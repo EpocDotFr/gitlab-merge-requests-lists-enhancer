@@ -1,6 +1,6 @@
 # GitLab Merge Requests lists enhancer
 
-Enhance lists of projects Merge Requests on any instance of Gitlab and GitLab.com.
+A web-browser extension that enhance all Merge Requests lists on any instance of Gitlab and GitLab.com.
 
 > TODO Screenshot
 

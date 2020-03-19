@@ -70,7 +70,7 @@
             };
 
             xhr.onerror = function() {
-                console.error('Error contacting GitLab');
+                console.error('Error while communicating with GitLab');
             };
 
             xhr.open('GET', this.createMergeRequestsDetailsGitLabApiUrl(mergeRequestIds));
@@ -94,15 +94,12 @@
 
                 branchesInfoNode.classList.add('issuable-info');
                 branchesInfoNode.innerHTML = '<span class="project-ref-path has-tooltip" title="Source branch">' +
-                        + '<a class="ref-name" href="#TODO">' +
-                            + '<svg class="s12 fork-sprite"><use xlink:href="/assets/icons-2206b8b510dd8a2edccabbd872bdecb67fa80554b54d351d80c5b056d048670e.svg#fork"></use></svg> ' + mergeRequest.source_branch
-                        + '</a>' +
-                    + '</span>' +
-                    + '<span class="project-ref-path has-tooltip" title="Target branch">' +
-                        + '<a class="ref-name" href="#TODO">' +
-                            + '<svg class="s12 fork-sprite"><use xlink:href="/assets/icons-2206b8b510dd8a2edccabbd872bdecb67fa80554b54d351d80c5b056d048670e.svg#fork"></use></svg> ' + mergeRequest.target_branch
-                        + '</a>' +
-                    + '</span>';
+                        '<a class="ref-name" href="#TODO">' + mergeRequest.source_branch + '</a>' +
+                    '</span>' +
+                    ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
+                    '<span class="project-ref-path has-tooltip" title="Target branch">' +
+                        '<a class="ref-name" href="#TODO">' + mergeRequest.target_branch + '</a>' +
+                    '</span>';
 
                 document
                     .querySelector('.mr-list .merge-request[data-iid="' + mergeRequest.iid + '"] .issuable-main-info')
