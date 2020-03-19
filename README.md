@@ -10,7 +10,7 @@ Enhance lists of projects Merge Requests on any instance of Gitlab and GitLab.co
 
 ## Prerequisites
 
-  - GitLab >= 9.0 (this addon requires GitLab API v4)
+  - **GitLab**: 9.0 or above (this addon requires GitLab API v4)
   - **Firefox**: any modern version of Firefox (>= 57)
 
 > Support for Opera and Chromium (and thus, Chrome) will hopefully come soon.
