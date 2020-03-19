@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "GitLab Merge Requests lists enhancer",
+  "version": "1.0.0",
+  "description": "Enhance lists of projects Merge Requests on any instance of Gitlab and GitLab.com",
+  "homepage_url": "https://github.com/EpocDotFr/gitlab-merge-requests-lists-enhancer",
+  "author": "Maxime 'Epoc' G.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "gmrle@epoc.fr",
+      "strict_min_version": "57.0"
+    }
+  },
+  "icons": {
+    "48": "images/logo.svg",
+    "96": "images/logo.svg"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*/*/-/merge_requests"],
+      "js": ["js/content.js"]
+    }
+  ]
+}
