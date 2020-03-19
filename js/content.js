@@ -3,11 +3,13 @@
 
     globals.gmrle = {
         currentProjectId: null,
-
-        baseGitLabUrl: null,
-        baseBranchUrl: null,
+        baseUrl: null,
+        baseProjectUrl: null,
         mergeRequestsDetailsApiUrl: null,
 
+        /**
+         * Initialize the content script of the extension which is executed in the context of the page.
+         */
         init() {
             this.currentProjectId = this.getCurrentProjectId();
 
@@ -18,17 +20,20 @@
                 return;
             }
 
-            this.baseGitLabUrl = location.protocol + '//' + location.host;
-            this.baseBranchUrl = this.getBaseBranchUrl();
-            this.mergeRequestsDetailsApiUrl = this.baseGitLabUrl + '/api/v4/projects/' + this.currentProjectId + '/merge_requests';
+            this.baseUrl = location.protocol + '//' + location.host;
+            this.baseProjectUrl = this.getBaseProjectUrl();
+            this.mergeRequestsDetailsApiUrl = this.baseUrl + '/api/v4/projects/' + this.currentProjectId + '/merge_requests';
 
             console.debug('Current project ID:', this.currentProjectId);
-            console.debug('GitLab base URL:', this.baseGitLabUrl);
-            console.debug('Base branch URL:', this.baseBranchUrl);
+            console.debug('GitLab base URL:', this.baseUrl);
+            console.debug('Base project URL:', this.baseProjectUrl);
             console.debug('API URL:', this.mergeRequestsDetailsApiUrl);
 
             this.updateUI();
         },
+        /**
+         * Finds and returns the GitLab project ID whe're looking merge requests at.
+         */
         getCurrentProjectId() {
             let body = document.querySelector('body');
 
@@ -38,9 +43,18 @@
 
             return body.dataset.projectId;
         },
-        getBaseBranchUrl() {
+        /**
+         * Finds and returns the URI to the project whe're looking merge requests at.
+         */
+        getBaseProjectUrl() {
             return document.querySelector('.nav-sidebar .context-header a').getAttribute('href');
         },
+        /**
+         * Initialize an UI update process:
+         *   - Get all Merge Requests IDs that are currently displayed
+         *   - Fetch their details using the GitLab API
+         *   - Actually update the UI by altering the DOM
+         */
         updateUI() {
             let currentMergeRequestIds = this.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
 
@@ -48,6 +62,10 @@
 
             this.fetchMergeRequestsDetails(currentMergeRequestIds);
         },
+        /**
+         * Gets all Merge Requests IDs that are currently displayed AND sets the `iid` data attribute (public Merge
+         * Request identifier) on all DOM nodes representing a Merge Requests (it's used later in the process).
+         */
         getCurrentMergeRequestIdsAndSetUuidDataAttributes() {
             return Array.from(
                 document.querySelectorAll('.mr-list .merge-request')
@@ -59,6 +77,12 @@
                 return iid;
             });
         },
+        /**
+         * Performs an HTTP GET request to the GitLab API to retrieve details about Merge Requests that are
+         * currently displayed. If successful:
+         *   - Removes all branches that may have been already displayed by GitLab
+         *   - Actually updates the UI by altering the DOM
+         */
         fetchMergeRequestsDetails(mergeRequestIds) {
             let self = this;
             let xhr = new XMLHttpRequest();
@@ -74,7 +98,7 @@
                     }
 
                     self.removeExistingTargetBranchNodes();
-                    self.handleMergeRequestsDetails(this.response);
+                    self.updateMergeRequestsNodes(this.response);
                 } else {
                     console.error('Got error from GitLab:', this.status);
                 }
@@ -84,35 +108,14 @@
                 console.error('Error while communicating with GitLab');
             };
 
-            xhr.open('GET', this.createMergeRequestsDetailsGitLabApiUrl(mergeRequestIds));
+            xhr.open('GET', this.createMergeRequestsDetailsApiUrl(mergeRequestIds));
             xhr.send();
         },
-        removeExistingTargetBranchNodes() {
-            document.querySelectorAll('.mr-list .merge-request .project-ref-path').forEach(function(el) {
-                el.parentNode.removeChild(el);
-            });
-        },
-        handleMergeRequestsDetails(mergeRequestsDetails) {
-            let self = this;
-
-            mergeRequestsDetails.forEach(function(mergeRequest) {
-                let branchesInfoNode = document.createElement('div');
-
-                branchesInfoNode.classList.add('issuable-info');
-                branchesInfoNode.innerHTML = '<span class="project-ref-path has-tooltip" title="Source branch">' +
-                        '<a class="ref-name" href="' + self.baseBranchUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
-                    '</span>' +
-                    ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
-                    '<span class="project-ref-path has-tooltip" title="Target branch">' +
-                        '<a class="ref-name" href="' + self.baseBranchUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
-                    '</span>';
-
-                document
-                    .querySelector('.mr-list .merge-request[data-iid="' + mergeRequest.iid + '"] .issuable-main-info')
-                    .appendChild(branchesInfoNode);
-            });
-        },
-        createMergeRequestsDetailsGitLabApiUrl(mergeRequestIds) {
+        /**
+         * Create an `URL` object representing the URL to the GitLab API endpoint that returns details about
+         * Merge Requests that are currently displayed (and only these ones).
+         */
+        createMergeRequestsDetailsApiUrl(mergeRequestIds) {
             let url = new URL(this.mergeRequestsDetailsApiUrl);
 
             mergeRequestIds.forEach(function(mergeRequestId) {
@@ -120,6 +123,37 @@
             });
 
             return url;
+        },
+        /**
+         * Removes all branches that may have been already displayed by GitLab.
+         */
+        removeExistingTargetBranchNodes() {
+            document.querySelectorAll('.mr-list .merge-request .project-ref-path').forEach(function(el) {
+                el.parentNode.removeChild(el);
+            });
+        },
+        /**
+         * Actually updates the UI by altering the DOM by adding our stuff.
+         */
+        updateMergeRequestsNodes(mergeRequestsDetails) {
+            let self = this;
+
+            mergeRequestsDetails.forEach(function(mergeRequest) {
+                let branchesInfoNode = document.createElement('div');
+
+                branchesInfoNode.classList.add('issuable-info');
+                branchesInfoNode.innerHTML = '<span class="project-ref-path has-tooltip" title="Source branch">' +
+                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
+                    '</span>' +
+                    ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
+                    '<span class="project-ref-path has-tooltip" title="Target branch">' +
+                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
+                    '</span>';
+
+                document
+                    .querySelector('.mr-list .merge-request[data-iid="' + mergeRequest.iid + '"] .issuable-main-info')
+                    .appendChild(branchesInfoNode);
+            });
         }
     };
 
