@@ -8,7 +8,8 @@ A web-browser extension that enhance all Merge Requests lists on any instance of
 
 ## Features
 
-  - Display source and target branches for each MRs
+  - Display source and target branches for each Merge Requests on all Merge Requests lists
+  - Compatible with all GitLab editions (GitLab CE, GitLab EE, GitLab.com) (see prerequisites anyway)
 
 ## Prerequisites
 
