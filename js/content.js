@@ -2,11 +2,13 @@
     'use strict';
 
     globals.gmrle = {
-        baseGitLabUrl: null,
         currentProjectId: null,
 
+        baseGitLabUrl: null,
+        baseBranchUrl: null,
+        mergeRequestsDetailsApiUrl: null,
+
         init() {
-            this.baseGitLabUrl = location.protocol + '//' + location.host;
             this.currentProjectId = this.getCurrentProjectId();
 
             if (!this.currentProjectId) {
@@ -16,8 +18,14 @@
                 return;
             }
 
-            console.debug('GitLab base URL:', this.baseGitLabUrl);
+            this.baseGitLabUrl = location.protocol + '//' + location.host;
+            this.baseBranchUrl = this.getBaseBranchUrl();
+            this.mergeRequestsDetailsApiUrl = this.baseGitLabUrl + '/api/v4/projects/' + this.currentProjectId + '/merge_requests';
+
             console.debug('Current project ID:', this.currentProjectId);
+            console.debug('GitLab base URL:', this.baseGitLabUrl);
+            console.debug('Base branch URL:', this.baseBranchUrl);
+            console.debug('API URL:', this.mergeRequestsDetailsApiUrl);
 
             this.updateUI();
         },
@@ -30,14 +38,17 @@
 
             return body.dataset.projectId;
         },
-        updateUI() {
-            let currentMergeRequestsIds = this.getCurrentMergeRequestsIdsAndSetUuidDataAttributes();
-
-            console.debug('Current merge requests IDs:', currentMergeRequestsIds);
-
-            this.fetchMergeRequestsDetails(currentMergeRequestsIds);
+        getBaseBranchUrl() {
+            return document.querySelector('.nav-sidebar .context-header a').getAttribute('href');
         },
-        getCurrentMergeRequestsIdsAndSetUuidDataAttributes() {
+        updateUI() {
+            let currentMergeRequestIds = this.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
+
+            console.debug('Current merge requests IDs:', currentMergeRequestIds);
+
+            this.fetchMergeRequestsDetails(currentMergeRequestIds);
+        },
+        getCurrentMergeRequestIdsAndSetUuidDataAttributes() {
             return Array.from(
                 document.querySelectorAll('.mr-list .merge-request')
             ).map(function(el) {
@@ -76,29 +87,24 @@
             xhr.open('GET', this.createMergeRequestsDetailsGitLabApiUrl(mergeRequestIds));
             xhr.send();
         },
-        createMergeRequestsDetailsGitLabApiUrl(mergeRequestIds) {
-            let url = new URL(
-                '/api/v4/projects/' + this.currentProjectId + '/merge_requests',
-                this.baseGitLabUrl
-            );
-
-            mergeRequestIds.forEach(function(mergeRequestId) {
-                url.searchParams.append('iids[]', mergeRequestId);
+        removeExistingTargetBranchNodes() {
+            document.querySelectorAll('.mr-list .merge-request .project-ref-path').forEach(function(el) {
+                el.parentNode.removeChild(el);
             });
-
-            return url;
         },
         handleMergeRequestsDetails(mergeRequestsDetails) {
+            let self = this;
+
             mergeRequestsDetails.forEach(function(mergeRequest) {
                 let branchesInfoNode = document.createElement('div');
 
                 branchesInfoNode.classList.add('issuable-info');
                 branchesInfoNode.innerHTML = '<span class="project-ref-path has-tooltip" title="Source branch">' +
-                        '<a class="ref-name" href="#TODO">' + mergeRequest.source_branch + '</a>' +
+                        '<a class="ref-name" href="' + self.baseBranchUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
                     '</span>' +
                     ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
                     '<span class="project-ref-path has-tooltip" title="Target branch">' +
-                        '<a class="ref-name" href="#TODO">' + mergeRequest.target_branch + '</a>' +
+                        '<a class="ref-name" href="' + self.baseBranchUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
                     '</span>';
 
                 document
@@ -106,10 +112,14 @@
                     .appendChild(branchesInfoNode);
             });
         },
-        removeExistingTargetBranchNodes() {
-            document.querySelectorAll('.mr-list .merge-request .project-ref-path').forEach(function(el) {
-                el.parentNode.removeChild(el);
+        createMergeRequestsDetailsGitLabApiUrl(mergeRequestIds) {
+            let url = new URL(this.mergeRequestsDetailsApiUrl);
+
+            mergeRequestIds.forEach(function(mergeRequestId) {
+                url.searchParams.append('iids[]', mergeRequestId);
             });
+
+            return url;
         }
     };
 
