@@ -20,5 +20,8 @@
       "matches": ["*://*/*/*/-/merge_requests", "*://*/*/*/-/merge_requests?*"],
       "js": ["js/content.js"]
     }
+  ],
+  "permissions": [
+    "*://*/*/*/-/merge_requests", "*://*/*/*/-/merge_requests?*"
   ]
 }

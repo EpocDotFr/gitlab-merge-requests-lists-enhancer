@@ -27,6 +27,7 @@ Enhance lists of projects Merge Requests on any instance of Gitlab and GitLab.co
 
   - **1.0** - 🚧 Initial release (display source and target branches)
   - **1.1** - WIP / unWIP button
+  - **1.2** - Direct JIRA ticket link
 
 ## License
 

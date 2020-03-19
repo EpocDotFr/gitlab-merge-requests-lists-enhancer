@@ -2,9 +2,11 @@
     'use strict';
 
     globals.gmrle = {
+        baseGitLabUrl: null,
         currentProjectId: null,
 
         init() {
+            this.baseGitLabUrl = location.protocol + '//' + location.host;
             this.currentProjectId = this.getCurrentProjectId();
 
             if (!this.currentProjectId) {
@@ -13,6 +15,9 @@
 
                 return;
             }
+
+            console.debug('GitLab base URL:', this.baseGitLabUrl);
+            console.debug('Current project ID:', this.currentProjectId);
 
             this.refreshUI();
         },
@@ -28,24 +33,63 @@
         refreshUI() {
             let currentMergeRequestsIds = this.getCurrentMergeRequestsIds();
 
-            console.log(currentMergeRequestsIds);
+            console.debug('Current merge requests IDS:', currentMergeRequestsIds);
 
-            // this.fetchMergeRequestsDetails(currentMergeRequestsIds)
+            this.fetchMergeRequestsDetails(currentMergeRequestsIds);
         },
         getCurrentMergeRequestsIds() {
-            return Array.prototype.map.call(
-                document.querySelectorAll('.mr-list > .merge-request'),
-                function (mergeRequest) {
-                    return mergeRequest.dataset.id;
-                }
-            );
+            return Array.from(document.querySelectorAll('.mr-list > .merge-request .issuable-reference'))
+                .map(function(mergeRequest) {
+                    return mergeRequest.textContent.trim().replace('!', '');
+                });
         },
         fetchMergeRequestsDetails(mergeRequestIds) {
+            let self = this;
+            let xhr = new XMLHttpRequest();
 
-            // https://medium.com/@mattburgess/how-to-get-data-with-javascript-in-2018-f30ba04ad0da#5013
-            // https://stackoverflow.com/questions/37944051/xmlhttprequest-from-firefox-webextension
-            //   https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions#API_permissions
-            //   https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions#Host_permissions
+            xhr.responseType = 'json';
+
+            xhr.onload = function() {
+                if (this.status == 200) {
+                    if (!this.response) {
+                        console.error('Got empty response from GitLab');
+
+                        return;
+                    }
+
+                    self.handleMergeRequestsDetails(this.response);
+                } else {
+                    console.error('Got error from GitLab:', this.status);
+                }
+            };
+
+            xhr.onerror = function() {
+                console.error('Error contacting GitLab');
+            };
+
+            xhr.open('GET', this.createMergeRequestsDetailsGitLabApiUrl(mergeRequestIds));
+            xhr.send();
+        },
+        createMergeRequestsDetailsGitLabApiUrl(mergeRequestIds) {
+            let url = new URL(
+                '/api/v4/projects/' + this.currentProjectId + '/merge_requests',
+                this.baseGitLabUrl
+            );
+
+            mergeRequestIds.forEach(function(mergeRequestId) {
+                url.searchParams.append('iids[]', mergeRequestId);
+            });
+
+            return url;
+        },
+        handleMergeRequestsDetails(mergeRequestsDetails) {
+            mergeRequestsDetails.forEach(function(mergeRequest) {
+                console.log(
+                    mergeRequest.title,
+                    mergeRequest.source_branch,
+                    mergeRequest.target_branch
+                );
+            });
         }
     };
 
