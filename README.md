@@ -16,6 +16,7 @@ Enhance lists of projects Merge Requests on any instance of Gitlab and GitLab.co
 
 ## Installation
 
+  - GitLab >= 9.0 (this addon requires GitLab API v4)
   - **Firefox**: from the [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/gitlab-merge-requests-lists-enhancer/) website
 
 ## Credits
