@@ -2,7 +2,9 @@
 
 A web-browser extension that enhance all Merge Requests lists on any instance of Gitlab and GitLab.com.
 
-> TODO Screenshot
+<p align="center">
+  <img src="screenshot.png">
+</p>
 
 ## Features
 
