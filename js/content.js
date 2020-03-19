@@ -42,8 +42,10 @@
         },
         fetchMergeRequestsDetails(mergeRequestIds) {
 
+            // https://medium.com/@mattburgess/how-to-get-data-with-javascript-in-2018-f30ba04ad0da#5013
             // https://stackoverflow.com/questions/37944051/xmlhttprequest-from-firefox-webextension
-            // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+            //   https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions#API_permissions
+            //   https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions#Host_permissions
         }
     };
 
