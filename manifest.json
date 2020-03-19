@@ -17,7 +17,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*/*/*/-/merge_requests"],
+      "matches": ["*://*/*/*/-/merge_requests", "*://*/*/*/-/merge_requests?*"],
       "js": ["js/content.js"]
     }
   ]
