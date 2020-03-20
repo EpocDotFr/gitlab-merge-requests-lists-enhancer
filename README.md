@@ -9,14 +9,14 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 ## Features
 
   - Display source and target branches for each Merge Requests on all Merge Requests lists
-  - Compatible with all GitLab editions (GitLab CE, GitLab EE, GitLab.com) (see prerequisites anyway)
+  - Compatible with all GitLab editions (GitLab CE, GitLab EE, GitLab.com) (look at the prerequisites, though)
   - No configuration needed
 
 ## Prerequisites
 
   - **GitLab**: 9.0 or above or GitLab.com (this addon requires GitLab API v4)
   - **Firefox**: any recent version of Firefox (>= 57)
-  - **Chrome**: any recent version of Chrome
+  - **Chrome**: any version of Chrome
 
 ## Installation
 
@@ -29,9 +29,10 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 
 ## Roadmap
 
-  - **1.0** - Initial release (display source and target branches)
-  - **1.1** - WIP / unWIP button
-  - **1.2** - Direct JIRA ticket link
+  - **1.0** - Initial release (display Merge Request source and target branches)
+  - **1.1** - Copy basic Merge Request information (intended for sharing on e.g instant messaging softwares)
+  - **1.2** - Direct Jira ticket link (automatic detection of ticket ID in branch name or Merge Request title)
+  - **1.3** - WIP / unWIP toggle button
 
 ## License
 
