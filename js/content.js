@@ -3,8 +3,8 @@
 
     globals.gmrle = {
         currentProjectId: null,
-        baseUrl: null,
         baseProjectUrl: null,
+        baseUrl: null,
         mergeRequestsDetailsApiUrl: null,
 
         /**
@@ -20,13 +20,21 @@
                 return;
             }
 
-            this.baseUrl = location.protocol + '//' + location.host;
             this.baseProjectUrl = this.getBaseProjectUrl();
+
+            if (!this.baseProjectUrl) {
+
+                console.error('Aborting: base project URL cannot be found');
+
+                return;
+            }
+
+            this.baseUrl = location.protocol + '//' + location.host;
             this.mergeRequestsDetailsApiUrl = this.baseUrl + '/api/v4/projects/' + this.currentProjectId + '/merge_requests';
 
             console.debug('Current project ID:', this.currentProjectId);
-            console.debug('GitLab base URL:', this.baseUrl);
             console.debug('Base project URL:', this.baseProjectUrl);
+            console.debug('GitLab base URL:', this.baseUrl);
             console.debug('API URL:', this.mergeRequestsDetailsApiUrl);
 
             this.updateUI();
@@ -47,15 +55,20 @@
          * Finds and returns the URI to the project whe're looking merge requests at.
          */
         getBaseProjectUrl() {
-            return document.querySelector('.nav-sidebar .context-header a').getAttribute('href');
+            let link = document.querySelector('.nav-sidebar .context-header a');
+
+            return link ? link.getAttribute('href') : null;
         },
         /**
          * Initialize an UI update process:
+         *   - Removes all branches that may have been already displayed by GitLab
          *   - Get all Merge Requests IDs that are currently displayed
          *   - Fetch their details using the GitLab API
          *   - Actually update the UI by altering the DOM
          */
         updateUI() {
+            this.removeExistingTargetBranchNodes();
+
             let currentMergeRequestIds = this.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
 
             console.debug('Current merge requests IDs:', currentMergeRequestIds);
@@ -79,9 +92,7 @@
         },
         /**
          * Performs an HTTP GET request to the GitLab API to retrieve details about Merge Requests that are
-         * currently displayed. If successful:
-         *   - Removes all branches that may have been already displayed by GitLab
-         *   - Actually updates the UI by altering the DOM
+         * currently displayed. If successful, it actually updates the UI by altering the DOM.
          */
         fetchMergeRequestsDetails(mergeRequestIds) {
             let self = this;
@@ -91,16 +102,15 @@
 
             xhr.onload = function() {
                 if (this.status == 200) {
-                    if (!this.response) {
+                    if (this.response == '') {
                         console.error('Got empty response from GitLab');
 
                         return;
                     }
 
-                    self.removeExistingTargetBranchNodes();
                     self.updateMergeRequestsNodes(this.response);
                 } else {
-                    console.error('Got error from GitLab:', this.status);
+                    console.error('Got error from GitLab:', this.status, this.response);
                 }
             };
 
