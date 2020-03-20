@@ -15,13 +15,13 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 ## Prerequisites
 
   - **GitLab**: 9.0 or above or GitLab.com (this addon requires GitLab API v4)
-  - **Firefox**: any modern version of Firefox (>= 57)
-
-> Support for Opera and Chromium (and thus, Chrome) will hopefully come soon.
+  - **Firefox**: any recent version of Firefox (>= 57)
+  - **Chrome**: any recent version of Chrome
 
 ## Installation
 
-  - **Firefox**: from the [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/gitlab-merge-requests-lists-enhancer/) website
+  - **Firefox**: from the [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/TODO/) website
+  - **Chrome**: from the [Chrome Web Store](https://chrome.google.com/webstore/detail/TODO) website
 
 ## Credits
 
@@ -29,7 +29,7 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 
 ## Roadmap
 
-  - **1.0** - 🚧 Initial release (display source and target branches)
+  - **1.0** - Initial release (display source and target branches)
   - **1.1** - WIP / unWIP button
   - **1.2** - Direct JIRA ticket link
 
