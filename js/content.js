@@ -2,12 +2,16 @@
     'use strict';
 
     class GitLabApiClient {
+        /**
+         * The GitLab API client used by the extension. No tokens or authentication needed as every requests are
+         * performed from inside the context of the page (GitLab allows API calls if they comes from the site).
+         */
         constructor(baseUrl) {
             this.baseUrl = baseUrl;
         }
 
         /**
-         * Create an `URL` object representing the full URL to the given GitLab API endpoint.
+         * Creates an `URL` object representing the full URL to the given GitLab API endpoint.
          */
         createEndpointUrl(endpoint, queryStringParameters = null) {
             let url = new URL(this.baseUrl + endpoint);
@@ -21,7 +25,10 @@
             return url;
         }
 
-        sendRequest(method, endpoint, callback, queryStringParameters = null) {
+        /**
+         * Sends an HTTP request to the GitLab API.
+         */
+        sendRequest(callback, method, endpoint, queryStringParameters = null) {
             let xhr = new XMLHttpRequest();
 
             xhr.responseType = 'json';
@@ -37,17 +44,17 @@
         }
 
         /**
-         * Fetch details about the given Merge Requests IDs.
+         * Fetch details about the given Merge Requests IDs in the given project ID.
          */
-        getMergeRequests(projectId, mergeRequestIds, callback) {
+        getProjectMergeRequests(callback, projectId, mergeRequestIds) {
             let queryStringParameters = mergeRequestIds.map(function(mergeRequestId) {
                 return ['iids[]', mergeRequestId];
             });
 
             this.sendRequest(
+                callback,
                 'GET',
                 'projects/' + projectId + '/merge_requests',
-                callback,
                 queryStringParameters
             );
         }
@@ -139,16 +146,16 @@
         fetchMergeRequestsDetails(mergeRequestIds) {
             let self = this;
 
-            this.apiClient.getMergeRequests(
-                this.currentProjectId,
-                mergeRequestIds,
+            this.apiClient.getProjectMergeRequests(
                 function() {
                     if (this.status == 200) {
                         self.updateMergeRequestsNodes(this.response);
                     } else {
                         console.error('Got error from GitLab:', this.status, this.response);
                     }
-                }
+                },
+                this.currentProjectId,
+                mergeRequestIds
             );
         }
 
