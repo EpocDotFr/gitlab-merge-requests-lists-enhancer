@@ -168,26 +168,41 @@
         }
 
         /**
+         * Append the given HTML string at the end of the given child target node.
+         */
+        parseHtmlAndAppendChild(targetNode, html) {
+            new DOMParser()
+                .parseFromString(html, 'text/html')
+                .querySelector('body')
+                .childNodes
+                .forEach(function(node) {
+                    targetNode.appendChild(node);
+                }
+            )
+        }
+
+        /**
          * Actually updates the UI by altering the DOM by adding our stuff.
          */
         updateMergeRequestsNodes(mergeRequestsDetails) {
             let self = this;
 
             mergeRequestsDetails.forEach(function(mergeRequest) {
-                let branchesInfoNode = document.createElement('div');
+                let infoDiv = document
+                    .querySelector('.mr-list .merge-request[data-iid="' + mergeRequest.iid + '"] .issuable-main-info');
 
-                branchesInfoNode.classList.add('issuable-info');
-                branchesInfoNode.innerHTML = '<span class="project-ref-path has-tooltip" title="Source branch">' +
-                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
-                    '</span>' +
-                    ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
-                    '<span class="project-ref-path has-tooltip" title="Target branch">' +
-                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
-                    '</span>';
+                let html = '<div class="issuable-info"><span class="project-ref-path has-tooltip" title="Source branch">' +
+                    '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
+                '</span>' +
+                ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
+                '<span class="project-ref-path has-tooltip" title="Target branch">' +
+                    '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
+                '</span></div>';
 
-                document
-                    .querySelector('.mr-list .merge-request[data-iid="' + mergeRequest.iid + '"] .issuable-main-info')
-                    .appendChild(branchesInfoNode);
+                self.parseHtmlAndAppendChild(
+                    infoDiv,
+                    html
+                );
             });
         }
     }
