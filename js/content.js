@@ -92,8 +92,6 @@
             console.debug('GitLab base URL:', this.baseUrl);
             console.debug('GitLab API base URL:', this.baseApiUrl);
 
-            this.removeExistingTargetBranchNodes();
-
             let currentMergeRequestIds = this.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
 
             console.debug('Current merge requests IDs:', currentMergeRequestIds);
@@ -149,6 +147,7 @@
             this.apiClient.getProjectMergeRequests(
                 function() {
                     if (this.status == 200) {
+                        self.removeExistingTargetBranchNodes();
                         self.updateMergeRequestsNodes(this.response);
                     } else {
                         console.error('Got error from GitLab:', this.status, this.response);
