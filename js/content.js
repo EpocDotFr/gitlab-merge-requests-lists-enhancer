@@ -96,7 +96,7 @@
 
             console.debug('Current merge requests IDs:', currentMergeRequestIds);
 
-            this.fetchMergeRequestsDetails(currentMergeRequestIds);
+            this.fetchMergeRequestsDetailsThenUpdateUI(currentMergeRequestIds);
         }
 
         /**
@@ -141,7 +141,7 @@
          * Performs an HTTP GET request to the GitLab API to retrieve details about Merge Requests that are
          * currently displayed. If successful, it actually updates the UI by altering the DOM.
          */
-        fetchMergeRequestsDetails(mergeRequestIds) {
+        fetchMergeRequestsDetailsThenUpdateUI(mergeRequestIds) {
             let self = this;
 
             this.apiClient.getProjectMergeRequests(
