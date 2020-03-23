@@ -20,10 +20,16 @@ def create_manifest_file(target):
 
 
 def switch(target):
+    print('Switching to ' + target)
+
     create_manifest_file(target)
+
+    print('Done')
 
 
 def build(target):
+    print('Building for ' + target)
+
     switch(target)
 
     arguments = [
@@ -36,6 +42,8 @@ def build(target):
     arguments.extend(settings.FILES_AND_DIRECTORIES_TO_IGNORE_WHEN_BUILDING)
 
     subprocess.run(arguments, shell=True)
+
+    print('Done')
 
 
 def run():
