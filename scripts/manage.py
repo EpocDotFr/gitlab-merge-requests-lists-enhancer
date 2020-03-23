@@ -8,12 +8,15 @@ def create_manifest_file(target):
     data = settings.MANIFEST_FILE
 
     if target == 'firefox':
+        data['options_ui']['browser_style'] = True
         data['browser_specific_settings'] = {
             'gecko': {
                 'id': 'gmrle@epoc.fr',
                 'strict_min_version': '57.0'
             }
         }
+    elif target == 'chrome':
+        data['options_ui']['chrome_style'] = True
 
     with open('manifest.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2)
