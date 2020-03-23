@@ -30,9 +30,10 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 ## Roadmap
 
   - **1.0** - Initial release (display Merge Request source and target branches)
-  - **1.1** - Copy basic Merge Request information (intended for sharing on e.g instant messaging softwares)
-  - **1.2** - Direct Jira ticket link (automatic detection of ticket ID in branch name or Merge Request title)
-  - **1.3** - WIP / unWIP toggle button
+  - **1.1** - Copy source and target branches name
+  - **1.2** - Copy basic Merge Request information (intended for sharing on e.g instant messaging softwares)
+  - **1.3** - Direct Jira ticket link (automatic detection of ticket ID in branch name or Merge Request title)
+  - **1.4** - WIP / unWIP toggle button
 
 ## License
 
