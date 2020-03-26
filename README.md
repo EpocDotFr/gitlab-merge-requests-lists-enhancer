@@ -21,7 +21,7 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 ## Installation
 
   - **Firefox**: from the [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/gitlab-mrs-lists-enhancer/) website
-  - **Chrome**: from the [Chrome Web Store](https://chrome.google.com/webstore/detail/TODO) website
+  - **Chrome**: from the [Chrome Web Store](https://chrome.google.com/webstore/detail/gitlab-merge-requests-lis/emiefdjcbfjkaofipmdcflcddcchmdkf) website
 
 ## Credits
 
