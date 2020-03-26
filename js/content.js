@@ -193,11 +193,18 @@
 
                 let html = '<div class="issuable-info"><span class="project-ref-path has-tooltip" title="Source branch">' +
                     '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
-                '</span>' +
+                '</span> ' +
+                '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip" title="Copy branch name" data-clipboard-text="{&quot;text&quot;:&quot;' + mergeRequest.source_branch + '&quot;,&quot;gfm&quot;:&quot;`' + mergeRequest.source_branch + '`&quot;}">' +
+                    '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                '</button>' +
                 ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
                 '<span class="project-ref-path has-tooltip" title="Target branch">' +
                     '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
-                '</span></div>';
+                '</span> ' +
+                '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip" title="Copy branch name" data-clipboard-text="{&quot;text&quot;:&quot;' + mergeRequest.target_branch + '&quot;,&quot;gfm&quot;:&quot;`' + mergeRequest.target_branch + '`&quot;}">' +
+                    '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                '</button>' +
+                '</div>';
 
                 self.parseHtmlAndAppendChild(
                     infoDiv,
