@@ -15,8 +15,8 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 ## Prerequisites
 
   - **GitLab**: 9.0 or above or GitLab.com (this addon requires GitLab API v4)
-  - **Firefox**: any recent version of Firefox (>= 57)
-  - **Chrome**: any version of Chrome
+  - **Firefox**: >= 63 (because this extension uses the clipboard API)
+  - **Chrome**: >= 66 (because this extension uses the clipboard API)
 
 ## Installation
 
@@ -29,7 +29,9 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 
 ## Roadmap
 
-  - **1.0** - Initial release (display Merge Request source and target branches)
+👉 = current version
+
+  - 👉 **1.0** - Initial release (display Merge Request source and target branches)
   - **1.1** - Copy source and target branches name
   - **1.2** - Copy basic Merge Request information (intended for sharing on e.g instant messaging softwares)
   - **1.3** - Direct Jira ticket link (automatic detection of ticket ID in branch name or Merge Request title)
