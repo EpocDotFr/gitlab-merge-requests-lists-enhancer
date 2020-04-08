@@ -83,13 +83,20 @@
                 return;
             }
 
-            this.baseUrl = location.protocol + '//' + location.host;
-            this.baseApiUrl = this.baseUrl + '/api/v4/';
-            this.apiClient = new GmrleGitLabApiClient(this.baseApiUrl);
+            let preferencesManager = new globals.GmrlePreferencesManager();
 
-            let currentMergeRequestIds = this.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
+            let self = this;
 
-            this.fetchMergeRequestsDetailsThenUpdateUI(currentMergeRequestIds);
+            preferencesManager.getAll(function(preferences) {
+                self.preferences = preferences;
+                self.baseUrl = location.protocol + '//' + location.host;
+                self.baseApiUrl = self.baseUrl + '/api/v4/';
+                self.apiClient = new GmrleGitLabApiClient(self.baseApiUrl);
+
+                let currentMergeRequestIds = self.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
+
+                self.fetchMergeRequestsDetailsThenUpdateUI(currentMergeRequestIds);
+            });
         }
 
         /**
@@ -187,20 +194,29 @@
                 let infoDiv = document
                     .querySelector('.mr-list .merge-request[data-iid="' + mergeRequest.iid + '"] .issuable-main-info');
 
-                let html = '<div class="issuable-info"><span class="project-ref-path has-tooltip" title="Source branch">' +
-                    '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
-                '</span> ' +
-                '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.source_branch + '">' +
-                    '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
-                '</button>' +
-                ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
-                '<span class="project-ref-path has-tooltip" title="Target branch">' +
-                    '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
-                '</span> ' +
-                '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.target_branch + '">' +
-                    '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
-                '</button>' +
-                '</div>';
+                let html = '<div class="issuable-info">' +
+                    '<span class="project-ref-path has-tooltip" title="Source branch">' +
+                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
+                    '</span>';
+
+                if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                    html += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.source_branch + '">' +
+                        '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                    '</button>'
+                }
+
+                html += ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
+                    '<span class="project-ref-path has-tooltip" title="Target branch">' +
+                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
+                    '</span>';
+
+                if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                    html += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.target_branch + '">' +
+                        '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                    '</button>';
+                }
+
+                html += '</div>';
 
                 self.parseHtmlAndAppendChild(
                     infoDiv,

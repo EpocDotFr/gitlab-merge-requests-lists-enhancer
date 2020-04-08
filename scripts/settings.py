@@ -14,7 +14,7 @@ MANIFEST_FILE = {
     'content_scripts': [
         {
             'matches': ['*://*/*/*/-/merge_requests', '*://*/*/*/-/merge_requests?*'],
-            'js': ['js/content.js']
+            'js': ['js/preferences.js', 'js/content.js']
         }
     ],
     'options_ui': {
