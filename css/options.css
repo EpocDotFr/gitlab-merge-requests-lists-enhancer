@@ -20,22 +20,22 @@ body, button {
 /************************************************************************
  * Form */
 
-form >  * {
+form.gmrle-options >  * {
     padding-top: 15px;
 }
 
-form > .option.checkbox {
+form.gmrle-options > .option.checkbox {
     display: table-row;
     width: 100%;
 }
 
-form > .option.checkbox > * {
+form.gmrle-options > .option.checkbox > * {
     vertical-align: middle;
     display: table-cell;
     padding: 5px;
 }
 
-form > .option.checkbox > *:first-child {
+form.gmrle-options > .option.checkbox > *:first-child {
     width: 50px;
     text-align: center;
 }
