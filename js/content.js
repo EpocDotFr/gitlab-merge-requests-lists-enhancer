@@ -149,6 +149,7 @@
                     if (this.status == 200) {
                         self.removeExistingTargetBranchNodes();
                         self.updateMergeRequestsNodes(this.response);
+                        self.attachClickEventOnCopyBranchNameButtons();
                     } else {
                         console.error('Got error from GitLab:', this.status, this.response);
                     }
@@ -194,14 +195,14 @@
                 let html = '<div class="issuable-info"><span class="project-ref-path has-tooltip" title="Source branch">' +
                     '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
                 '</span> ' +
-                '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip" title="Copy branch name" data-clipboard-text="{&quot;text&quot;:&quot;' + mergeRequest.source_branch + '&quot;,&quot;gfm&quot;:&quot;`' + mergeRequest.source_branch + '`&quot;}">' +
+                '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.source_branch + '">' +
                     '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
                 '</button>' +
                 ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
                 '<span class="project-ref-path has-tooltip" title="Target branch">' +
                     '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
                 '</span> ' +
-                '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip" title="Copy branch name" data-clipboard-text="{&quot;text&quot;:&quot;' + mergeRequest.target_branch + '&quot;,&quot;gfm&quot;:&quot;`' + mergeRequest.target_branch + '`&quot;}">' +
+                '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.target_branch + '">' +
                     '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
                 '</button>' +
                 '</div>';
@@ -210,6 +211,22 @@
                     infoDiv,
                     html
                 );
+            });
+        }
+
+        /**
+         * Attach a click event on all buttons inserted by the extension allowing to copy the source and target
+         * branches name.
+         */
+        attachClickEventOnCopyBranchNameButtons() {
+            document.querySelectorAll('button.gmrle-copy-branch-name').forEach(function(el) {
+                el.addEventListener('click', function() {
+                    navigator.clipboard.writeText(el.dataset.branchName).then(function() {
+                        // Do nothing if copy was successful.
+                    }, function() {
+                        alert('Unable to copy branch name.');
+                    });
+                });
             });
         }
     }
