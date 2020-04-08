@@ -12,7 +12,7 @@ def create_manifest_file(target):
         data['browser_specific_settings'] = {
             'gecko': {
                 'id': 'gmrle@epoc.fr',
-                'strict_min_version': '57.0'
+                'strict_min_version': '63.0'
             }
         }
     elif target == 'chrome':
