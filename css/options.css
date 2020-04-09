@@ -1,33 +1,13 @@
 /************************************************************************
- * Global */
-
-body, button {
-    font-size: 14px;
-}
+ * Global styles */
 
 .txt-center {
     text-align: center;
 }
 
 /************************************************************************
- * Form */
+ * Preferences form */
 
 form >  * {
     padding-top: 15px;
-}
-
-form > .option.checkbox {
-    display: table-row;
-    width: 100%;
-}
-
-form > .option.checkbox > * {
-    vertical-align: middle;
-    display: table-cell;
-    padding: 5px;
-}
-
-form > .option.checkbox > *:first-child {
-    width: 50px;
-    text-align: center;
 }
