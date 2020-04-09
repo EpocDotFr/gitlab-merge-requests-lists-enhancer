@@ -9,5 +9,6 @@
  * Preferences form */
 
 form >  * {
-    padding-top: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
