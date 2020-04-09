@@ -1,7 +1,7 @@
 (function(globals) {
     'use strict';
 
-    class GmrleGitLabApiClient {
+    class GitLabApiClient {
         /**
          * The GitLab API client used by the extension. No tokens or authentication needed as every requests are
          * performed from inside the context of the page (GitLab allows API calls if they comes from the site).
@@ -60,7 +60,7 @@
         }
     }
 
-    class GmrleContentScript {
+    class ContentScript {
         /**
          * The content script of the extension which is executed in the context of the page.
          */
@@ -83,18 +83,17 @@
                 return;
             }
 
+            this.baseUrl = location.protocol + '//' + location.host;
+            this.baseApiUrl = this.baseUrl + '/api/v4/';
+            this.apiClient = new GitLabApiClient(this.baseApiUrl);
+
+            let currentMergeRequestIds = this.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
             let preferencesManager = new globals.GmrlePreferencesManager();
 
             let self = this;
 
             preferencesManager.getAll(function(preferences) {
                 self.preferences = preferences;
-                self.baseUrl = location.protocol + '//' + location.host;
-                self.baseApiUrl = self.baseUrl + '/api/v4/';
-                self.apiClient = new GmrleGitLabApiClient(self.baseApiUrl);
-
-                let currentMergeRequestIds = self.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
-
                 self.fetchMergeRequestsDetailsThenUpdateUI(currentMergeRequestIds);
             });
         }
@@ -244,5 +243,5 @@
         }
     }
 
-    let cs = new GmrleContentScript();
+    let cs = new ContentScript();
 }(this));

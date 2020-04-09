@@ -1,7 +1,7 @@
 (function(globals) {
     'use strict';
 
-    class GmrleOptionsPage {
+    class OptionsPage {
         /**
          * Class which handles everything related to the options page of the extension. Preferences are persisted in
          * the local storage of the browser.
@@ -18,7 +18,7 @@
          * Queries and caches every relevant DOM nodes for further manipulations.
          */
         getDomNodes() {
-            this.optionsForm = document.querySelector('form.gmrle-options');
+            this.optionsForm = document.querySelector('form');
             this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox = document.querySelector('input#enable_buttons_to_copy_source_and_target_branches_name');
         }
 
@@ -57,6 +57,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        let op = new GmrleOptionsPage();
+        let op = new OptionsPage();
     });
 }(this));
