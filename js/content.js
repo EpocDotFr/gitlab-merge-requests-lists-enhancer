@@ -88,7 +88,7 @@
             this.apiClient = new GitLabApiClient(this.baseApiUrl);
 
             let currentMergeRequestIds = this.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
-            let preferencesManager = new globals.GmrlePreferencesManager();
+            let preferencesManager = new globals.Gmrle.PreferencesManager();
 
             let self = this;
 

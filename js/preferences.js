@@ -2,8 +2,9 @@
     'use strict';
 
     globals.browser = globals.browser || globals.chrome; // Firefox uses `browser`, Chrome uses `chrome`
+    globals.Gmrle = globals.Gmrle || {};
 
-    globals.GmrlePreferencesManager = class {
+    globals.Gmrle.PreferencesManager = class {
         defaults = {
             enable_buttons_to_copy_source_and_target_branches_name: true
         };

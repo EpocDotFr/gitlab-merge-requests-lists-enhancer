@@ -7,7 +7,7 @@
          * the local storage of the browser.
          */
         constructor() {
-            this.preferencesManager = new globals.GmrlePreferencesManager();
+            this.preferencesManager = new globals.Gmrle.PreferencesManager();
 
             this.getDomNodes();
             this.restoreOptionsFromStorage();
