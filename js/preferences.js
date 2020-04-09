@@ -53,7 +53,15 @@
          * Used as `getAll` if the current browser is Chrome.
          */
         getAllChrome(callback) {
-            chrome.storage.local.get(this.defaults, callback);
+            chrome.storage.local.get(this.defaults, function(preferences) {
+                if (chrome.runtime.lastError) {
+                    alert('Error retrieving extension preferences, check console for more information.');
+
+                    console.error('Error retrieving extension preferences:', chrome.runtime.lastError);
+                } else {
+                    callback(preferences);
+                }
+            });
         }
 
         /**
@@ -62,7 +70,13 @@
          * Used as `setAll` if the current browser is Chrome.
          */
         setAllChrome(preferences) {
-            chrome.storage.local.set(preferences);
+            chrome.storage.local.set(preferences, function() {
+                if (chrome.runtime.lastError) {
+                    alert('Error saving extension preferences, check console for more information.');
+
+                    console.error('Error saving extension preferences:', chrome.runtime.lastError);
+                }
+            });
         }
     }
 }(this));
