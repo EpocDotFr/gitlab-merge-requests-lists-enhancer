@@ -1,7 +1,6 @@
 (function(globals) {
     'use strict';
 
-    globals.browser = globals.browser || globals.chrome; // Firefox uses `browser`, Chrome uses `chrome`
     globals.Gmrle = globals.Gmrle || {};
 
     globals.Gmrle.PreferencesManager = class {
@@ -12,26 +11,58 @@
         /**
          * This class holds all the logic related to user preferences persistance.
          */
-        constructor() {}
+        constructor() {
+            if (globals.browser) { // Firefox uses `browser`, Chrome uses `chrome`
+                this.getAll = this.getAllFirefox;
+                this.setAll = this.setAllFirefox;
+            } else if (globals.chrome) {
+                this.getAll = this.getAllChrome;
+                this.setAll = this.setAllChrome;
+            } else {
+                console.error('Unsupported browser');
+            }
+        }
 
         /**
-         * Get all preferences.
+         * Get all the user's preferences.
+         *
+         * Used as `getAll` if the current browser is Firefox.
          */
-        getAll(callback) {
-            globals.browser.storage.local.get(this.defaults).then(callback, function() { // FIXME Chrome don't use promises
+        getAllFirefox(callback) {
+            browser.storage.local.get(this.defaults).then(callback, function() {
                 alert('Error retrieving extension preferences.');
             });
         }
 
         /**
-         * Set all preferences.
+         * Save all the user's preferences.
+         *
+         * Used as `setAll` if the current browser is Firefox.
          */
-        setAll(preferences) {
-            globals.browser.storage.local.set(preferences).then(function() { // FIXME Chrome don't use promises
+        setAllFirefox(preferences) {
+            browser.storage.local.set(preferences).then(function() {
                 // Do nothing if save was successful.
             }, function() {
                 alert('Error saving extension preferences.');
             });
+        }
+
+        /**
+         * Get all the user's preferences.
+         *
+         * Used as `getAll` if the current browser is Chrome.
+         */
+        getAllChrome(callback) {
+            chrome.storage.local.get(this.defaults, callback);
+        }
+
+        /**
+         * Save all the user's preferences.
+         *
+         * Used as `setAll` if the current browser is Chrome.
+         */
+        setAllChrome(preferences) {
+            chrome.storage.local.set(preferences);
         }
     }
 }(this));
