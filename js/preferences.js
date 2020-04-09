@@ -19,7 +19,7 @@
          */
         getAll(callback) {
             globals.browser.storage.local.get(this.defaults).then(callback, function() { // FIXME Chrome don't use promises
-                alert('Error retrieving add-on preferences.');
+                alert('Error retrieving extension preferences.');
             });
         }
 
@@ -30,7 +30,7 @@
             globals.browser.storage.local.set(preferences).then(function() { // FIXME Chrome don't use promises
                 // Do nothing if save was successful.
             }, function() {
-                alert('Error saving add-on preferences.');
+                alert('Error saving extension preferences.');
             });
         }
     }

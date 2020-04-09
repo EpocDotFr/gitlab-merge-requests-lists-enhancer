@@ -229,6 +229,10 @@
          * branches name.
          */
         attachClickEventToCopyBranchNameButtons() {
+            if (!this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                return
+            }
+
             document.querySelectorAll('button.gmrle-copy-branch-name').forEach(function(el) {
                 el.addEventListener('click', function(e) {
                     e.preventDefault();
