@@ -16,8 +16,8 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 ## Prerequisites
 
   - **GitLab**: 9.0 or above or GitLab.com (this addon requires GitLab API v4)
-  - **Firefox**: >= 63 (because this extension uses the clipboard API)
-  - **Chrome**: >= 66 (because this extension uses the clipboard API)
+  - **Firefox**: >= 63 (because this extension uses the `clipboard.writeText` API)
+  - **Chrome**: >= 66 (because this extension uses the `clipboard.writeText` API)
 
 ## Installation
 

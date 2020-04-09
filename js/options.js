@@ -4,7 +4,7 @@
     class OptionsPage {
         /**
          * Class which handles everything related to the options page of the extension. Preferences are persisted in
-         * the local storage of the browser.
+         * the browser's local storage.
          */
         constructor() {
             this.preferencesManager = new globals.Gmrle.PreferencesManager();
@@ -23,7 +23,7 @@
         }
 
         /**
-         * Retrieve preferences from local storage and update the options page accordingly.
+         * Retrieve preferences from local storage and update the UI accordingly.
          */
         restoreOptionsFromStorage() {
             let self = this;

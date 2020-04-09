@@ -226,7 +226,7 @@
 
         /**
          * Attach a click event to all buttons inserted by the extension allowing to copy the source and target
-         * branches name.
+         * branches name (if feature is enabled by the user).
          */
         attachClickEventToCopyBranchNameButtons() {
             if (!this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
