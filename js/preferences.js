@@ -4,9 +4,11 @@
     globals.Gmrle = globals.Gmrle || {};
 
     globals.Gmrle.PreferencesManager = class {
-        defaults = {
-            enable_buttons_to_copy_source_and_target_branches_name: true
-        };
+        get defaults() {
+            return {
+                enable_buttons_to_copy_source_and_target_branches_name: true
+            };
+        }
 
         /**
          * This class holds all the logic related to user preferences persistance.
