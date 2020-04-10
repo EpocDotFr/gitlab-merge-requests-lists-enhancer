@@ -10,6 +10,7 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 
   - Display source and target branches
     - Buttons allowing to easily copy these branches name (can be disabled in the extension preferences)
+  - Buttons allowing to copy basic Merge Request information (useful when sharing the Merge Request on e.g instant messaging softwares. Can be disabled in the extension preferences)
   - Compatible with all GitLab editions (GitLab CE, GitLab EE, GitLab.com) (look at the prerequisites, though)
   - No configuration needed
 
