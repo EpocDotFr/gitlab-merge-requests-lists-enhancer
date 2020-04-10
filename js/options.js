@@ -49,9 +49,9 @@
 
             this.enableButtonToCopyMrInfoCheckbox.addEventListener('change', function() {
                 if (this.checked) {
-                    self.copyMrInfoFormatTextarea.parentNode.classList.remove('is-hidden');
+                    self.copyMrInfoFormatTextarea.parentNode.parentNode.classList.remove('is-hidden');
                 } else {
-                    self.copyMrInfoFormatTextarea.parentNode.classList.add('is-hidden');
+                    self.copyMrInfoFormatTextarea.parentNode.parentNode.classList.add('is-hidden');
                 }
             });
         }

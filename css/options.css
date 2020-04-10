@@ -13,15 +13,29 @@
     display: none;
 }
 
-/************************************************************************
- * Preferences form */
+.monospaced {
+    font-family: monospace;
+}
 
-form > * {
+/************************************************************************
+ * Margins and paddings */
+
+.pas {
+    padding: 5px;
+}
+
+.pts {
     padding-top: 5px;
+}
+
+.pbs {
     padding-bottom: 5px;
+}
+
+.man {
     margin: 0;
 }
 
-form > .indented {
+.pll {
     padding-left: 55px;
 }

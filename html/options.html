@@ -6,17 +6,18 @@
 </head>
 <body>
     <form>
-        <div class="browser-style">
+        <div class="browser-style pts pbs man">
             <input type="checkbox" id="enable_buttons_to_copy_source_and_target_branches_name"> <label for="enable_buttons_to_copy_source_and_target_branches_name">Enable buttons allowing to copy source and target branches name</label>
         </div>
-        <div class="browser-style">
-            <input type="checkbox" id="enable_button_to_copy_mr_info"> <label for="enable_button_to_copy_mr_info">Enable button allowing to copy basic Merge Request information <small>(useful when sharing the Merge Request on e.g Slack)</small></label>
+        <div class="browser-style pts pbs man">
+            <input type="checkbox" id="enable_button_to_copy_mr_info"> <label for="enable_button_to_copy_mr_info">Enable button allowing to copy basic Merge Request information <small>Useful when sharing the Merge Request on e.g Slack</small></label>
         </div>
-        <div class="indented is-hidden">
-            <label for="copy_mr_info_format">Format:</label><br>
-            <textarea class="browser-style w100p" id="copy_mr_info_format" rows="4"></textarea>
+        <div class="is-hidden pll pts pbs man">
+            <div class="pbs"><label for="copy_mr_info_format">Text format:</label></div>
+            <div><textarea class="browser-style w100p monospaced man pas" id="copy_mr_info_format" rows="4"></textarea></div>
+            <div class="pts"><small>Available placeholders: <code>{MR_TITLE}</code>, <code>{MR_ID}</code>, <code>{MR_URL}</code>, <code>{MR_DIFFS_URL}</code>, <code>{MR_AUTHOR_NAME}</code>, <code>{MR_SOURCE_BRANCH_NAME}</code>, <code>{MR_SOURCE_BRANCH_COMMITS_URL}</code>, <code>{MR_TARGET_BRANCH_NAME}</code>, <code>{MR_TARGET_BRANCH_COMMITS_URL}</code></small></div>
         </div>
-        <div class="txt-center"><button type="submit" class="browser-style">Save preferences</button></div>
+        <div class="txt-center pts pbs man"><button type="submit" class="browser-style">Save preferences</button></div>
     </form>
 
     <script src="../js/preferences.js"></script>
