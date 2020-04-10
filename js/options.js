@@ -21,7 +21,7 @@
             this.optionsForm = document.querySelector('form');
             this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox = document.querySelector('input#enable_buttons_to_copy_source_and_target_branches_name');
             this.enableButtonToCopyMrInfoCheckbox = document.querySelector('input#enable_button_to_copy_mr_info');
-            this.copyMrInfoMessageFormatTextarea = document.querySelector('textarea#copy_mr_info_message_format');
+            this.copyMrInfoFormatTextarea = document.querySelector('textarea#copy_mr_info_format');
         }
 
         /**
@@ -49,9 +49,9 @@
 
             this.enableButtonToCopyMrInfoCheckbox.addEventListener('change', function() {
                 if (this.checked) {
-                    self.copyMrInfoMessageFormatTextarea.parentNode.classList.remove('is-hidden');
+                    self.copyMrInfoFormatTextarea.parentNode.classList.remove('is-hidden');
                 } else {
-                    self.copyMrInfoMessageFormatTextarea.parentNode.classList.add('is-hidden');
+                    self.copyMrInfoFormatTextarea.parentNode.classList.add('is-hidden');
                 }
             });
         }
