@@ -87,7 +87,9 @@
             this.baseApiUrl = this.baseUrl + '/api/v4/';
             this.apiClient = new GitLabApiClient(this.baseApiUrl);
 
-            let currentMergeRequestIds = this.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
+            this.setMergeRequestsDataAttributes();
+
+            let currentMergeRequestIds = this.getCurrentMergeRequestIds();
             let preferencesManager = new globals.Gmrle.PreferencesManager();
 
             let self = this;
@@ -121,18 +123,25 @@
         }
 
         /**
-         * Gets all Merge Requests IDs that are currently displayed AND sets the `iid` data attribute (public Merge
-         * Request identifier) on all DOM nodes representing a Merge Requests (it's used later in the process).
+         * Sets several data-* attributes on all DOM nodes representing a Merge Request so these values may be used
+         * later and will not need to be computed again.
          */
-        getCurrentMergeRequestIdsAndSetUuidDataAttributes() {
-            return Array.from(
-                document.querySelectorAll('.mr-list .merge-request')
-            ).map(function(el) {
+        setMergeRequestsDataAttributes() {
+            document.querySelectorAll('.mr-list .merge-request').forEach(function(el) {
                 let iid = el.querySelector('.issuable-reference').textContent.trim().replace('!', '');
 
                 el.dataset.iid = iid;
+            });
+        }
 
-                return iid;
+        /**
+         * Gets all Merge Requests IDs that are currently displayed.
+         */
+        getCurrentMergeRequestIds() {
+            return Array.from(
+                document.querySelectorAll('.mr-list .merge-request')
+            ).map(function(el) {
+                return el.dataset.iid;
             });
         }
 
