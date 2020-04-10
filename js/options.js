@@ -62,7 +62,7 @@
         }
 
         /**
-         * Take all DOM nodes values and perist them in the local storage.
+         * Take all DOM nodes values and persist them in the local storage.
          */
         saveOptionsToStorage() {
             this.preferencesManager.setAll({
