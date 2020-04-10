@@ -196,7 +196,7 @@
                 .forEach(function(node) {
                     callback(node);
                 }
-            )
+            );
         }
 
         /**
