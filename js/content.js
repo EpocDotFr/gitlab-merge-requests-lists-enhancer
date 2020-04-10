@@ -161,6 +161,10 @@
                         if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
                             self.attachClickEventToCopyBranchNameButtons();
                         }
+
+                        if (self.preferences.enable_button_to_copy_mr_info) {
+                            self.attachClickEventToCopyMergeRequestInfoButtons();
+                        }
                     } else {
                         alert('Got error from GitLab, check console for more information.');
 
@@ -222,11 +226,15 @@
             mergeRequestsDetails.forEach(function(mergeRequest) {
                 let mergeRequestContainer = document.querySelector('.mr-list .merge-request[data-iid="' + mergeRequest.iid + '"]');
 
+                // Set several data-* attributes to the Merge Request container node
+                mergeRequestContainer.dataset.sourceBranchName = mergeRequest.source_branch;
+                mergeRequestContainer.dataset.targetBranchName = mergeRequest.target_branch;
+
                 // -----------------------------------------------
                 // Copy MR info button
 
                 if (self.preferences.enable_button_to_copy_mr_info) {
-                    let copyMrInfoButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip" title="Copy Merge Request info">' +
+                    let copyMrInfoButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-mr-info" title="Copy Merge Request info">' +
                         '<i class="fa fa-share-square-o" aria-hidden="true"></i>' +
                     '</button> ';
 
@@ -247,7 +255,7 @@
 
                 // Copy source branch name button
                 if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
-                    newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.source_branch + '">' +
+                    newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="source">' +
                         '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
                     '</button>';
                 }
@@ -260,7 +268,7 @@
 
                 // Copy target branch name button
                 if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
-                    newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.target_branch + '">' +
+                    newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="target">' +
                         '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
                     '</button>';
                 }
@@ -283,11 +291,31 @@
                 el.addEventListener('click', function(e) {
                     e.preventDefault();
 
-                    navigator.clipboard.writeText(el.dataset.branchName).then(function() {
+                    let branchName = this.closest('.merge-request').dataset[this.dataset.branchNameToCopy + 'BranchName'];
+
+                    navigator.clipboard.writeText(branchName).then(function() {
                         // Do nothing if copy was successful.
                     }, function() {
                         alert('Unable to copy branch name.');
                     });
+                });
+            });
+        }
+
+        /**
+         * Attach a click event to all buttons inserted by the extension allowing to copy Merge Request info (if
+         * feature is enabled by the user).
+         */
+        attachClickEventToCopyMergeRequestInfoButtons() {
+            document.querySelectorAll('button.gmrle-copy-mr-info').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    /*navigator.clipboard.writeText(el.dataset.branchName).then(function() {
+                        // Do nothing if copy was successful.
+                    }, function() {
+                        alert('Unable to copy Merge Request info.');
+                    });*/
                 });
             });
         }
