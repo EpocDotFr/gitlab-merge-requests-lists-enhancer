@@ -32,6 +32,11 @@
 
             this.preferencesManager.getAll(function(preferences) {
                 self.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked = preferences.enable_buttons_to_copy_source_and_target_branches_name;
+
+                self.enableButtonToCopyMrInfoCheckbox.checked = preferences.enable_button_to_copy_mr_info;
+                self.enableButtonToCopyMrInfoCheckbox.dispatchEvent(new CustomEvent('change'));
+
+                self.copyMrInfoFormatTextarea.value = preferences.copy_mr_info_format;
             });
         }
 
@@ -61,7 +66,9 @@
          */
         saveOptionsToStorage() {
             this.preferencesManager.setAll({
-                enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked
+                enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked,
+                enable_button_to_copy_mr_info: this.enableButtonToCopyMrInfoCheckbox.checked,
+                copy_mr_info_format: this.copyMrInfoFormatTextarea.value
             });
         }
     }
