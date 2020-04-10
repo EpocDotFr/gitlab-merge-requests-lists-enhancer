@@ -158,7 +158,7 @@
                         self.removeExistingTargetBranchNodes();
                         self.updateMergeRequestsNodes(this.response);
 
-                        if (!this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                        if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
                             self.attachClickEventToCopyBranchNameButtons();
                         }
                     } else {
