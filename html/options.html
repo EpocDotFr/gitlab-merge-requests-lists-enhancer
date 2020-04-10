@@ -5,18 +5,16 @@
     <link rel="stylesheet" href="../css/options.css">
 </head>
 <body>
-    <form class="gmrle-options">
-        <div class="option checkbox">
-            <div class="browser-style"><input type="checkbox" id="enable_buttons_to_copy_source_and_target_branches_name"></div>
-            <div><label for="enable_buttons_to_copy_source_and_target_branches_name">Enable buttons allowing to copy source and target branches name</label></div>
+    <form>
+        <div class="browser-style">
+            <input type="checkbox" id="enable_buttons_to_copy_source_and_target_branches_name"> <label for="enable_buttons_to_copy_source_and_target_branches_name">Enable buttons allowing to copy source and target branches name</label>
         </div>
-        <div class="option checkbox">
-            <div class="browser-style"><input type="checkbox" id="option_enable_button_to_copy_mr_info"></div>
-            <div><label for="option_enable_button_to_copy_mr_info">Enable button allowing to copy basic Merge Request information (useful when sharing the Merge Request on e.g Slack)</label></div>
+        <div class="browser-style">
+            <input type="checkbox" id="enable_button_to_copy_mr_info"> <label for="enable_button_to_copy_mr_info">Enable button allowing to copy basic Merge Request information <small>(useful when sharing the Merge Request on e.g Slack)</small></label>
         </div>
-        <div class="option indented is-hidden">
-            <div><label for="copy_mr_info_format">Format:</label></div>
-            <div><textarea class="browser-style w100p" id="copy_mr_info_format"></textarea></div>
+        <div class="indented is-hidden">
+            <label for="copy_mr_info_message_format">Format:</label><br>
+            <textarea class="browser-style w100p" id="copy_mr_info_message_format" rows="4"></textarea>
         </div>
         <div class="txt-center"><button type="submit" class="browser-style">Save preferences</button></div>
     </form>

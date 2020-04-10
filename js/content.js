@@ -1,7 +1,7 @@
 (function(globals) {
     'use strict';
 
-    class GmrleGitLabApiClient {
+    class GitLabApiClient {
         /**
          * The GitLab API client used by the extension. No tokens or authentication needed as every requests are
          * performed from inside the context of the page (GitLab allows API calls if they comes from the site).
@@ -60,7 +60,7 @@
         }
     }
 
-    class GmrleContentScript {
+    class ContentScript {
         /**
          * The content script of the extension which is executed in the context of the page.
          */
@@ -85,11 +85,17 @@
 
             this.baseUrl = location.protocol + '//' + location.host;
             this.baseApiUrl = this.baseUrl + '/api/v4/';
-            this.apiClient = new GmrleGitLabApiClient(this.baseApiUrl);
+            this.apiClient = new GitLabApiClient(this.baseApiUrl);
 
             let currentMergeRequestIds = this.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
+            let preferencesManager = new globals.Gmrle.PreferencesManager();
 
-            this.fetchMergeRequestsDetailsThenUpdateUI(currentMergeRequestIds);
+            let self = this;
+
+            preferencesManager.getAll(function(preferences) {
+                self.preferences = preferences;
+                self.fetchMergeRequestsDetailsThenUpdateUI(currentMergeRequestIds);
+            });
         }
 
         /**
@@ -187,20 +193,29 @@
                 let infoDiv = document
                     .querySelector('.mr-list .merge-request[data-iid="' + mergeRequest.iid + '"] .issuable-main-info');
 
-                let html = '<div class="issuable-info"><span class="project-ref-path has-tooltip" title="Source branch">' +
-                    '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
-                '</span> ' +
-                '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.source_branch + '">' +
-                    '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
-                '</button>' +
-                ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
-                '<span class="project-ref-path has-tooltip" title="Target branch">' +
-                    '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
-                '</span> ' +
-                '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.target_branch + '">' +
-                    '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
-                '</button>' +
-                '</div>';
+                let html = '<div class="issuable-info">' +
+                    '<span class="project-ref-path has-tooltip" title="Source branch">' +
+                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
+                    '</span>';
+
+                if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                    html += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.source_branch + '">' +
+                        '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                    '</button>'
+                }
+
+                html += ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
+                    '<span class="project-ref-path has-tooltip" title="Target branch">' +
+                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
+                    '</span>';
+
+                if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                    html += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.target_branch + '">' +
+                        '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                    '</button>';
+                }
+
+                html += '</div>';
 
                 self.parseHtmlAndAppendChild(
                     infoDiv,
@@ -211,9 +226,13 @@
 
         /**
          * Attach a click event to all buttons inserted by the extension allowing to copy the source and target
-         * branches name.
+         * branches name (if feature is enabled by the user).
          */
         attachClickEventToCopyBranchNameButtons() {
+            if (!this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                return
+            }
+
             document.querySelectorAll('button.gmrle-copy-branch-name').forEach(function(el) {
                 el.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -228,5 +247,5 @@
         }
     }
 
-    let cs = new GmrleContentScript();
+    let cs = new ContentScript();
 }(this));
