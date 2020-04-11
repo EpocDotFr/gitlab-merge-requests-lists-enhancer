@@ -87,8 +87,6 @@
             this.baseApiUrl = this.baseUrl + '/api/v4/';
             this.apiClient = new GitLabApiClient(this.baseApiUrl);
 
-            this.setMergeRequestsDataAttributes();
-
             let currentMergeRequestIds = this.getCurrentMergeRequestIds();
             let preferencesManager = new globals.Gmrle.PreferencesManager();
 
@@ -123,25 +121,13 @@
         }
 
         /**
-         * Sets several data-* attributes on all DOM nodes representing a Merge Request so these values may be used
-         * later and will not need to be computed again.
-         */
-        setMergeRequestsDataAttributes() {
-            document.querySelectorAll('.mr-list .merge-request').forEach(function(el) {
-                let iid = el.querySelector('.issuable-reference').textContent.trim().replace('!', '');
-
-                el.dataset.iid = iid;
-            });
-        }
-
-        /**
          * Gets all Merge Requests IDs that are currently displayed.
          */
         getCurrentMergeRequestIds() {
             return Array.from(
-                document.querySelectorAll('.mr-list .merge-request')
+                document.querySelectorAll('.mr-list .merge-request .issuable-reference')
             ).map(function(el) {
-                return el.dataset.iid;
+                return el.textContent.trim().replace('!', '');
             });
         }
 
@@ -224,11 +210,9 @@
             let self = this;
 
             mergeRequestsDetails.forEach(function(mergeRequest) {
-                let mergeRequestContainer = document.querySelector('.mr-list .merge-request[data-iid="' + mergeRequest.iid + '"]');
+                let mergeRequestContainer = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
 
-                // Set several data-* attributes to the Merge Request container node
-                mergeRequestContainer.dataset.sourceBranchName = mergeRequest.source_branch;
-                mergeRequestContainer.dataset.targetBranchName = mergeRequest.target_branch;
+                self.setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest);
 
                 // -----------------------------------------------
                 // Copy MR info button
@@ -283,6 +267,21 @@
         }
 
         /**
+         * Sets several data-* attributes on a DOM node representing a Merge Request from the GitLab API response so
+         * these values may be used later.
+         */
+        setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest) {
+            mergeRequestContainer.dataset.title = mergeRequest.title;
+            mergeRequestContainer.dataset.iid = mergeRequest.iid;
+            mergeRequestContainer.dataset.url = mergeRequest.web_url;
+            mergeRequestContainer.dataset.diffsUrl = mergeRequest.web_url + '/diffs';
+            mergeRequestContainer.dataset.authorName = mergeRequest.author.name;
+            mergeRequestContainer.dataset.status = mergeRequest.state;
+            mergeRequestContainer.dataset.sourceBranchName = mergeRequest.source_branch;
+            mergeRequestContainer.dataset.targetBranchName = mergeRequest.target_branch;
+        }
+
+        /**
          * Attach a click event to all buttons inserted by the extension allowing to copy the source and target
          * branches name (if feature is enabled by the user).
          */
@@ -307,16 +306,42 @@
          * feature is enabled by the user).
          */
         attachClickEventToCopyMergeRequestInfoButtons() {
+            let self = this;
+
             document.querySelectorAll('button.gmrle-copy-mr-info').forEach(function(el) {
                 el.addEventListener('click', function(e) {
                     e.preventDefault();
 
-                    /*navigator.clipboard.writeText(el.dataset.branchName).then(function() {
+                    let text = self.buildMergeRequestInfoText(this.closest('.merge-request'));
+
+                    navigator.clipboard.writeText(text).then(function() {
                         // Do nothing if copy was successful.
                     }, function() {
                         alert('Unable to copy Merge Request info.');
-                    });*/
+                    });
                 });
+            });
+        }
+
+        /**
+         * Creates the Merge Request info text from a Merge Request container DOM node.
+         */
+        buildMergeRequestInfoText(mergeRequestContainer) {
+            let placeholders = {
+                'MR_TITLE': mergeRequestContainer.dataset.title,
+                'MR_ID': mergeRequestContainer.dataset.iid,
+                'MR_URL': mergeRequestContainer.dataset.url,
+                'MR_DIFFS_URL': mergeRequestContainer.dataset.diffsUrl,
+                'MR_AUTHOR_NAME': mergeRequestContainer.dataset.authorName,
+                'MR_STATUS': mergeRequestContainer.dataset.status,
+                'MR_SOURCE_BRANCH_NAME': mergeRequestContainer.dataset.sourceBranchName,
+                'MR_TARGET_BRANCH_NAME': mergeRequestContainer.dataset.targetBranchName
+            };
+
+            let placeholdersReplaceRegex = new RegExp('{(' + Object.keys(placeholders).join('|') + ')}', 'g');
+
+            return this.preferences.copy_mr_info_format.replace(placeholdersReplaceRegex, function(_, placeholder) {
+              return placeholders[placeholder];
             });
         }
     }
