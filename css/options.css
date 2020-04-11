@@ -9,6 +9,10 @@
     width: 100%;
 }
 
+.w50 {
+    width: 50%;
+}
+
 .is-hidden {
     display: none;
 }
@@ -28,14 +32,26 @@
     padding-top: 5px;
 }
 
+.ptm {
+    padding-top: 10px;
+}
+
 .pbs {
     padding-bottom: 5px;
 }
 
-.man {
-    margin: 0;
+.pbm {
+    padding-bottom: 10px;
+}
+
+.prm {
+    padding-right: 10px;
 }
 
 .pll {
     padding-left: 30px;
+}
+
+.man {
+    margin: 0;
 }

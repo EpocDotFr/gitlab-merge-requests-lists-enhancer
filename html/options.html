@@ -18,12 +18,12 @@
             <div class="pts"><small>Available placeholders: <code>{MR_TITLE}</code>, <code>{MR_ID}</code>, <code>{MR_URL}</code>, <code>{MR_DIFFS_URL}</code>, <code>{MR_AUTHOR_NAME}</code>, <code>{MR_STATUS}</code>, <code>{MR_SOURCE_BRANCH_NAME}</code>, <code>{MR_TARGET_BRANCH_NAME}</code></small></div>
         </div>
         <div class="browser-style pts pbs man">
-            <input type="checkbox" id="enable_auto_jira_ticket_link"> <label for="enable_auto_jira_ticket_link">Enable automatic Jira ticket link</label>
+            <input type="checkbox" id="enable_jira_ticket_link"> <label for="enable_jira_ticket_link">Enable Jira ticket link</label>
         </div>
-        <div class="is-hidden pll pts pbs man">
-            <div class="browser-style pbs"><input type="radio" name="jira_ticket_id_detection_location" value="source_branch_name" id="jira_ticket_id_detection_location_source_branch_name"> <label for="jira_ticket_id_detection_location_source_branch_name">Source branch name</label></div>
-            <div class="browser-style"><input type="radio" name="jira_ticket_id_detection_location" value="merge_request_title" id="jira_ticket_id_detection_location_merge_request_title"> <label for="jira_ticket_id_detection_location_merge_request_title">Merge Request title</label></div>
-            <div class="browser-style pts"><input type="radio" name="jira_ticket_id_detection_location" value="both" id="jira_ticket_id_detection_location_both"> <label for="jira_ticket_id_detection_location_both">Both <small>First location with a match will be used</small></label></div>
+        <div class="pll pts pbs man">
+            <div class="browser-style pbm man"><label for="">Base Jira URL:</label> <input type="text" id="" class="w50 man pas"></div>
+            <div class="browser-style pbs man">Where should the Jira ticket ID be searched in? <input type="radio" required name="jira_ticket_id_detection_location" value="source_branch_name" id="jira_ticket_id_detection_location_source_branch_name"> <label for="jira_ticket_id_detection_location_source_branch_name" class="prm">Source branch name</label> <input type="radio" required name="jira_ticket_id_detection_location" value="merge_request_title" id="jira_ticket_id_detection_location_merge_request_title"> <label for="jira_ticket_id_detection_location_merge_request_title">Merge Request title</label></div>
+            <div><small>Note: the position of the Jira ticket ID in the source branch name and in the Merge Request title doesn't matter</small></div>
         </div>
         <div class="txt-center pts pbs man"><button type="submit" class="browser-style">Save preferences</button></div>
     </form>
