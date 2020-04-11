@@ -229,7 +229,7 @@
                 }
 
                 // -----------------------------------------------
-                // New source and target branch info
+                // Source and target branches info
 
                 // Source branch name
                 let newInfoLineToInject = '<div class="issuable-info">' +
@@ -283,7 +283,7 @@
 
         /**
          * Attach a click event to all buttons inserted by the extension allowing to copy the source and target
-         * branches name (if feature is enabled by the user).
+         * branches name.
          */
         attachClickEventToCopyBranchNameButtons() {
             document.querySelectorAll('button.gmrle-copy-branch-name').forEach(function(el) {
@@ -302,8 +302,7 @@
         }
 
         /**
-         * Attach a click event to all buttons inserted by the extension allowing to copy Merge Request info (if
-         * feature is enabled by the user).
+         * Attach a click event to all buttons inserted by the extension allowing to copy Merge Request info.
          */
         attachClickEventToCopyMergeRequestInfoButtons() {
             let self = this;
