@@ -31,7 +31,7 @@ You can also install this add-on manually by using one of the ZIP files on the [
 
 ## Credits
 
-  - Logo by [Thanga Vignesh P](https://www.iconfinder.com/icons/5402348/add_list_playlist_icon) (CC BY-NC 3.0)
+  - Logo: [GitLab](https://about.gitlab.com/press/press-kit/#logos) and [Octicons](https://primer.style/octicons/git-pull-request) (MIT License)
 
 ## Roadmap
 
