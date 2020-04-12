@@ -18,7 +18,8 @@ MANIFEST_FILE = {
         }
     ],
     'options_ui': {
-        'page': 'html/options.html'
+        'page': 'html/options.html',
+        'open_in_tab': False
     },
     'permissions': [
         '*://*/*/*/-/merge_requests', '*://*/*/*/-/merge_requests?*',
