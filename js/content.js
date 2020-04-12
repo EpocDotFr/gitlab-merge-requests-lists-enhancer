@@ -207,22 +207,20 @@
          * Actually updates the UI by altering the DOM by adding our stuff.
          */
         updateMergeRequestsNodes(mergeRequestsDetails) {
-            let self = this;
-
             mergeRequestsDetails.forEach(function(mergeRequest) {
                 let mergeRequestContainer = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
 
-                self.setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest);
+                this.setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest);
 
                 // -----------------------------------------------
                 // Copy MR info button
 
-                if (self.preferences.enable_button_to_copy_mr_info) {
+                if (this.preferences.enable_button_to_copy_mr_info) {
                     let copyMrInfoButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-mr-info" title="Copy Merge Request info">' +
                         '<i class="fa fa-share-square-o" aria-hidden="true"></i>' +
                     '</button> ';
 
-                    self.parseHtmlAndPrepend(
+                    this.parseHtmlAndPrepend(
                         mergeRequestContainer.querySelector('.issuable-reference').parentNode,
                         copyMrInfoButton
                     );
@@ -234,11 +232,11 @@
                 // Source branch name
                 let newInfoLineToInject = '<div class="issuable-info">' +
                     '<span class="project-ref-path has-tooltip" title="Source branch">' +
-                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
+                        '<a class="ref-name" href="' + this.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
                     '</span>';
 
                 // Copy source branch name button
-                if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
                     newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="source">' +
                         '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
                     '</button>';
@@ -247,11 +245,11 @@
                 // Target branch name
                 newInfoLineToInject += ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
                     '<span class="project-ref-path has-tooltip" title="Target branch">' +
-                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
+                        '<a class="ref-name" href="' + this.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
                     '</span>';
 
                 // Copy target branch name button
-                if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
                     newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="target">' +
                         '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
                     '</button>';
@@ -259,11 +257,11 @@
 
                 newInfoLineToInject += '</div>';
 
-                self.parseHtmlAndAppend(
+                this.parseHtmlAndAppend(
                     mergeRequestContainer.querySelector('.issuable-main-info'),
                     newInfoLineToInject
                 );
-            });
+            }, this);
         }
 
         /**
