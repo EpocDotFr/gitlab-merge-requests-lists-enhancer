@@ -71,6 +71,7 @@
 
             this.enableButtonToCopyMrInfoCheckbox.addEventListener('change', function() {
                 self.copyMrInfoOptionsDiv.classList.toggle('is-hidden', !this.checked);
+                self.copyMrInfoFormatTextarea.toggleAttribute('required', this.checked);
             });
 
             this.enableJiraTicketLinkCheckbox.addEventListener('change', function() {
