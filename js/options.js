@@ -19,7 +19,10 @@
          */
         getDomNodes() {
             this.optionsForm = document.querySelector('form');
+
             this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox = document.querySelector('input#enable_buttons_to_copy_source_and_target_branches_name');
+
+            this.copyMrInfoOptionsDiv = document.querySelector('div#copy-mr-info-options');
             this.enableButtonToCopyMrInfoCheckbox = document.querySelector('input#enable_button_to_copy_mr_info');
             this.copyMrInfoFormatTextarea = document.querySelector('textarea#copy_mr_info_format');
 
@@ -66,7 +69,7 @@
             });
 
             this.enableButtonToCopyMrInfoCheckbox.addEventListener('change', function() {
-                self.copyMrInfoFormatTextarea.parentNode.parentNode.classList.toggle('is-hidden', !this.checked);
+                self.copyMrInfoOptionsDiv.classList.toggle('is-hidden', !this.checked);
             });
 
             this.enableJiraTicketLinkCheckbox.addEventListener('change', function() {
