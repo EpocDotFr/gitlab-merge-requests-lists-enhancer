@@ -76,6 +76,11 @@
 
             this.enableJiraTicketLinkCheckbox.addEventListener('change', function() {
                 self.jiraTicketLinkOptionsDiv.classList.toggle('is-hidden', !this.checked);
+                self.baseJiraUrlInput.toggleAttribute('required', this.checked);
+
+                self.jiraTicketIdDetectionLocationRadioButtons.forEach(function(el) {
+                    el.toggleAttribute('required', this.checked);
+                }, this);
             });
         }
 
