@@ -52,6 +52,22 @@
     padding-left: 30px;
 }
 
+.mlm {
+    margin-left: 10px;
+}
+
 .man {
     margin: 0;
+}
+
+.mtn {
+    margin-top: 0;
+}
+
+.mbn {
+    margin-bottom: 0;
+}
+
+.mrn {
+    margin-right: 0;
 }
