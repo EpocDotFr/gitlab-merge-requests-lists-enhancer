@@ -45,6 +45,7 @@
                 self.enableButtonToCopyMrInfoCheckbox.dispatchEvent(new CustomEvent('change'));
 
                 self.copyMrInfoFormatTextarea.value = preferences.copy_mr_info_format;
+
                 self.enableJiraTicketLinkCheckbox.checked = preferences.enable_jira_ticket_link;
                 self.enableJiraTicketLinkCheckbox.dispatchEvent(new CustomEvent('change'));
 
