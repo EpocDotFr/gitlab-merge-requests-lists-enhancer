@@ -8,7 +8,10 @@
             return {
                 enable_buttons_to_copy_source_and_target_branches_name: true,
                 enable_button_to_copy_mr_info: true,
-                copy_mr_info_format: 'MR {MR_ID} (from {MR_AUTHOR_NAME}): {MR_TITLE}\n{MR_URL}'
+                copy_mr_info_format: 'MR {MR_ID} (from {MR_AUTHOR_NAME}): {MR_TITLE}\n{MR_URL}',
+                enable_jira_ticket_link: false,
+                base_jira_url: '',
+                jira_ticket_id_detection_location: 'source_branch_name'
             };
         }
 
