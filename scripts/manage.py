@@ -16,6 +16,7 @@ def create_manifest_file(target):
             }
         }
     elif target == 'chrome':
+        data['minimum_chrome_version'] = '66'
         data['options_ui']['chrome_style'] = True
 
     with open('manifest.json', 'w', encoding='utf-8') as f:
