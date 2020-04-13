@@ -213,10 +213,12 @@
                 this.setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest);
 
                 // -----------------------------------------------
-                // Jira ticket link
+                // Jira ticket link (data attributes are set in setDataAttributesToMergeRequestContainer, above)
 
-                if (this.preferences.enable_jira_ticket_link) {
-                    let jiraTicketLink = '<a href="#" class="issuable-milestone">' + 'API-265' + '</a> ';
+                if (('jiraTicketId' in mergeRequestContainer.dataset) && ('jiraTicketUrl' in mergeRequestContainer.dataset)) {
+                    let jiraTicketLink = '<a href="' + mergeRequestContainer.dataset.jiraTicketUrl + '" class="issuable-milestone">' +
+                        mergeRequestContainer.dataset.jiraTicketId +
+                    '</a> ';
 
                     this.parseHtmlAndPrepend(
                         mergeRequestContainer.querySelector('.merge-request-title'),
@@ -288,6 +290,63 @@
             mergeRequestContainer.dataset.status = mergeRequest.state;
             mergeRequestContainer.dataset.sourceBranchName = mergeRequest.source_branch;
             mergeRequestContainer.dataset.targetBranchName = mergeRequest.target_branch;
+
+            if (this.preferences.enable_jira_ticket_link) {
+                let jiraTicketId = this.findFirstJiraTicketId(mergeRequest);
+
+                if (jiraTicketId) {
+                    mergeRequestContainer.dataset.jiraTicketId = jiraTicketId;
+                    mergeRequestContainer.dataset.jiraTicketUrl = this.createJiraTicketUrl(jiraTicketId);
+                }
+            }
+        }
+
+        /**
+         * Finds a Jira ticket ID in the given Merge Request object. Finding location may be different regarding
+         * user's preferences.
+         */
+        findFirstJiraTicketId(mergeRequest) {
+            let textToSearchJiraTicketIdIn = null;
+
+            switch (this.preferences.jira_ticket_id_detection_location) {
+                case 'source_branch_name':
+                    textToSearchJiraTicketIdIn = mergeRequest.source_branch;
+
+                    break;
+                case 'merge_request_title':
+                    textToSearchJiraTicketIdIn = mergeRequest.title;
+
+                    break;
+                default:
+                    console.error('Invalid detection location');
+
+                    return null;
+            }
+
+            let jiraTicketIdRegex = new RegExp('[A-Z]{1,10}-\\d+');
+            let results = jiraTicketIdRegex.exec(textToSearchJiraTicketIdIn);
+
+            if (!results) {
+                return null;
+            }
+
+            return results[0];
+        }
+
+        /**
+         * Creates an URL to a given Jira ticket ID, pointing to the Jira base URL the user has defined in its
+         * preferences.
+         */
+        createJiraTicketUrl(jiraTicketId) {
+            let baseJiraUrl = new URL(this.preferences.base_jira_url);
+
+            if (!baseJiraUrl.pathname.endsWith('/')) {
+                baseJiraUrl.pathname += '/';
+            }
+
+            baseJiraUrl.pathname += 'browse/' + jiraTicketId;
+
+            return baseJiraUrl.toString();
         }
 
         /**

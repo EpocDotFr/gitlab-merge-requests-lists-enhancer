@@ -26,7 +26,7 @@
         <div class="pll pts pbs man" id="jira-ticket-link-options">
             <div class="browser-style pbm man"><label for="base_jira_url">Base Jira URL:</label> <input type="url" id="base_jira_url" class="w50 mlm mtn mbn mrn pas" required></div>
             <div class="browser-style pbs man">Where should the Jira ticket ID be searched in? <input type="radio" required name="jira_ticket_id_detection_location" value="source_branch_name" id="jira_ticket_id_detection_location_source_branch_name" class="mlm mtn mbn mrn"> <label for="jira_ticket_id_detection_location_source_branch_name">Source branch name</label> <input type="radio" required name="jira_ticket_id_detection_location" value="merge_request_title" id="jira_ticket_id_detection_location_merge_request_title" class="mlm mtn mbn mrn"> <label for="jira_ticket_id_detection_location_merge_request_title">Merge Request title</label></div>
-            <div><small>Note: the position of the Jira ticket ID in the aforementioned locations doesn't matter</small></div>
+            <div><small>Notes: the position of the Jira ticket ID in the aforementioned locations doesn't matter. Also only uppercase ticket IDs will be matched.</small></div>
         </div>
         <div class="txt-center pts pbs man"><button type="submit" class="browser-style">Save preferences</button></div>
     </form>
