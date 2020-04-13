@@ -221,7 +221,7 @@
                     '</button> ';
 
                     this.parseHtmlAndPrepend(
-                        mergeRequestContainer.querySelector('.issuable-reference').parentNode,
+                        mergeRequestContainer.querySelector('.issuable-info'),
                         copyMrInfoButton
                     );
                 }
@@ -265,8 +265,7 @@
         }
 
         /**
-         * Sets several data-* attributes on a DOM node representing a Merge Request from the GitLab API response so
-         * these values may be used later.
+         * Sets several data-* attributes on a DOM node representing a Merge Request so these values may be used later.
          */
         setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest) {
             mergeRequestContainer.dataset.title = mergeRequest.title;
