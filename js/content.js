@@ -213,6 +213,18 @@
                 this.setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest);
 
                 // -----------------------------------------------
+                // Jira ticket link
+
+                if (this.preferences.enable_jira_ticket_link) {
+                    let jiraTicketLink = '<a href="#" class="issuable-milestone">' + 'API-265' + '</a> ';
+
+                    this.parseHtmlAndPrepend(
+                        mergeRequestContainer.querySelector('.merge-request-title'),
+                        jiraTicketLink
+                    );
+                }
+
+                // -----------------------------------------------
                 // Copy MR info button
 
                 if (this.preferences.enable_button_to_copy_mr_info) {
