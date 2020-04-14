@@ -30,8 +30,13 @@
             <div><textarea class="browser-style w100 monospaced man pas" id="copy_mr_info_format" rows="6" required></textarea></div>
             <div class="pts"><small>Available placeholders: <code>{MR_TITLE}</code>, <code>{MR_ID}</code>, <code>{MR_URL}</code>, <code>{MR_DIFFS_URL}</code>, <code>{MR_AUTHOR_NAME}</code>, <code>{MR_STATUS}</code>, <code>{MR_SOURCE_BRANCH_NAME}</code>, <code>{MR_TARGET_BRANCH_NAME}</code></small></div>
         </div>
-        <div class="browser-style pts pbs man">
-            <input type="checkbox" id="enable_jira_ticket_link"> <label for="enable_jira_ticket_link">Enable Jira ticket link</label>
+        <div class="pts pbs man row">
+            <div class="w40p txt-center browser-style">
+                <input type="checkbox" id="enable_jira_ticket_link">
+            </div>
+            <div>
+                <label for="enable_jira_ticket_link">Enable Jira ticket link</label>
+            </div>
         </div>
         <div class="pll pts pbs man" id="jira-ticket-link-options">
             <div class="browser-style pbm man"><label for="base_jira_url">Base Jira URL:</label> <input type="url" id="base_jira_url" class="w50 mlm mtn mbn mrn pas" required></div>
