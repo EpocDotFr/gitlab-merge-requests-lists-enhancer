@@ -17,6 +17,19 @@
     font-family: monospace;
 }
 
+.w40p {
+    width: 40px;
+}
+
+.row {
+    display: table;
+    width: 100%;
+}
+
+.row > * {
+    display: table-cell;
+}
+
 /************************************************************************
  * Margins and paddings */
 
@@ -33,7 +46,7 @@
 }
 
 .pll {
-    padding-left: 30px;
+    padding-left: 40px;
 }
 
 .man {
