@@ -14,10 +14,6 @@
     }
 }
 
-.w50 {
-    width: 50%;
-}
-
 .is-hidden {
     display: none;
 }
@@ -38,6 +34,10 @@
 
 .w100 {
     width: 100%;
+}
+
+.w50 {
+    width: 50%;
 }
 
 .w40p {
