@@ -1,12 +1,17 @@
 /************************************************************************
  * Global styles */
 
-.txt-center {
-    text-align: center;
-}
-
-.w100 {
-    width: 100%;
+/*
+ * Firefox for Mac: use a dark theme if the OS/browser also uses one.
+ * This doesn't affects Firefox for Windows (as for now), as dark/light theme detection isn't implemented for this OS.
+ */
+@supports (-moz-appearance:none) {
+    @media (prefers-color-scheme: dark) {
+        body {
+            background-color: #202023;
+            color: rgb(249, 249, 250);
+        }
+    }
 }
 
 .w50 {
@@ -17,13 +22,30 @@
     display: none;
 }
 
+/************************************************************************
+ * Text styles */
+
+.txt-center {
+    text-align: center;
+}
+
 .monospaced {
     font-family: monospace;
+}
+
+/************************************************************************
+ * Sizing styles */
+
+.w100 {
+    width: 100%;
 }
 
 .w40p {
     width: 40px;
 }
+
+/************************************************************************
+ * Layout styles */
 
 .row {
     display: table;
@@ -35,7 +57,7 @@
 }
 
 /************************************************************************
- * Margins and paddings */
+ * Margin and padding styles */
 
 .pas {
     padding: 5px;
