@@ -2,8 +2,8 @@
  * Global styles */
 
 /*
- * Firefox for Mac: prevents the options page to use a light theme although the OS and the browser uses a dark theme.
- * This doesn't affects Firefox for Windows (as for now).
+ * Firefox for Mac: use a dark theme if the OS/browser also uses one.
+ * This doesn't affects Firefox for Windows (as for now), as dark/light theme detection isn't implemented for this OS.
  */
 @supports (-moz-appearance:none) {
     @media (prefers-color-scheme: dark) {
