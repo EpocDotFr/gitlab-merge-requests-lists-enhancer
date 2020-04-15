@@ -1,25 +1,47 @@
 /************************************************************************
  * Global styles */
 
-.txt-center {
-    text-align: center;
-}
-
-.w100 {
-    width: 100%;
+/*
+ * Firefox for Mac: prevents the options page to use a light theme although the OS and the browser uses a dark theme.
+ * This doesn't affects Firefox for Windows (as for now).
+ */
+@supports (-moz-appearance:none) {
+    @media (prefers-color-scheme: dark) {
+        body {
+            background-color: #202023;
+            color: rgb(249, 249, 250);
+        }
+    }
 }
 
 .is-hidden {
     display: none;
 }
 
+/************************************************************************
+ * Text styles */
+
+.txt-center {
+    text-align: center;
+}
+
 .monospaced {
     font-family: monospace;
+}
+
+/************************************************************************
+ * Sizing styles */
+
+.w100 {
+    width: 100%;
 }
 
 .w40p {
     width: 40px;
 }
+
+/************************************************************************
+ * Layout styles */
 
 .row {
     display: table;
@@ -31,7 +53,7 @@
 }
 
 /************************************************************************
- * Margins and paddings */
+ * Margin and padding styles */
 
 .pas {
     padding: 5px;
