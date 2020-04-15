@@ -10,6 +10,9 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 
   - Display source and target branches
     - Buttons allowing to easily copy these branches name (can be disabled in the extension preferences)
+  - Button allowing to copy Merge Request information (useful when sharing the Merge Request on e.g instant messaging softwares)
+    - Can be disabled in the extension preferences
+    - Text format is customizable (with support of placeholders)
   - Compatible with all GitLab editions (GitLab CE, GitLab EE, GitLab.com) (look at the prerequisites, though)
   - No configuration needed
 
@@ -28,15 +31,15 @@ You can also install this add-on manually by using one of the ZIP files on the [
 
 ## Credits
 
-  - Logo by [Thanga Vignesh P](https://www.iconfinder.com/icons/5402348/add_list_playlist_icon) (CC BY-NC 3.0)
+  - Logo: [GitLab](https://about.gitlab.com/press/press-kit/#logos) and [Octicons](https://primer.style/octicons/git-pull-request) (MIT License)
 
 ## Roadmap
 
 👉 = current version
 
   - **1.0** - Initial release (display Merge Request source and target branches)
-  - 👉 **1.1** - Copy source and target branches name
-  - **1.2** - Copy basic Merge Request information (intended for sharing on e.g instant messaging softwares)
+  - **1.1** - Copy source and target branches name
+  - 👉 **1.2** - Copy Merge Request information (intended for sharing on e.g instant messaging softwares)
   - **1.3** - Direct Jira ticket link (automatic detection of ticket ID in branch name or Merge Request title)
   - **1.4** - WIP / unWIP toggle button
 

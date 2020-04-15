@@ -19,7 +19,12 @@
          */
         getDomNodes() {
             this.optionsForm = document.querySelector('form');
+
             this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox = document.querySelector('input#enable_buttons_to_copy_source_and_target_branches_name');
+
+            this.copyMrInfoOptionsDiv = document.querySelector('div#copy-mr-info-options');
+            this.enableButtonToCopyMrInfoCheckbox = document.querySelector('input#enable_button_to_copy_mr_info');
+            this.copyMrInfoFormatTextarea = document.querySelector('textarea#copy_mr_info_format');
         }
 
         /**
@@ -30,6 +35,11 @@
 
             this.preferencesManager.getAll(function(preferences) {
                 self.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked = preferences.enable_buttons_to_copy_source_and_target_branches_name;
+
+                self.enableButtonToCopyMrInfoCheckbox.checked = preferences.enable_button_to_copy_mr_info;
+                self.enableButtonToCopyMrInfoCheckbox.dispatchEvent(new CustomEvent('change'));
+
+                self.copyMrInfoFormatTextarea.value = preferences.copy_mr_info_format;
             });
         }
 
@@ -44,14 +54,21 @@
 
                 self.saveOptionsToStorage();
             });
+
+            this.enableButtonToCopyMrInfoCheckbox.addEventListener('change', function() {
+                self.copyMrInfoOptionsDiv.classList.toggle('is-hidden', !this.checked);
+                self.copyMrInfoFormatTextarea.toggleAttribute('required', this.checked);
+            });
         }
 
         /**
-         * Take all DOM nodes values and perist them in the local storage.
+         * Take all DOM nodes values and persist them in the local storage.
          */
         saveOptionsToStorage() {
             this.preferencesManager.setAll({
-                enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked
+                enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked,
+                enable_button_to_copy_mr_info: this.enableButtonToCopyMrInfoCheckbox.checked,
+                copy_mr_info_format: this.copyMrInfoFormatTextarea.value
             });
         }
     }

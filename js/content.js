@@ -87,7 +87,7 @@
             this.baseApiUrl = this.baseUrl + '/api/v4/';
             this.apiClient = new GitLabApiClient(this.baseApiUrl);
 
-            let currentMergeRequestIds = this.getCurrentMergeRequestIdsAndSetUuidDataAttributes();
+            let currentMergeRequestIds = this.getCurrentMergeRequestIds();
             let preferencesManager = new globals.Gmrle.PreferencesManager();
 
             let self = this;
@@ -121,18 +121,13 @@
         }
 
         /**
-         * Gets all Merge Requests IDs that are currently displayed AND sets the `iid` data attribute (public Merge
-         * Request identifier) on all DOM nodes representing a Merge Requests (it's used later in the process).
+         * Gets all Merge Requests IDs that are currently displayed.
          */
-        getCurrentMergeRequestIdsAndSetUuidDataAttributes() {
+        getCurrentMergeRequestIds() {
             return Array.from(
-                document.querySelectorAll('.mr-list .merge-request')
+                document.querySelectorAll('.mr-list .merge-request .issuable-reference')
             ).map(function(el) {
-                let iid = el.querySelector('.issuable-reference').textContent.trim().replace('!', '');
-
-                el.dataset.iid = iid;
-
-                return iid;
+                return el.textContent.trim().replace('!', '');
             });
         }
 
@@ -148,7 +143,14 @@
                     if (this.status == 200) {
                         self.removeExistingTargetBranchNodes();
                         self.updateMergeRequestsNodes(this.response);
-                        self.attachClickEventToCopyBranchNameButtons();
+
+                        if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                            self.attachClickEventToCopyBranchNameButtons();
+                        }
+
+                        if (self.preferences.enable_button_to_copy_mr_info) {
+                            self.attachClickEventToCopyMergeRequestInfoButtons();
+                        }
                     } else {
                         alert('Got error from GitLab, check console for more information.');
 
@@ -170,79 +172,172 @@
         }
 
         /**
-         * Append the given HTML string at the end of the given child target node.
+         * Parses HTML code and applies a callback on all of the parsed root DOM nodes.
          */
-        parseHtmlAndAppendChild(targetNode, html) {
+        parseHtml(html, callback) {
             new DOMParser()
                 .parseFromString(html, 'text/html')
                 .querySelector('body')
                 .childNodes
                 .forEach(function(node) {
-                    targetNode.appendChild(node);
+                    callback(node);
                 }
-            )
+            );
+        }
+
+        /**
+         * Prepends the given HTML string at the beginning of the given child target node.
+         */
+        parseHtmlAndPrepend(targetNode, html) {
+            this.parseHtml(html, function(node) {
+                targetNode.prepend(node);
+            });
+        }
+
+        /**
+         * Appends the given HTML string at the end of the given child target node.
+         */
+        parseHtmlAndAppend(targetNode, html) {
+            this.parseHtml(html, function(node) {
+                targetNode.append(node);
+            });
         }
 
         /**
          * Actually updates the UI by altering the DOM by adding our stuff.
          */
         updateMergeRequestsNodes(mergeRequestsDetails) {
-            let self = this;
-
             mergeRequestsDetails.forEach(function(mergeRequest) {
-                let infoDiv = document
-                    .querySelector('.mr-list .merge-request[data-iid="' + mergeRequest.iid + '"] .issuable-main-info');
+                let mergeRequestContainer = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
 
-                let html = '<div class="issuable-info">' +
-                    '<span class="project-ref-path has-tooltip" title="Source branch">' +
-                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
-                    '</span>';
+                this.setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest);
 
-                if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
-                    html += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.source_branch + '">' +
-                        '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
-                    '</button>'
+                // -----------------------------------------------
+                // Copy MR info button
+
+                if (this.preferences.enable_button_to_copy_mr_info) {
+                    let copyMrInfoButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-mr-info" title="Copy Merge Request info">' +
+                        '<i class="fa fa-share-square-o" aria-hidden="true"></i>' +
+                    '</button> ';
+
+                    this.parseHtmlAndPrepend(
+                        mergeRequestContainer.querySelector('.issuable-info'),
+                        copyMrInfoButton
+                    );
                 }
 
-                html += ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
-                    '<span class="project-ref-path has-tooltip" title="Target branch">' +
-                        '<a class="ref-name" href="' + self.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
+                // -----------------------------------------------
+                // Source and target branches info
+
+                // Source branch name
+                let newInfoLineToInject = '<div class="issuable-info">' +
+                    '<span class="project-ref-path has-tooltip" title="Source branch">' +
+                        '<a class="ref-name" href="' + this.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
                     '</span>';
 
-                if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
-                    html += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name="' + mergeRequest.target_branch + '">' +
+                // Copy source branch name button
+                if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                    newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="source">' +
                         '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
                     '</button>';
                 }
 
-                html += '</div>';
+                // Target branch name
+                newInfoLineToInject += ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
+                    '<span class="project-ref-path has-tooltip" title="Target branch">' +
+                        '<a class="ref-name" href="' + this.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
+                    '</span>';
 
-                self.parseHtmlAndAppendChild(
-                    infoDiv,
-                    html
+                // Copy target branch name button
+                if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                    newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="target">' +
+                        '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                    '</button>';
+                }
+
+                newInfoLineToInject += '</div>';
+
+                this.parseHtmlAndAppend(
+                    mergeRequestContainer.querySelector('.issuable-main-info'),
+                    newInfoLineToInject
                 );
-            });
+            }, this);
+        }
+
+        /**
+         * Sets several data-* attributes on a DOM node representing a Merge Request so these values may be used later.
+         */
+        setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest) {
+            mergeRequestContainer.dataset.title = mergeRequest.title;
+            mergeRequestContainer.dataset.iid = mergeRequest.iid;
+            mergeRequestContainer.dataset.url = mergeRequest.web_url;
+            mergeRequestContainer.dataset.diffsUrl = mergeRequest.web_url + '/diffs';
+            mergeRequestContainer.dataset.authorName = mergeRequest.author.name;
+            mergeRequestContainer.dataset.status = mergeRequest.state;
+            mergeRequestContainer.dataset.sourceBranchName = mergeRequest.source_branch;
+            mergeRequestContainer.dataset.targetBranchName = mergeRequest.target_branch;
         }
 
         /**
          * Attach a click event to all buttons inserted by the extension allowing to copy the source and target
-         * branches name (if feature is enabled by the user).
+         * branches name.
          */
         attachClickEventToCopyBranchNameButtons() {
-            if (!this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
-                return
-            }
-
             document.querySelectorAll('button.gmrle-copy-branch-name').forEach(function(el) {
                 el.addEventListener('click', function(e) {
                     e.preventDefault();
 
-                    navigator.clipboard.writeText(el.dataset.branchName).then(function() {
+                    let branchName = this.closest('.merge-request').dataset[this.dataset.branchNameToCopy + 'BranchName'];
+
+                    navigator.clipboard.writeText(branchName).then(function() {
                         // Do nothing if copy was successful.
                     }, function() {
                         alert('Unable to copy branch name.');
                     });
                 });
+            });
+        }
+
+        /**
+         * Attach a click event to all buttons inserted by the extension allowing to copy Merge Request info.
+         */
+        attachClickEventToCopyMergeRequestInfoButtons() {
+            let self = this;
+
+            document.querySelectorAll('button.gmrle-copy-mr-info').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    let text = self.buildMergeRequestInfoText(this.closest('.merge-request'));
+
+                    navigator.clipboard.writeText(text).then(function() {
+                        // Do nothing if copy was successful.
+                    }, function() {
+                        alert('Unable to copy Merge Request info.');
+                    });
+                });
+            });
+        }
+
+        /**
+         * Creates the Merge Request info text from a Merge Request container DOM node.
+         */
+        buildMergeRequestInfoText(mergeRequestContainer) {
+            let placeholders = {
+                'MR_TITLE': mergeRequestContainer.dataset.title,
+                'MR_ID': mergeRequestContainer.dataset.iid,
+                'MR_URL': mergeRequestContainer.dataset.url,
+                'MR_DIFFS_URL': mergeRequestContainer.dataset.diffsUrl,
+                'MR_AUTHOR_NAME': mergeRequestContainer.dataset.authorName,
+                'MR_STATUS': mergeRequestContainer.dataset.status,
+                'MR_SOURCE_BRANCH_NAME': mergeRequestContainer.dataset.sourceBranchName,
+                'MR_TARGET_BRANCH_NAME': mergeRequestContainer.dataset.targetBranchName
+            };
+
+            let placeholdersReplaceRegex = new RegExp('{(' + Object.keys(placeholders).join('|') + ')}', 'g');
+
+            return this.preferences.copy_mr_info_format.replace(placeholdersReplaceRegex, function(_, placeholder) {
+              return placeholders[placeholder];
             });
         }
     }
