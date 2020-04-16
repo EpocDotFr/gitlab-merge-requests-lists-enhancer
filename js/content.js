@@ -411,7 +411,7 @@
 
             return this.preferences.copy_mr_info_format.replace(placeholdersReplaceRegex, function(_, placeholder) {
               return placeholders[placeholder];
-            });
+            }).trim();
         }
     }
 
