@@ -1,18 +1,39 @@
 /************************************************************************
- * Global styles */
+ * Browser-specific styles */
 
-/*
- * Firefox for Mac: use a dark theme if the OS/browser also uses one.
- * This doesn't affects Firefox for Windows (as for now), as dark/light theme detection isn't implemented for this OS.
- */
+/* Firefox */
 @supports (-moz-appearance:none) {
+    /* Dark theme styles */
     @media (prefers-color-scheme: dark) {
         body {
             background-color: #202023;
             color: rgb(249, 249, 250);
         }
+
+        input[type="text"], input[type="url"], textarea {
+            background-color: #2a2a2e;
+            color: #fff;
+            border-color: rgba(249, 249, 250, 0.2);
+        }
+
+        button {
+            background-color: rgba(249, 249, 250, 0.2);
+            color: #fff;
+            border-color: transparent;
+        }
     }
 }
+
+/* Chrome */
+@supports (-webkit-appearance:none) {
+    /* Dark theme styles */
+    @media (prefers-color-scheme: dark) {
+
+    }
+}
+
+/************************************************************************
+ * Global styles */
 
 .is-hidden {
     display: none;
