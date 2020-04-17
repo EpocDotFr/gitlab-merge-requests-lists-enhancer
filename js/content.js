@@ -414,16 +414,16 @@
          */
         buildMergeRequestInfoText(mergeRequestContainer) {
             let placeholders = {
-                'MR_TITLE': mergeRequestContainer.dataset.title,
-                'MR_ID': mergeRequestContainer.dataset.iid,
-                'MR_URL': mergeRequestContainer.dataset.url,
-                'MR_DIFFS_URL': mergeRequestContainer.dataset.diffsUrl,
-                'MR_AUTHOR_NAME': mergeRequestContainer.dataset.authorName,
-                'MR_STATUS': mergeRequestContainer.dataset.status,
-                'MR_SOURCE_BRANCH_NAME': mergeRequestContainer.dataset.sourceBranchName,
-                'MR_TARGET_BRANCH_NAME': mergeRequestContainer.dataset.targetBranchName,
-                'MR_JIRA_TICKET_ID': ('jiraTicketId' in mergeRequestContainer.dataset) ? mergeRequestContainer.dataset.jiraTicketId : '',
-                'MR_JIRA_TICKET_URL': ('jiraTicketUrl' in mergeRequestContainer.dataset) ? mergeRequestContainer.dataset.jiraTicketUrl : ''
+                MR_TITLE: mergeRequestContainer.dataset.title,
+                MR_ID: mergeRequestContainer.dataset.iid,
+                MR_URL: mergeRequestContainer.dataset.url,
+                MR_DIFFS_URL: mergeRequestContainer.dataset.diffsUrl,
+                MR_AUTHOR_NAME: mergeRequestContainer.dataset.authorName,
+                MR_STATUS: mergeRequestContainer.dataset.status,
+                MR_SOURCE_BRANCH_NAME: mergeRequestContainer.dataset.sourceBranchName,
+                MR_TARGET_BRANCH_NAME: mergeRequestContainer.dataset.targetBranchName,
+                MR_JIRA_TICKET_ID: ('jiraTicketId' in mergeRequestContainer.dataset) ? mergeRequestContainer.dataset.jiraTicketId : '',
+                MR_JIRA_TICKET_URL: ('jiraTicketUrl' in mergeRequestContainer.dataset) ? mergeRequestContainer.dataset.jiraTicketUrl : ''
             };
 
             let placeholdersReplaceRegex = new RegExp('{(' + Object.keys(placeholders).join('|') + ')}', 'g');
