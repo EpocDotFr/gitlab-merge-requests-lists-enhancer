@@ -231,18 +231,18 @@
                             break;
                         default:
                             console.error('Invalid link label type');
-
-                            return null;
                     }
 
-                    let jiraTicketLink = '<a href="' + mergeRequestContainer.dataset.jiraTicketUrl + '" class="issuable-milestone">' +
-                        jiraTicketLinkLabel +
-                    '</a> ';
+                    if (jiraTicketLinkLabel) {
+                        let jiraTicketLink = '<a href="' + mergeRequestContainer.dataset.jiraTicketUrl + '" class="issuable-milestone">' +
+                            jiraTicketLinkLabel +
+                        '</a> ';
 
-                    this.parseHtmlAndPrepend(
-                        mergeRequestContainer.querySelector('.merge-request-title'),
-                        jiraTicketLink
-                    );
+                        this.parseHtmlAndPrepend(
+                            mergeRequestContainer.querySelector('.merge-request-title'),
+                            jiraTicketLink
+                        );
+                    }
                 }
 
                 // -----------------------------------------------
