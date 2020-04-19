@@ -216,7 +216,7 @@
                 // Jira ticket link (data attributes are set in setDataAttributesToMergeRequestContainer, above)
 
                 if (('jiraTicketId' in mergeRequestContainer.dataset) && ('jiraTicketUrl' in mergeRequestContainer.dataset)) {
-                    let jiraTicketLinkLabel = '';
+                    let jiraTicketLinkLabel = null;
 
                     switch (this.preferences.jira_ticket_link_label_type) {
                         case 'ticket_id':
