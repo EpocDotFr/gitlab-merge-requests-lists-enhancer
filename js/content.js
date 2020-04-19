@@ -230,7 +230,7 @@
 
                             break;
                         default:
-                            console.error('Invalid link label type');
+                            console.error('Invalid link label type ' + this.preferences.jira_ticket_link_label_type);
                     }
 
                     if (jiraTicketLinkLabel) {
