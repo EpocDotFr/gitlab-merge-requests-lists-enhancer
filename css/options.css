@@ -15,6 +15,7 @@
         background-color: #2a2a2e;
         color: #fff;
         border-color: rgba(249, 249, 250, 0.2);
+        border-width: 1px;
     }
 
     .is-firefox button {
@@ -31,16 +32,18 @@
     body.is-chrome {
         background-color: #292a2d;
         color: rgb(232, 234, 237);
-        width: 680px;
+        width: 660px;
     }
 
     .is-chrome input[type="url"],
     .is-chrome textarea {
-        /* TODO */
+        background-color: #202023;
+        color: rgb(232, 234, 237);
+        border-color: rgba(255, 255, 255, 0.1);
     }
 
     .is-chrome button {
-        /* TODO */
+        color: rgb(232, 234, 237);
     }
 }
 
