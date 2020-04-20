@@ -10,7 +10,7 @@
             color: rgb(249, 249, 250);
         }
 
-        input[type="text"], input[type="url"], textarea {
+        input[type="url"], textarea {
             background-color: #2a2a2e;
             color: #fff;
             border-color: rgba(249, 249, 250, 0.2);
@@ -21,6 +21,10 @@
             color: #fff;
             border-color: transparent;
         }
+
+        .txt-muted {
+            /* TODO */
+        }
     }
 }
 
@@ -28,7 +32,22 @@
 @supports (-webkit-appearance:none) {
     /* Dark theme styles */
     @media (prefers-color-scheme: dark) {
+        body {
+            background-color: #292a2d;
+            color: rgb(232, 234, 237);
+        }
 
+        input[type="url"], textarea {
+            /* TODO */
+        }
+
+        button {
+            /* TODO */
+        }
+
+        .txt-muted {
+            /* TODO */
+        }
     }
 }
 
@@ -48,6 +67,10 @@
 
 .monospaced {
     font-family: monospace;
+}
+
+.txt-muted {
+    opacity: 0.8;
 }
 
 /************************************************************************

@@ -23,12 +23,12 @@
             </div>
         </div>
         <div class="pbs pll">
-            <small>Useful when sharing the Merge Request on e.g instant messaging softwares</small>
+            <small class="txt-muted">Useful when sharing the Merge Request on e.g instant messaging softwares</small>
         </div>
         <div class="pll pts pbs" id="copy-mr-info-options">
             <div class="pbs"><label for="copy_mr_info_format">Text format:</label></div>
             <div><textarea class="browser-style w100 monospaced man pas" id="copy_mr_info_format" rows="6" required></textarea></div>
-            <div class="pts"><small>Available placeholders: <code>{MR_TITLE}</code>, <code>{MR_ID}</code>, <code>{MR_URL}</code>, <code>{MR_DIFFS_URL}</code>, <code>{MR_AUTHOR_NAME}</code>, <code>{MR_STATUS}</code>, <code>{MR_SOURCE_BRANCH_NAME}</code>, <code>{MR_TARGET_BRANCH_NAME}</code>, <code>{MR_JIRA_TICKET_ID}</code>, <code>{MR_JIRA_TICKET_URL}</code></small></div>
+            <div class="pts"><small class="txt-muted">Available placeholders: <code>{MR_TITLE}</code>, <code>{MR_ID}</code>, <code>{MR_URL}</code>, <code>{MR_DIFFS_URL}</code>, <code>{MR_AUTHOR_NAME}</code>, <code>{MR_STATUS}</code>, <code>{MR_SOURCE_BRANCH_NAME}</code>, <code>{MR_TARGET_BRANCH_NAME}</code>, <code>{MR_JIRA_TICKET_ID}</code>, <code>{MR_JIRA_TICKET_URL}</code></small></div>
         </div>
         <div class="pts pbs row">
             <div class="w40p txt-center browser-style">
@@ -46,7 +46,7 @@
                 <div class="browser-style man pbs"><input type="radio" required name="jira_ticket_id_detection_location" value="source_branch_name" id="jira_ticket_id_detection_location_source_branch_name" class="man"> <label for="jira_ticket_id_detection_location_source_branch_name">Source branch name</label></div>
                 <div class="browser-style man pbs"><input type="radio" required name="jira_ticket_id_detection_location" value="merge_request_title" id="jira_ticket_id_detection_location_merge_request_title" class="man"> <label for="jira_ticket_id_detection_location_merge_request_title">Merge Request title</label></div>
             </div>
-            <div class="pbm"><small>Note: the position of the Jira ticket ID in the aforementioned locations doesn't matter. Also only the first uppercase ticket ID occurence will be matched.</small></div>
+            <div class="pbm"><small class="txt-muted">Note: the position of the Jira ticket ID in the aforementioned locations doesn't matter. Also only the first uppercase ticket ID occurence will be matched.</small></div>
             <div class="pbs">What should be displayed as the label of the Jira ticket link?</div>
             <div class="pll">
                 <div class="browser-style man pbs"><input type="radio" required name="jira_ticket_link_label_type" value="ticket_id" id="jira_ticket_link_label_type_ticket_id" class="man"> <label for="jira_ticket_link_label_type_ticket_id">The ticket ID</label></div>
