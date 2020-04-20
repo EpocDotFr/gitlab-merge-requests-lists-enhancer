@@ -27,12 +27,15 @@
 
 /* Chrome **************************************************************/
 
+body.is-chrome {
+    width: 660px;
+}
+
 /* Dark theme styles override */
 @media (prefers-color-scheme: dark) {
     body.is-chrome {
         background-color: #292a2d;
         color: rgb(232, 234, 237);
-        width: 660px;
     }
 
     .is-chrome input[type="url"],
@@ -40,10 +43,6 @@
         background-color: #202023;
         color: rgb(232, 234, 237);
         border-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .is-chrome button {
-        color: rgb(232, 234, 237);
     }
 }
 
