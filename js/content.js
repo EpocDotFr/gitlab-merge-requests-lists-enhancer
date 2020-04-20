@@ -321,35 +321,27 @@
         }
 
         /**
-         * Finds a Jira ticket ID in the given Merge Request object. Finding location may be different regarding
-         * user's preferences.
+         * Finds a Jira ticket ID in the given Merge Request object. It first tris in the source branch name, then
+         * fallbacks to the Merge Request title.
          */
         findFirstJiraTicketId(mergeRequest) {
-            let textToSearchJiraTicketIdIn = null;
-
-            switch (this.preferences.jira_ticket_id_detection_location) {
-                case 'source_branch_name':
-                    textToSearchJiraTicketIdIn = mergeRequest.source_branch;
-
-                    break;
-                case 'merge_request_title':
-                    textToSearchJiraTicketIdIn = mergeRequest.title;
-
-                    break;
-                default:
-                    console.error('Invalid detection location');
-
-                    return null;
-            }
-
             let jiraTicketIdRegex = new RegExp('[A-Z]{1,10}-\\d+');
-            let results = jiraTicketIdRegex.exec(textToSearchJiraTicketIdIn);
 
-            if (!results) {
-                return null;
+            // First try in the source branch name
+            let results = jiraTicketIdRegex.exec(mergeRequest.source_branch);
+
+            if (results) {
+                return results[0];
             }
 
-            return results[0];
+            // Fallback to the Merge Request title if none found in the source branch name
+            results = jiraTicketIdRegex.exec(mergeRequest.title);
+
+            if (results) {
+                return results[0];
+            }
+
+            return null;
         }
 
         /**

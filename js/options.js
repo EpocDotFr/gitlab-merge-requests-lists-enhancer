@@ -31,7 +31,6 @@
             this.jiraTicketLinkOptionsDiv = document.querySelector('div#jira-ticket-link-options');
             this.enableJiraTicketLinkCheckbox = document.querySelector('input#enable_jira_ticket_link');
             this.baseJiraUrlInput = document.querySelector('input#base_jira_url');
-            this.jiraTicketIdDetectionLocationRadioButtons = Array.from(document.querySelectorAll('input[name="jira_ticket_id_detection_location"]'));
             this.jiraTicketLinkLabelTypeRadioButtons = Array.from(document.querySelectorAll('input[name="jira_ticket_link_label_type"]'));
         }
 
@@ -53,10 +52,6 @@
                 self.enableJiraTicketLinkCheckbox.dispatchEvent(new CustomEvent('change'));
 
                 self.baseJiraUrlInput.value = preferences.base_jira_url;
-
-                self.jiraTicketIdDetectionLocationRadioButtons.find(function(el) {
-                    return el.value == preferences.jira_ticket_id_detection_location;
-                }).checked = true;
 
                 self.jiraTicketLinkLabelTypeRadioButtons.find(function(el) {
                     return el.value == preferences.jira_ticket_link_label_type;
@@ -85,10 +80,6 @@
                 self.jiraTicketLinkOptionsDiv.classList.toggle('is-hidden', !this.checked);
                 self.baseJiraUrlInput.toggleAttribute('required', this.checked);
 
-                self.jiraTicketIdDetectionLocationRadioButtons.forEach(function(el) {
-                    el.toggleAttribute('required', this.checked);
-                }, this);
-
                 self.jiraTicketLinkLabelTypeRadioButtons.forEach(function(el) {
                     el.toggleAttribute('required', this.checked);
                 }, this);
@@ -99,10 +90,6 @@
          * Take all DOM nodes values and persist them in the local storage.
          */
         saveOptionsToStorage() {
-            let jira_ticket_id_detection_location = this.jiraTicketIdDetectionLocationRadioButtons.find(function(el) {
-                return el.checked;
-            }).value;
-
             let jira_ticket_link_label_type = this.jiraTicketLinkLabelTypeRadioButtons.find(function(el) {
                 return el.checked;
             }).value;
@@ -113,7 +100,6 @@
                 copy_mr_info_format: this.copyMrInfoFormatTextarea.value,
                 enable_jira_ticket_link: this.enableJiraTicketLinkCheckbox.checked,
                 base_jira_url: this.baseJiraUrlInput.value,
-                jira_ticket_id_detection_location: jira_ticket_id_detection_location,
                 jira_ticket_link_label_type: jira_ticket_link_label_type
             });
         }
