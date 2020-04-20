@@ -7,6 +7,8 @@
          * the browser's local storage.
          */
         constructor() {
+            this.addBrowserDiscriminatingClassToBody();
+
             this.preferencesManager = new globals.Gmrle.PreferencesManager();
 
             this.getDomNodes();
@@ -115,6 +117,41 @@
                 jira_ticket_link_label_type: jira_ticket_link_label_type
             });
         }
+
+        /**
+         * Returns the browser name the extension is currently running on.
+         */
+        getCurrentBrowserName() {
+            let ua = navigator.userAgent;
+
+            if (ua.includes('Firefox') && !ua.includes('Seamonkey')) {
+                return 'firefox';
+            } else if (ua.includes('Chrome') && !ua.includes('Chromium')) {
+                return 'chrome';
+            }
+
+            return null;
+        }
+
+        /**
+         * Adds a CSS class name to the <body> tag identifying the browser the extension is currently running on.
+         */
+        addBrowserDiscriminatingClassToBody() {
+            let currentBrowserName = this.getCurrentBrowserName();
+
+            if (!currentBrowserName) {
+                return;
+            }
+
+            let body = document.querySelector('body');
+
+            if (!body) {
+                return;
+            }
+
+            body.classList.add('is-' + currentBrowserName);
+        }
+
     }
 
     document.addEventListener('DOMContentLoaded', function() {

@@ -1,53 +1,46 @@
 /************************************************************************
  * Browser-specific styles */
 
-/* Firefox */
-@supports (-moz-appearance:none) {
-    /* Dark theme styles */
-    @media (prefers-color-scheme: dark) {
-        body {
-            background-color: #202023;
-            color: rgb(249, 249, 250);
-        }
+/* Firefox *************************************************************/
 
-        input[type="url"], textarea {
-            background-color: #2a2a2e;
-            color: #fff;
-            border-color: rgba(249, 249, 250, 0.2);
-        }
+/* Dark theme styles override */
+@media (prefers-color-scheme: dark) {
+    body.is-firefox {
+        background-color: #202023;
+        color: rgb(249, 249, 250);
+    }
 
-        button {
-            background-color: rgba(249, 249, 250, 0.2);
-            color: #fff;
-            border-color: transparent;
-        }
+    .is-firefox input[type="url"],
+    .is-firefox textarea {
+        background-color: #2a2a2e;
+        color: #fff;
+        border-color: rgba(249, 249, 250, 0.2);
+    }
 
-        .txt-muted {
-            /* TODO */
-        }
+    .is-firefox button {
+        background-color: rgba(249, 249, 250, 0.2);
+        color: #fff;
+        border: none;
     }
 }
 
-/* Chrome */
-@supports (-webkit-appearance:none) {
-    /* Dark theme styles */
-    @media (prefers-color-scheme: dark) {
-        body {
-            background-color: #292a2d;
-            color: rgb(232, 234, 237);
-        }
+/* Chrome **************************************************************/
 
-        input[type="url"], textarea {
-            /* TODO */
-        }
+/* Dark theme styles override */
+@media (prefers-color-scheme: dark) {
+    body.is-chrome {
+        background-color: #292a2d;
+        color: rgb(232, 234, 237);
+        width: 680px;
+    }
 
-        button {
-            /* TODO */
-        }
+    .is-chrome input[type="url"],
+    .is-chrome textarea {
+        /* TODO */
+    }
 
-        .txt-muted {
-            /* TODO */
-        }
+    .is-chrome button {
+        /* TODO */
     }
 }
 
