@@ -213,6 +213,39 @@
                 this.setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest);
 
                 // -----------------------------------------------
+                // Jira ticket link (data attributes are set in setDataAttributesToMergeRequestContainer, above)
+
+                if (('jiraTicketId' in mergeRequestContainer.dataset) && ('jiraTicketUrl' in mergeRequestContainer.dataset)) {
+                    let jiraTicketLinkLabel = null;
+
+                    switch (this.preferences.jira_ticket_link_label_type) {
+                        case 'ticket_id':
+                            jiraTicketLinkLabel = mergeRequestContainer.dataset.jiraTicketId;
+
+                            break;
+                        case 'icon':
+                            jiraTicketLinkLabel = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip" title="Jira ticket ' + mergeRequestContainer.dataset.jiraTicketId + '">' +
+                                '<i class="fa fa-ticket" aria-hidden="true"></i>' +
+                            '</button>';
+
+                            break;
+                        default:
+                            console.error('Invalid link label type ' + this.preferences.jira_ticket_link_label_type);
+                    }
+
+                    if (jiraTicketLinkLabel) {
+                        let jiraTicketLink = '<a href="' + mergeRequestContainer.dataset.jiraTicketUrl + '" class="issuable-milestone">' +
+                            jiraTicketLinkLabel +
+                        '</a> ';
+
+                        this.parseHtmlAndPrepend(
+                            mergeRequestContainer.querySelector('.merge-request-title'),
+                            jiraTicketLink
+                        );
+                    }
+                }
+
+                // -----------------------------------------------
                 // Copy MR info button
 
                 if (this.preferences.enable_button_to_copy_mr_info) {
@@ -276,6 +309,55 @@
             mergeRequestContainer.dataset.status = mergeRequest.state;
             mergeRequestContainer.dataset.sourceBranchName = mergeRequest.source_branch;
             mergeRequestContainer.dataset.targetBranchName = mergeRequest.target_branch;
+
+            if (this.preferences.enable_jira_ticket_link) {
+                let jiraTicketId = this.findFirstJiraTicketId(mergeRequest);
+
+                if (jiraTicketId) {
+                    mergeRequestContainer.dataset.jiraTicketId = jiraTicketId;
+                    mergeRequestContainer.dataset.jiraTicketUrl = this.createJiraTicketUrl(jiraTicketId);
+                }
+            }
+        }
+
+        /**
+         * Finds a Jira ticket ID in the given Merge Request object. It first tris in the source branch name, then
+         * fallbacks to the Merge Request title.
+         */
+        findFirstJiraTicketId(mergeRequest) {
+            let jiraTicketIdRegex = new RegExp('[A-Z]{1,10}-\\d+');
+
+            // First try in the source branch name
+            let results = jiraTicketIdRegex.exec(mergeRequest.source_branch);
+
+            if (results) {
+                return results[0];
+            }
+
+            // Fallback to the Merge Request title if none found in the source branch name
+            results = jiraTicketIdRegex.exec(mergeRequest.title);
+
+            if (results) {
+                return results[0];
+            }
+
+            return null;
+        }
+
+        /**
+         * Creates an URL to a given Jira ticket ID, pointing to the Jira base URL the user has defined in its
+         * preferences.
+         */
+        createJiraTicketUrl(jiraTicketId) {
+            let baseJiraUrl = new URL(this.preferences.base_jira_url);
+
+            if (!baseJiraUrl.pathname.endsWith('/')) {
+                baseJiraUrl.pathname += '/';
+            }
+
+            baseJiraUrl.pathname += 'browse/' + jiraTicketId;
+
+            return baseJiraUrl.toString();
         }
 
         /**
@@ -324,21 +406,23 @@
          */
         buildMergeRequestInfoText(mergeRequestContainer) {
             let placeholders = {
-                'MR_TITLE': mergeRequestContainer.dataset.title,
-                'MR_ID': mergeRequestContainer.dataset.iid,
-                'MR_URL': mergeRequestContainer.dataset.url,
-                'MR_DIFFS_URL': mergeRequestContainer.dataset.diffsUrl,
-                'MR_AUTHOR_NAME': mergeRequestContainer.dataset.authorName,
-                'MR_STATUS': mergeRequestContainer.dataset.status,
-                'MR_SOURCE_BRANCH_NAME': mergeRequestContainer.dataset.sourceBranchName,
-                'MR_TARGET_BRANCH_NAME': mergeRequestContainer.dataset.targetBranchName
+                MR_TITLE: mergeRequestContainer.dataset.title,
+                MR_ID: mergeRequestContainer.dataset.iid,
+                MR_URL: mergeRequestContainer.dataset.url,
+                MR_DIFFS_URL: mergeRequestContainer.dataset.diffsUrl,
+                MR_AUTHOR_NAME: mergeRequestContainer.dataset.authorName,
+                MR_STATUS: mergeRequestContainer.dataset.status,
+                MR_SOURCE_BRANCH_NAME: mergeRequestContainer.dataset.sourceBranchName,
+                MR_TARGET_BRANCH_NAME: mergeRequestContainer.dataset.targetBranchName,
+                MR_JIRA_TICKET_ID: ('jiraTicketId' in mergeRequestContainer.dataset) ? mergeRequestContainer.dataset.jiraTicketId : '',
+                MR_JIRA_TICKET_URL: ('jiraTicketUrl' in mergeRequestContainer.dataset) ? mergeRequestContainer.dataset.jiraTicketUrl : ''
             };
 
             let placeholdersReplaceRegex = new RegExp('{(' + Object.keys(placeholders).join('|') + ')}', 'g');
 
             return this.preferences.copy_mr_info_format.replace(placeholdersReplaceRegex, function(_, placeholder) {
               return placeholders[placeholder];
-            });
+            }).trim();
         }
     }
 
