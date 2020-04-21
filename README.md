@@ -42,11 +42,14 @@ You can also install this add-on manually by using one of the ZIP files on the [
 
 👉 = current version
 
-  - **1.0** - Initial release (display Merge Request source and target branches)
+  - **1.0** - Initial release (display Merge Request source and target branches name)
   - **1.1** - Copy source and target branches name
   - **1.2** - Copy Merge Request information (intended for sharing on e.g instant messaging softwares)
   - 👉 **1.3** - Direct Jira ticket link (automatic detection of ticket ID in source branch name or Merge Request title)
   - **1.4** - WIP / unWIP toggle button
+  - **1.5**:
+    - New option: enable display Merge Request source and target branches
+    - New options: enable copy source and target branches name button (one option for each branches)
 
 ## License
 

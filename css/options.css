@@ -17,12 +17,6 @@
         border-color: rgba(249, 249, 250, 0.2);
         border-width: 1px;
     }
-
-    .is-firefox button {
-        background-color: rgba(249, 249, 250, 0.2);
-        color: #fff;
-        border: none;
-    }
 }
 
 /* Chrome **************************************************************/
