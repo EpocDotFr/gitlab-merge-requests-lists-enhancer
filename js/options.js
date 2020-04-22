@@ -21,6 +21,7 @@
          */
         getDomNodes() {
             this.optionsForm = document.querySelector('form');
+            this.submitButtonInOptionsForm = this.optionsForm.querySelector('button[type="submit"]');
 
             this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox = document.querySelector('input#enable_buttons_to_copy_source_and_target_branches_name');
 
@@ -68,6 +69,20 @@
             this.optionsForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
+                self.submitButtonInOptionsForm.disabled = true;
+
+                if (!('originalTextContent' in self.submitButtonInOptionsForm.dataset)) {
+                    self.submitButtonInOptionsForm.dataset.originalTextContent = self.submitButtonInOptionsForm.textContent;
+                }
+
+                self.submitButtonInOptionsForm.textContent = 'Saving...';
+
+                if ('timeOutId' in self.submitButtonInOptionsForm.dataset) {
+                    clearTimeout(self.submitButtonInOptionsForm.dataset.timeOutId);
+
+                    delete self.submitButtonInOptionsForm.dataset.timeOutId;
+                }
+
                 self.saveOptionsToStorage();
             });
 
@@ -90,18 +105,36 @@
          * Take all DOM nodes values and persist them in the local storage.
          */
         saveOptionsToStorage() {
+            let self = this;
+
             let jira_ticket_link_label_type = this.jiraTicketLinkLabelTypeRadioButtons.find(function(el) {
                 return el.checked;
             }).value;
 
-            this.preferencesManager.setAll({
-                enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked,
-                enable_button_to_copy_mr_info: this.enableButtonToCopyMrInfoCheckbox.checked,
-                copy_mr_info_format: this.copyMrInfoFormatTextarea.value,
-                enable_jira_ticket_link: this.enableJiraTicketLinkCheckbox.checked,
-                base_jira_url: this.baseJiraUrlInput.value,
-                jira_ticket_link_label_type: jira_ticket_link_label_type
-            });
+            this.preferencesManager.setAll(
+                {
+                    enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked,
+                    enable_button_to_copy_mr_info: this.enableButtonToCopyMrInfoCheckbox.checked,
+                    copy_mr_info_format: this.copyMrInfoFormatTextarea.value,
+                    enable_jira_ticket_link: this.enableJiraTicketLinkCheckbox.checked,
+                    base_jira_url: this.baseJiraUrlInput.value,
+                    jira_ticket_link_label_type: jira_ticket_link_label_type
+                },
+                function() {
+                    self.submitButtonInOptionsForm.disabled = false;
+                    self.submitButtonInOptionsForm.textContent = 'Saved!';
+                    self.submitButtonInOptionsForm.dataset.timeOutId = setTimeout(function() {
+                        delete self.submitButtonInOptionsForm.dataset.timeOutId;
+                        self.submitButtonInOptionsForm.textContent = self.submitButtonInOptionsForm.dataset.originalTextContent;
+                        delete self.submitButtonInOptionsForm.dataset.originalTextContent;
+                    }, 700);
+                },
+                function() {
+                    self.submitButtonInOptionsForm.disabled = false;
+                    self.submitButtonInOptionsForm.textContent = self.submitButtonInOptionsForm.dataset.originalTextContent;
+                    delete self.submitButtonInOptionsForm.dataset.originalTextContent;
+                }
+            );
         }
 
         /**
@@ -137,7 +170,6 @@
 
             body.classList.add('is-' + currentBrowserName);
         }
-
     }
 
     document.addEventListener('DOMContentLoaded', function() {

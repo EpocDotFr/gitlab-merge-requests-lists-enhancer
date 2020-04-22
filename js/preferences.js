@@ -35,8 +35,8 @@
          *
          * Used as `getAll` if the current browser is Firefox.
          */
-        getAllFirefox(callback) {
-            browser.storage.local.get(this.defaults).then(callback, function() {
+        getAllFirefox(successCallback) {
+            browser.storage.local.get(this.defaults).then(successCallback, function() {
                 alert('Error retrieving extension preferences.');
             });
         }
@@ -46,10 +46,10 @@
          *
          * Used as `setAll` if the current browser is Firefox.
          */
-        setAllFirefox(preferences) {
-            browser.storage.local.set(preferences).then(function() {
-                // Do nothing if save was successful.
-            }, function() {
+        setAllFirefox(preferences, successCallback, errorCallback) {
+            browser.storage.local.set(preferences).then(successCallback, function() {
+                errorCallback();
+
                 alert('Error saving extension preferences.');
             });
         }
@@ -59,14 +59,14 @@
          *
          * Used as `getAll` if the current browser is Chrome.
          */
-        getAllChrome(callback) {
+        getAllChrome(successCallback) {
             chrome.storage.local.get(this.defaults, function(preferences) {
                 if (chrome.runtime.lastError) {
                     alert('Error retrieving extension preferences, check console for more information.');
 
                     console.error('Error retrieving extension preferences:', chrome.runtime.lastError);
                 } else {
-                    callback(preferences);
+                    successCallback(preferences);
                 }
             });
         }
@@ -76,12 +76,16 @@
          *
          * Used as `setAll` if the current browser is Chrome.
          */
-        setAllChrome(preferences) {
+        setAllChrome(preferences, successCallback, errorCallback) {
             chrome.storage.local.set(preferences, function() {
                 if (chrome.runtime.lastError) {
+                    errorCallback();
+
                     alert('Error saving extension preferences, check console for more information.');
 
                     console.error('Error saving extension preferences:', chrome.runtime.lastError);
+                } else {
+                    successCallback();
                 }
             });
         }
