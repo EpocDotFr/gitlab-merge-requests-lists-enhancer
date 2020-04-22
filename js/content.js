@@ -216,6 +216,7 @@
                 // Jira ticket link (data attributes are set in setDataAttributesToMergeRequestContainer, above)
 
                 if (('jiraTicketId' in mergeRequestContainer.dataset) && ('jiraTicketUrl' in mergeRequestContainer.dataset)) {
+                    let jiraTicketLinkToolip = null;
                     let jiraTicketLinkLabel = null;
 
                     switch (this.preferences.jira_ticket_link_label_type) {
@@ -224,9 +225,8 @@
 
                             break;
                         case 'icon':
-                            jiraTicketLinkLabel = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip" title="Jira ticket ' + mergeRequestContainer.dataset.jiraTicketId + '">' +
-                                '<i class="fa fa-ticket" aria-hidden="true"></i>' +
-                            '</button>';
+                            jiraTicketLinkLabel = '<i class="fa fa-ticket" aria-hidden="true"></i>';
+                            jiraTicketLinkToolip = 'Jira ticket ' + mergeRequestContainer.dataset.jiraTicketId;
 
                             break;
                         default:
@@ -234,7 +234,9 @@
                     }
 
                     if (jiraTicketLinkLabel) {
-                        let jiraTicketLink = '<a href="' + mergeRequestContainer.dataset.jiraTicketUrl + '" class="issuable-milestone">' +
+                        let jiraTicketLink = '<a href="' + mergeRequestContainer.dataset.jiraTicketUrl + '" ' +
+                            'class="issuable-milestone ' + (jiraTicketLinkToolip ? 'has-tooltip' : '') + '" ' +
+                            (jiraTicketLinkToolip ? 'title="' + jiraTicketLinkToolip + '"' : '') + '>' +
                             jiraTicketLinkLabel +
                         '</a> ';
 
