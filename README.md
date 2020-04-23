@@ -19,7 +19,7 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
     - Ticket ID is automatically detected in source branch name or Merge Request title
     - Base Jira URL is configured in extension preferences
     - The ticket ID or an icon can be displayed as the link label (configured in extension preferences)
-  - WIP / unWIP toggle button
+  - WIP / unWIP toggle button (can be disabled in the extension preferences)
   - Compatible with all GitLab editions (GitLab CE, GitLab EE, GitLab.com) (look at the prerequisites, though)
 
 ## Prerequisites
