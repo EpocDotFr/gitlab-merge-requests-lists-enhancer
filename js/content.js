@@ -6,8 +6,9 @@
          * The GitLab API client used by the extension. No tokens or authentication needed as every requests are
          * performed from inside the context of the page (GitLab allows API calls if they comes from the site).
          */
-        constructor(baseUrl) {
+        constructor(baseUrl, csrfToken) {
             this.baseUrl = baseUrl;
+            this.csrfToken = csrfToken;
         }
 
         /**
@@ -28,7 +29,7 @@
         /**
          * Sends an HTTP request to the GitLab API.
          */
-        sendRequest(callback, method, endpoint, queryStringParameters = null) {
+        sendRequest(callback, method, endpoint, queryStringParameters = null, data = null) {
             let xhr = new XMLHttpRequest();
 
             xhr.responseType = 'json';
@@ -40,7 +41,15 @@
             };
 
             xhr.open(method, this.createEndpointUrl(endpoint, queryStringParameters));
-            xhr.send();
+
+            if (data) {
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.setRequestHeader('X-CSRF-Token', this.csrfToken);
+
+                data = JSON.stringify(data);
+            }
+
+            xhr.send(data);
         }
 
         /**
@@ -56,6 +65,26 @@
                 'GET',
                 'projects/' + projectId + '/merge_requests',
                 queryStringParameters
+            );
+        }
+
+        /**
+         * Update the given Merge Request Id in the given project ID.
+         */
+        updateProjectMergeRequest(callback, projectId, mergeRequestId, data) {
+            let dataToSend = {
+                id: parseInt(projectId, 10),
+                merge_request_iid: parseInt(mergeRequestId, 10)
+            };
+
+            Object.assign(dataToSend, data);
+
+            this.sendRequest(
+                callback,
+                'PUT',
+                'projects/' + projectId + '/merge_requests/' + mergeRequestId,
+                null,
+                dataToSend
             );
         }
     }
@@ -85,7 +114,7 @@
 
             this.baseUrl = location.protocol + '//' + location.host;
             this.baseApiUrl = this.baseUrl + '/api/v4/';
-            this.apiClient = new GitLabApiClient(this.baseApiUrl);
+            this.apiClient = new GitLabApiClient(this.baseApiUrl, this.getCsrfToken());
 
             let currentMergeRequestIds = this.getCurrentMergeRequestIds();
             let preferencesManager = new globals.Gmrle.PreferencesManager();
@@ -121,6 +150,15 @@
         }
 
         /**
+         * Get the current CSRF token that should be send in any subsequent POST or PUT requests.
+         */
+        getCsrfToken() {
+            let meta = document.querySelector('meta[name="csrf-token"]');
+
+            return meta ? meta.getAttribute('content') : null;
+        }
+
+        /**
          * Gets all Merge Requests IDs that are currently displayed.
          */
         getCurrentMergeRequestIds() {
@@ -152,9 +190,9 @@
                             self.attachClickEventToCopyMergeRequestInfoButtons();
                         }
                     } else {
-                        alert('Got error from GitLab, check console for more information.');
-
                         console.error('Got error from GitLab:', this.status, this.response);
+
+                        alert('Got error from GitLab, check console for more information.');
                     }
                 },
                 this.currentProjectId,
