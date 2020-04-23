@@ -242,6 +242,15 @@
         }
 
         /**
+         * Inserts the given HTML string before the given child target node.
+         */
+        parseHtmlAndInsertBefore(targetNode, html) {
+            this.parseHtml(html, function(node) {
+                targetNode.parentNode.insertBefore(node, targetNode);
+            });
+        }
+
+        /**
          * Actually updates the UI by altering the DOM by adding our stuff.
          */
         updateMergeRequestsNodes(mergeRequestsDetails) {
@@ -249,6 +258,20 @@
                 let mergeRequestContainer = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
 
                 this.setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest);
+
+                // -----------------------------------------------
+                // Toggle WIP status button
+
+                if (this.preferences.enable_button_to_toggle_wip_status) {
+                    let toggleWipStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-wip-status" title="WIP this Merge Request" style="padding-left: 0">' +
+                        '<i class="fa fa-wrench" aria-hidden="true"></i>' +
+                    '</button> ';
+
+                    this.parseHtmlAndPrepend(
+                        mergeRequestContainer.querySelector('.merge-request-title'),
+                        toggleWipStatusButton
+                    );
+                }
 
                 // -----------------------------------------------
                 // Jira ticket link (data attributes are set in setDataAttributesToMergeRequestContainer, above)
@@ -278,8 +301,8 @@
                             jiraTicketLinkLabel +
                         '</a> ';
 
-                        this.parseHtmlAndPrepend(
-                            mergeRequestContainer.querySelector('.merge-request-title'),
+                        this.parseHtmlAndInsertBefore(
+                            mergeRequestContainer.querySelector('.merge-request-title-text'),
                             jiraTicketLink
                         );
                     }
