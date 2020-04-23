@@ -289,7 +289,7 @@
                 // Copy MR info button
 
                 if (this.preferences.enable_button_to_copy_mr_info) {
-                    let copyMrInfoButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-mr-info" title="Copy Merge Request info">' +
+                    let copyMrInfoButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-mr-info" title="Copy Merge Request info" style="padding-left: 0">' +
                         '<i class="fa fa-share-square-o" aria-hidden="true"></i>' +
                     '</button> ';
 
