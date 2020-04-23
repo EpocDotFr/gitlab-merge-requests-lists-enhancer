@@ -11,7 +11,8 @@
                 copy_mr_info_format: 'MR {MR_ID} (from {MR_AUTHOR_NAME}): {MR_TITLE}\n{MR_URL}',
                 enable_jira_ticket_link: false,
                 base_jira_url: '',
-                jira_ticket_link_label_type: 'ticket_id'
+                jira_ticket_link_label_type: 'ticket_id',
+                enable_button_to_toggle_wip_status: true
             };
         }
 

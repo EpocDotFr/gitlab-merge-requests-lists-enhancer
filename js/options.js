@@ -33,6 +33,8 @@
             this.enableJiraTicketLinkCheckbox = document.querySelector('input#enable_jira_ticket_link');
             this.baseJiraUrlInput = document.querySelector('input#base_jira_url');
             this.jiraTicketLinkLabelTypeRadioButtons = Array.from(document.querySelectorAll('input[name="jira_ticket_link_label_type"]'));
+
+            this.enableButtonToToggleWipStatusCheckbox = document.querySelector('input#enable_button_to_toggle_wip_status');
         }
 
         /**
@@ -57,6 +59,8 @@
                 self.jiraTicketLinkLabelTypeRadioButtons.find(function(el) {
                     return el.value == preferences.jira_ticket_link_label_type;
                 }).checked = true;
+
+                self.enableButtonToToggleWipStatusCheckbox.checked = preferences.enable_button_to_toggle_wip_status;
             });
         }
 
@@ -105,7 +109,8 @@
                     copy_mr_info_format: this.copyMrInfoFormatTextarea.value,
                     enable_jira_ticket_link: this.enableJiraTicketLinkCheckbox.checked,
                     base_jira_url: this.baseJiraUrlInput.value,
-                    jira_ticket_link_label_type: jira_ticket_link_label_type
+                    jira_ticket_link_label_type: jira_ticket_link_label_type,
+                    enable_button_to_toggle_wip_status: this.enableButtonToToggleWipStatusCheckbox.checked
                 },
                 function() {
                     self.setSuccessfulVisualFeedbackOnSubmitButton();
