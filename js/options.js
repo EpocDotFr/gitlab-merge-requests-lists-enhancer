@@ -69,20 +69,7 @@
             this.optionsForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                self.submitButtonInOptionsForm.disabled = true;
-
-                if (!('originalTextContent' in self.submitButtonInOptionsForm.dataset)) {
-                    self.submitButtonInOptionsForm.dataset.originalTextContent = self.submitButtonInOptionsForm.textContent;
-                }
-
-                self.submitButtonInOptionsForm.textContent = 'Saving...';
-
-                if ('timeOutId' in self.submitButtonInOptionsForm.dataset) {
-                    clearTimeout(self.submitButtonInOptionsForm.dataset.timeOutId);
-
-                    delete self.submitButtonInOptionsForm.dataset.timeOutId;
-                }
-
+                self.initializeVisualFeedbackOnSubmitButton();
                 self.saveOptionsToStorage();
             });
 
@@ -121,18 +108,10 @@
                     jira_ticket_link_label_type: jira_ticket_link_label_type
                 },
                 function() {
-                    self.submitButtonInOptionsForm.disabled = false;
-                    self.submitButtonInOptionsForm.textContent = 'Saved!';
-                    self.submitButtonInOptionsForm.dataset.timeOutId = setTimeout(function() {
-                        delete self.submitButtonInOptionsForm.dataset.timeOutId;
-                        self.submitButtonInOptionsForm.textContent = self.submitButtonInOptionsForm.dataset.originalTextContent;
-                        delete self.submitButtonInOptionsForm.dataset.originalTextContent;
-                    }, 700);
+                    self.setSuccessfulVisualFeedbackOnSubmitButton();
                 },
                 function() {
-                    self.submitButtonInOptionsForm.disabled = false;
-                    self.submitButtonInOptionsForm.textContent = self.submitButtonInOptionsForm.dataset.originalTextContent;
-                    delete self.submitButtonInOptionsForm.dataset.originalTextContent;
+                    self.revertVisualFeedbackOnSubmitButton();
                 }
             );
         }
@@ -169,6 +148,53 @@
             }
 
             body.classList.add('is-' + currentBrowserName);
+        }
+
+        /**
+         * Sets the submit button to a "saving" state when preferences are being saved: disable the button, update
+         * its label.
+         */
+        initializeVisualFeedbackOnSubmitButton() {
+            this.submitButtonInOptionsForm.disabled = true;
+
+            if (!('originalTextContent' in this.submitButtonInOptionsForm.dataset)) {
+                this.submitButtonInOptionsForm.dataset.originalTextContent = this.submitButtonInOptionsForm.textContent;
+            }
+
+            this.submitButtonInOptionsForm.textContent = 'Saving...';
+
+            if ('timeOutId' in this.submitButtonInOptionsForm.dataset) {
+                clearTimeout(this.submitButtonInOptionsForm.dataset.timeOutId);
+
+                delete this.submitButtonInOptionsForm.dataset.timeOutId;
+            }
+        }
+
+        /**
+         * Sets the submit button to a "successfull" state when preferences are successfully saved: enable the button,
+         * update its label, and set a timeout when the label will be reverted back to the original one.
+         */
+        setSuccessfulVisualFeedbackOnSubmitButton() {
+            let self = this;
+
+            this.submitButtonInOptionsForm.disabled = false;
+            this.submitButtonInOptionsForm.textContent = 'Saved!';
+            this.submitButtonInOptionsForm.dataset.timeOutId = setTimeout(function() {
+                self.submitButtonInOptionsForm.textContent = self.submitButtonInOptionsForm.dataset.originalTextContent;
+
+                delete self.submitButtonInOptionsForm.dataset.timeOutId;
+                delete self.submitButtonInOptionsForm.dataset.originalTextContent;
+            }, 700);
+        }
+
+        /**
+         * Reverts the submit button back to its initial state: enabled it and revert its label.
+         */
+        revertVisualFeedbackOnSubmitButton() {
+            this.submitButtonInOptionsForm.disabled = false;
+            this.submitButtonInOptionsForm.textContent = this.submitButtonInOptionsForm.dataset.originalTextContent;
+
+            delete this.submitButtonInOptionsForm.dataset.originalTextContent;
         }
     }
 
