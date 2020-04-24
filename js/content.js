@@ -150,7 +150,7 @@
         }
 
         /**
-         * Get the current CSRF token that should be send in any subsequent POST or PUT requests.
+         * Get the current CSRF token that should be sent in any subsequent POST or PUT requests to the Gitlab API.
          */
         getCsrfToken() {
             let meta = document.querySelector('meta[name="csrf-token"]');
@@ -504,10 +504,10 @@
             this.apiClient.updateProjectMergeRequest(
                 function() {
                     if (this.status == 200) {
-                        mergeRequestNode.dataset.isWip = !isWip;
-                        mergeRequestNode.dataset.title = newTitle;
+                        mergeRequestNode.dataset.isWip = this.response.work_in_progress;
+                        mergeRequestNode.dataset.title = this.response.title;
 
-                        mergeRequestNode.querySelector('.merge-request-title-text a').textContent = newTitle;
+                        mergeRequestNode.querySelector('.merge-request-title-text a').textContent = this.response.title;
                     } else {
                         console.error('Got error from GitLab:', this.status, this.response);
 
