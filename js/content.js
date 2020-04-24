@@ -500,6 +500,8 @@
          */
         toggleMergeRequestWipStatus(mergeRequestNode, toggleButton) {
             toggleButton.disabled = true;
+            toggleButton.firstChild.classList.remove('fa-wrench');
+            toggleButton.firstChild.classList.add('fa-spinner', 'fa-spin');
 
             let isWip = mergeRequestNode.dataset.isWip == 'true';
             let newTitle = '';
@@ -524,6 +526,8 @@
                     }
 
                     toggleButton.disabled = false;
+                    toggleButton.firstChild.classList.add('fa-wrench');
+                    toggleButton.firstChild.classList.remove('fa-spinner', 'fa-spin');
                 },
                 this.currentProjectId,
                 mergeRequestNode.dataset.iid,
