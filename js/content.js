@@ -42,9 +42,18 @@
 
             xhr.open(method, this.createEndpointUrl(endpoint, queryStringParameters));
 
+            if (['post', 'put', 'patch'].includes(method.toLowerCase())) {
+                if (!this.csrfToken) {
+                    console.error('Cannot issue POST/PUT/PATCH requests without CSRF token');
+
+                    return;
+                }
+
+                xhr.setRequestHeader('X-CSRF-Token', this.csrfToken);
+            }
+
             if (data) {
                 xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.setRequestHeader('X-CSRF-Token', this.csrfToken);
 
                 data = JSON.stringify(data);
             }
