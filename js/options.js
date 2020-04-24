@@ -73,7 +73,10 @@
             this.optionsForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                self.initializeVisualFeedbackOnSubmitButton();
+                if (!self.initializeVisualFeedbackOnSubmitButton()) {
+                    return false;
+                }
+
                 self.saveOptionsToStorage();
             });
 
@@ -160,6 +163,10 @@
          * its label.
          */
         initializeVisualFeedbackOnSubmitButton() {
+            if (this.submitButtonInOptionsForm.disabled) {
+                return false;
+            }
+
             this.submitButtonInOptionsForm.disabled = true;
 
             if (!('originalTextContent' in this.submitButtonInOptionsForm.dataset)) {
@@ -173,6 +180,8 @@
 
                 delete this.submitButtonInOptionsForm.dataset.timeOutId;
             }
+
+            return true;
         }
 
         /**
