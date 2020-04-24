@@ -189,6 +189,10 @@
                         if (self.preferences.enable_button_to_copy_mr_info) {
                             self.attachClickEventToCopyMergeRequestInfoButtons();
                         }
+
+                        if (self.preferences.enable_button_to_toggle_wip_status) {
+                            self.attachClickEventToToggleWipStatusButtons();
+                        }
                     } else {
                         console.error('Got error from GitLab:', this.status, this.response);
 
@@ -263,7 +267,9 @@
                 // Toggle WIP status button
 
                 if (this.preferences.enable_button_to_toggle_wip_status) {
-                    let toggleWipStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-wip-status" title="WIP this Merge Request" style="padding-left: 0">' +
+                    let toggleWipStatusButtonTooptip = mergeRequestNode.dataset.isWip == 'true' ? 'unWIP this Merge Request' : 'WIP this Merge Request';
+
+                    let toggleWipStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-wip-status" title="' + toggleWipStatusButtonTooptip + '" style="padding-left: 0">' +
                         '<i class="fa fa-wrench" aria-hidden="true"></i>' +
                     '</button> ';
 
@@ -463,6 +469,59 @@
                     });
                 });
             });
+        }
+
+        /**
+         * Attach a click event to all buttons inserted by the extension allowing to toggle Merge Request WIP status.
+         */
+        attachClickEventToToggleWipStatusButtons() {
+            let self = this;
+
+            document.querySelectorAll('button.gmrle-toggle-wip-status').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    self.toggleMergeRequestWipStatus(this.closest('.merge-request'), this);
+                });
+            });
+        }
+
+        /**
+         * Actually toggle a given Merge Request WIP status.
+         */
+        toggleMergeRequestWipStatus(mergeRequestNode, toggleButton) {
+            toggleButton.disabled = true;
+
+            let isWip = mergeRequestNode.dataset.isWip == 'true';
+            let newTitle = '';
+
+            if (isWip) {
+                newTitle = mergeRequestNode.dataset.title.replace(new RegExp('^WIP:'), '').trim();
+            } else {
+                newTitle = 'WIP: ' + mergeRequestNode.dataset.title.trim();
+            }
+
+            this.apiClient.updateProjectMergeRequest(
+                function() {
+                    if (this.status == 200) {
+                        mergeRequestNode.dataset.isWip = !isWip;
+                        mergeRequestNode.dataset.title = newTitle;
+
+                        mergeRequestNode.querySelector('.merge-request-title-text a').textContent = newTitle;
+                    } else {
+                        console.error('Got error from GitLab:', this.status, this.response);
+
+                        alert('Got error from GitLab, check console for more information.');
+                    }
+
+                    toggleButton.disabled = false;
+                },
+                this.currentProjectId,
+                mergeRequestNode.dataset.iid,
+                {
+                    title: newTitle
+                }
+            );
         }
 
         /**
