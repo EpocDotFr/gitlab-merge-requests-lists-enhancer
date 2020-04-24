@@ -253,11 +253,11 @@
         /**
          * Actually updates the UI by altering the DOM by adding our stuff.
          */
-        updateMergeRequestsNodes(mergeRequestsDetails) {
-            mergeRequestsDetails.forEach(function(mergeRequest) {
-                let mergeRequestContainer = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
+        updateMergeRequestsNodes(mergeRequests) {
+            mergeRequests.forEach(function(mergeRequest) {
+                let mergeRequestNode = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
 
-                this.setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest);
+                this.setDataAttributesToMergeRequestNode(mergeRequestNode, mergeRequest);
 
                 // -----------------------------------------------
                 // Toggle WIP status button
@@ -268,26 +268,26 @@
                     '</button> ';
 
                     this.parseHtmlAndPrepend(
-                        mergeRequestContainer.querySelector('.merge-request-title'),
+                        mergeRequestNode.querySelector('.merge-request-title'),
                         toggleWipStatusButton
                     );
                 }
 
                 // -----------------------------------------------
-                // Jira ticket link (data attributes are set in setDataAttributesToMergeRequestContainer, above)
+                // Jira ticket link (data attributes are set in setDataAttributesToNode, above)
 
-                if (('jiraTicketId' in mergeRequestContainer.dataset) && ('jiraTicketUrl' in mergeRequestContainer.dataset)) {
+                if (('jiraTicketId' in mergeRequestNode.dataset) && ('jiraTicketUrl' in mergeRequestNode.dataset)) {
                     let jiraTicketLinkToolip = null;
                     let jiraTicketLinkLabel = null;
 
                     switch (this.preferences.jira_ticket_link_label_type) {
                         case 'ticket_id':
-                            jiraTicketLinkLabel = mergeRequestContainer.dataset.jiraTicketId;
+                            jiraTicketLinkLabel = mergeRequestNode.dataset.jiraTicketId;
 
                             break;
                         case 'icon':
                             jiraTicketLinkLabel = '<i class="fa fa-ticket" aria-hidden="true"></i>';
-                            jiraTicketLinkToolip = 'Jira ticket ' + mergeRequestContainer.dataset.jiraTicketId;
+                            jiraTicketLinkToolip = 'Jira ticket ' + mergeRequestNode.dataset.jiraTicketId;
 
                             break;
                         default:
@@ -295,14 +295,14 @@
                     }
 
                     if (jiraTicketLinkLabel) {
-                        let jiraTicketLink = '<a href="' + mergeRequestContainer.dataset.jiraTicketUrl + '" ' +
+                        let jiraTicketLink = '<a href="' + mergeRequestNode.dataset.jiraTicketUrl + '" ' +
                             'class="issuable-milestone ' + (jiraTicketLinkToolip ? 'has-tooltip' : '') + '" ' +
                             (jiraTicketLinkToolip ? 'title="' + jiraTicketLinkToolip + '"' : '') + '>' +
                             jiraTicketLinkLabel +
                         '</a> ';
 
                         this.parseHtmlAndInsertBefore(
-                            mergeRequestContainer.querySelector('.merge-request-title-text'),
+                            mergeRequestNode.querySelector('.merge-request-title-text'),
                             jiraTicketLink
                         );
                     }
@@ -317,7 +317,7 @@
                     '</button> ';
 
                     this.parseHtmlAndPrepend(
-                        mergeRequestContainer.querySelector('.issuable-info'),
+                        mergeRequestNode.querySelector('.issuable-info'),
                         copyMrInfoButton
                     );
                 }
@@ -354,7 +354,7 @@
                 newInfoLineToInject += '</div>';
 
                 this.parseHtmlAndAppend(
-                    mergeRequestContainer.querySelector('.issuable-main-info'),
+                    mergeRequestNode.querySelector('.issuable-main-info'),
                     newInfoLineToInject
                 );
             }, this);
@@ -363,22 +363,23 @@
         /**
          * Sets several data-* attributes on a DOM node representing a Merge Request so these values may be used later.
          */
-        setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest) {
-            mergeRequestContainer.dataset.title = mergeRequest.title;
-            mergeRequestContainer.dataset.iid = mergeRequest.iid;
-            mergeRequestContainer.dataset.url = mergeRequest.web_url;
-            mergeRequestContainer.dataset.diffsUrl = mergeRequest.web_url + '/diffs';
-            mergeRequestContainer.dataset.authorName = mergeRequest.author.name;
-            mergeRequestContainer.dataset.status = mergeRequest.state;
-            mergeRequestContainer.dataset.sourceBranchName = mergeRequest.source_branch;
-            mergeRequestContainer.dataset.targetBranchName = mergeRequest.target_branch;
+        setDataAttributesToMergeRequestNode(mergeRequestNode, mergeRequest) {
+            mergeRequestNode.dataset.title = mergeRequest.title;
+            mergeRequestNode.dataset.iid = mergeRequest.iid;
+            mergeRequestNode.dataset.url = mergeRequest.web_url;
+            mergeRequestNode.dataset.diffsUrl = mergeRequest.web_url + '/diffs';
+            mergeRequestNode.dataset.authorName = mergeRequest.author.name;
+            mergeRequestNode.dataset.status = mergeRequest.state;
+            mergeRequestNode.dataset.sourceBranchName = mergeRequest.source_branch;
+            mergeRequestNode.dataset.targetBranchName = mergeRequest.target_branch;
+            mergeRequestNode.dataset.isWip = mergeRequest.work_in_progress;
 
             if (this.preferences.enable_jira_ticket_link) {
                 let jiraTicketId = this.findFirstJiraTicketId(mergeRequest);
 
                 if (jiraTicketId) {
-                    mergeRequestContainer.dataset.jiraTicketId = jiraTicketId;
-                    mergeRequestContainer.dataset.jiraTicketUrl = this.createJiraTicketUrl(jiraTicketId);
+                    mergeRequestNode.dataset.jiraTicketId = jiraTicketId;
+                    mergeRequestNode.dataset.jiraTicketUrl = this.createJiraTicketUrl(jiraTicketId);
                 }
             }
         }
@@ -467,18 +468,18 @@
         /**
          * Creates the Merge Request info text from a Merge Request container DOM node.
          */
-        buildMergeRequestInfoText(mergeRequestContainer) {
+        buildMergeRequestInfoText(mergeRequestNode) {
             let placeholders = {
-                MR_TITLE: mergeRequestContainer.dataset.title,
-                MR_ID: mergeRequestContainer.dataset.iid,
-                MR_URL: mergeRequestContainer.dataset.url,
-                MR_DIFFS_URL: mergeRequestContainer.dataset.diffsUrl,
-                MR_AUTHOR_NAME: mergeRequestContainer.dataset.authorName,
-                MR_STATUS: mergeRequestContainer.dataset.status,
-                MR_SOURCE_BRANCH_NAME: mergeRequestContainer.dataset.sourceBranchName,
-                MR_TARGET_BRANCH_NAME: mergeRequestContainer.dataset.targetBranchName,
-                MR_JIRA_TICKET_ID: ('jiraTicketId' in mergeRequestContainer.dataset) ? mergeRequestContainer.dataset.jiraTicketId : '',
-                MR_JIRA_TICKET_URL: ('jiraTicketUrl' in mergeRequestContainer.dataset) ? mergeRequestContainer.dataset.jiraTicketUrl : ''
+                MR_TITLE: mergeRequestNode.dataset.title,
+                MR_ID: mergeRequestNode.dataset.iid,
+                MR_URL: mergeRequestNode.dataset.url,
+                MR_DIFFS_URL: mergeRequestNode.dataset.diffsUrl,
+                MR_AUTHOR_NAME: mergeRequestNode.dataset.authorName,
+                MR_STATUS: mergeRequestNode.dataset.status,
+                MR_SOURCE_BRANCH_NAME: mergeRequestNode.dataset.sourceBranchName,
+                MR_TARGET_BRANCH_NAME: mergeRequestNode.dataset.targetBranchName,
+                MR_JIRA_TICKET_ID: ('jiraTicketId' in mergeRequestNode.dataset) ? mergeRequestNode.dataset.jiraTicketId : '',
+                MR_JIRA_TICKET_URL: ('jiraTicketUrl' in mergeRequestNode.dataset) ? mergeRequestNode.dataset.jiraTicketUrl : ''
             };
 
             let placeholdersReplaceRegex = new RegExp('{(' + Object.keys(placeholders).join('|') + ')}', 'g');
