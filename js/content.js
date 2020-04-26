@@ -276,9 +276,7 @@
                 // Toggle WIP status button
 
                 if (this.preferences.enable_button_to_toggle_wip_status) {
-                    let toggleWipStatusButtonTooptip = mergeRequestNode.dataset.isWip == 'true' ? 'unWIP this Merge Request' : 'WIP this Merge Request';
-
-                    let toggleWipStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-wip-status" title="' + toggleWipStatusButtonTooptip + '" style="padding-left: 0">' +
+                    let toggleWipStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-wip-status" title="Toggle WIP status" style="padding-left: 0">' +
                         '<i class="fa fa-wrench" aria-hidden="true"></i>' +
                     '</button> ';
 
