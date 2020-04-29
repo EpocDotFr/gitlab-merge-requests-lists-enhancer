@@ -123,6 +123,7 @@
 
             this.baseUrl = location.protocol + '//' + location.host;
             this.baseApiUrl = this.baseUrl + '/api/v4/';
+            this.userAuthenticated = this.isUserAuthenticated();
             this.apiClient = new GitLabApiClient(this.baseApiUrl, this.getCsrfToken());
 
             let currentMergeRequestIds = this.getCurrentMergeRequestIds();
@@ -168,6 +169,13 @@
         }
 
         /**
+         * Determines if the current user is logged-in to GitLab.
+         */
+        isUserAuthenticated() {
+            return document.querySelector('.navbar-nav .header-user') ? true : false;
+        }
+
+        /**
          * Gets all Merge Requests IDs that are currently displayed.
          */
         getCurrentMergeRequestIds() {
@@ -199,7 +207,7 @@
                             self.attachClickEventToCopyMergeRequestInfoButtons();
                         }
 
-                        if (self.preferences.enable_button_to_toggle_wip_status) {
+                        if (self.userAuthenticated && self.preferences.enable_button_to_toggle_wip_status) {
                             self.attachClickEventToToggleWipStatusButtons();
                         }
                     } else {
@@ -275,7 +283,7 @@
                 // -----------------------------------------------
                 // Toggle WIP status button
 
-                if (this.preferences.enable_button_to_toggle_wip_status) {
+                if (this.userAuthenticated && this.preferences.enable_button_to_toggle_wip_status) {
                     let toggleWipStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-wip-status" title="Toggle WIP status" style="padding-left: 0">' +
                         '<i class="fa fa-wrench" aria-hidden="true"></i>' +
                     '</button> ';
