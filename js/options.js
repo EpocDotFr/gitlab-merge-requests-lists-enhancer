@@ -21,6 +21,7 @@
          */
         getDomNodes() {
             this.optionsForm = document.querySelector('form');
+            this.submitButtonInOptionsForm = this.optionsForm.querySelector('button[type="submit"]');
 
             this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox = document.querySelector('input#enable_buttons_to_copy_source_and_target_branches_name');
 
@@ -32,6 +33,8 @@
             this.enableJiraTicketLinkCheckbox = document.querySelector('input#enable_jira_ticket_link');
             this.baseJiraUrlInput = document.querySelector('input#base_jira_url');
             this.jiraTicketLinkLabelTypeRadioButtons = Array.from(document.querySelectorAll('input[name="jira_ticket_link_label_type"]'));
+
+            this.enableButtonToToggleWipStatusCheckbox = document.querySelector('input#enable_button_to_toggle_wip_status');
         }
 
         /**
@@ -56,6 +59,8 @@
                 self.jiraTicketLinkLabelTypeRadioButtons.find(function(el) {
                     return el.value == preferences.jira_ticket_link_label_type;
                 }).checked = true;
+
+                self.enableButtonToToggleWipStatusCheckbox.checked = preferences.enable_button_to_toggle_wip_status;
             });
         }
 
@@ -67,6 +72,10 @@
 
             this.optionsForm.addEventListener('submit', function(e) {
                 e.preventDefault();
+
+                if (!self.initializeVisualFeedbackOnSubmitButton()) {
+                    return false;
+                }
 
                 self.saveOptionsToStorage();
             });
@@ -90,18 +99,29 @@
          * Take all DOM nodes values and persist them in the local storage.
          */
         saveOptionsToStorage() {
+            let self = this;
+
             let jira_ticket_link_label_type = this.jiraTicketLinkLabelTypeRadioButtons.find(function(el) {
                 return el.checked;
             }).value;
 
-            this.preferencesManager.setAll({
-                enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked,
-                enable_button_to_copy_mr_info: this.enableButtonToCopyMrInfoCheckbox.checked,
-                copy_mr_info_format: this.copyMrInfoFormatTextarea.value,
-                enable_jira_ticket_link: this.enableJiraTicketLinkCheckbox.checked,
-                base_jira_url: this.baseJiraUrlInput.value,
-                jira_ticket_link_label_type: jira_ticket_link_label_type
-            });
+            this.preferencesManager.setAll(
+                {
+                    enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked,
+                    enable_button_to_copy_mr_info: this.enableButtonToCopyMrInfoCheckbox.checked,
+                    copy_mr_info_format: this.copyMrInfoFormatTextarea.value,
+                    enable_jira_ticket_link: this.enableJiraTicketLinkCheckbox.checked,
+                    base_jira_url: this.baseJiraUrlInput.value,
+                    jira_ticket_link_label_type: jira_ticket_link_label_type,
+                    enable_button_to_toggle_wip_status: this.enableButtonToToggleWipStatusCheckbox.checked
+                },
+                function() {
+                    self.setSuccessfulVisualFeedbackOnSubmitButton();
+                },
+                function() {
+                    self.revertVisualFeedbackOnSubmitButton();
+                }
+            );
         }
 
         /**
@@ -138,6 +158,58 @@
             body.classList.add('is-' + currentBrowserName);
         }
 
+        /**
+         * Sets the submit button to a "saving" state when preferences are being saved: disable the button, update
+         * its label.
+         */
+        initializeVisualFeedbackOnSubmitButton() {
+            if (this.submitButtonInOptionsForm.disabled) {
+                return false;
+            }
+
+            this.submitButtonInOptionsForm.disabled = true;
+
+            if (!('originalTextContent' in this.submitButtonInOptionsForm.dataset)) {
+                this.submitButtonInOptionsForm.dataset.originalTextContent = this.submitButtonInOptionsForm.textContent;
+            }
+
+            this.submitButtonInOptionsForm.textContent = 'Saving...';
+
+            if ('timeOutId' in this.submitButtonInOptionsForm.dataset) {
+                clearTimeout(this.submitButtonInOptionsForm.dataset.timeOutId);
+
+                delete this.submitButtonInOptionsForm.dataset.timeOutId;
+            }
+
+            return true;
+        }
+
+        /**
+         * Sets the submit button to a "successfull" state when preferences are successfully saved: enable the button,
+         * update its label, and set a timeout when the label will be reverted back to the original one.
+         */
+        setSuccessfulVisualFeedbackOnSubmitButton() {
+            let self = this;
+
+            this.submitButtonInOptionsForm.disabled = false;
+            this.submitButtonInOptionsForm.textContent = 'Saved!';
+            this.submitButtonInOptionsForm.dataset.timeOutId = setTimeout(function() {
+                self.submitButtonInOptionsForm.textContent = self.submitButtonInOptionsForm.dataset.originalTextContent;
+
+                delete self.submitButtonInOptionsForm.dataset.timeOutId;
+                delete self.submitButtonInOptionsForm.dataset.originalTextContent;
+            }, 700);
+        }
+
+        /**
+         * Reverts the submit button back to its initial state: enabled it and revert its label.
+         */
+        revertVisualFeedbackOnSubmitButton() {
+            this.submitButtonInOptionsForm.disabled = false;
+            this.submitButtonInOptionsForm.textContent = this.submitButtonInOptionsForm.dataset.originalTextContent;
+
+            delete this.submitButtonInOptionsForm.dataset.originalTextContent;
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function() {

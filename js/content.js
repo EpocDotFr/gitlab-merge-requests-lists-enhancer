@@ -6,8 +6,9 @@
          * The GitLab API client used by the extension. No tokens or authentication needed as every requests are
          * performed from inside the context of the page (GitLab allows API calls if they comes from the site).
          */
-        constructor(baseUrl) {
+        constructor(baseUrl, csrfToken) {
             this.baseUrl = baseUrl;
+            this.csrfToken = csrfToken;
         }
 
         /**
@@ -28,7 +29,7 @@
         /**
          * Sends an HTTP request to the GitLab API.
          */
-        sendRequest(callback, method, endpoint, queryStringParameters = null) {
+        sendRequest(callback, method, endpoint, queryStringParameters = null, data = null) {
             let xhr = new XMLHttpRequest();
 
             xhr.responseType = 'json';
@@ -40,7 +41,24 @@
             };
 
             xhr.open(method, this.createEndpointUrl(endpoint, queryStringParameters));
-            xhr.send();
+
+            if (['post', 'put', 'patch'].includes(method.toLowerCase())) {
+                if (!this.csrfToken) {
+                    console.error('Cannot issue POST/PUT/PATCH requests without CSRF token');
+
+                    return;
+                }
+
+                xhr.setRequestHeader('X-CSRF-Token', this.csrfToken);
+            }
+
+            if (data) {
+                xhr.setRequestHeader('Content-Type', 'application/json');
+
+                data = JSON.stringify(data);
+            }
+
+            xhr.send(data);
         }
 
         /**
@@ -56,6 +74,26 @@
                 'GET',
                 'projects/' + projectId + '/merge_requests',
                 queryStringParameters
+            );
+        }
+
+        /**
+         * Update the given Merge Request Id in the given project ID.
+         */
+        updateProjectMergeRequest(callback, projectId, mergeRequestId, data) {
+            let dataToSend = {
+                id: parseInt(projectId, 10),
+                merge_request_iid: parseInt(mergeRequestId, 10)
+            };
+
+            Object.assign(dataToSend, data);
+
+            this.sendRequest(
+                callback,
+                'PUT',
+                'projects/' + projectId + '/merge_requests/' + mergeRequestId,
+                null,
+                dataToSend
             );
         }
     }
@@ -85,7 +123,7 @@
 
             this.baseUrl = location.protocol + '//' + location.host;
             this.baseApiUrl = this.baseUrl + '/api/v4/';
-            this.apiClient = new GitLabApiClient(this.baseApiUrl);
+            this.apiClient = new GitLabApiClient(this.baseApiUrl, this.getCsrfToken());
 
             let currentMergeRequestIds = this.getCurrentMergeRequestIds();
             let preferencesManager = new globals.Gmrle.PreferencesManager();
@@ -121,6 +159,15 @@
         }
 
         /**
+         * Get the current CSRF token that should be sent in any subsequent POST or PUT requests to the Gitlab API.
+         */
+        getCsrfToken() {
+            let meta = document.querySelector('meta[name="csrf-token"]');
+
+            return meta ? meta.getAttribute('content') : null;
+        }
+
+        /**
          * Gets all Merge Requests IDs that are currently displayed.
          */
         getCurrentMergeRequestIds() {
@@ -151,10 +198,14 @@
                         if (self.preferences.enable_button_to_copy_mr_info) {
                             self.attachClickEventToCopyMergeRequestInfoButtons();
                         }
-                    } else {
-                        alert('Got error from GitLab, check console for more information.');
 
+                        if (self.preferences.enable_button_to_toggle_wip_status) {
+                            self.attachClickEventToToggleWipStatusButtons();
+                        }
+                    } else {
                         console.error('Got error from GitLab:', this.status, this.response);
+
+                        alert('Got error from GitLab, check console for more information.');
                     }
                 },
                 this.currentProjectId,
@@ -204,29 +255,52 @@
         }
 
         /**
+         * Inserts the given HTML string before the given child target node.
+         */
+        parseHtmlAndInsertBefore(targetNode, html) {
+            this.parseHtml(html, function(node) {
+                targetNode.parentNode.insertBefore(node, targetNode);
+            });
+        }
+
+        /**
          * Actually updates the UI by altering the DOM by adding our stuff.
          */
-        updateMergeRequestsNodes(mergeRequestsDetails) {
-            mergeRequestsDetails.forEach(function(mergeRequest) {
-                let mergeRequestContainer = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
+        updateMergeRequestsNodes(mergeRequests) {
+            mergeRequests.forEach(function(mergeRequest) {
+                let mergeRequestNode = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
 
-                this.setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest);
+                this.setDataAttributesToMergeRequestNode(mergeRequestNode, mergeRequest);
 
                 // -----------------------------------------------
-                // Jira ticket link (data attributes are set in setDataAttributesToMergeRequestContainer, above)
+                // Toggle WIP status button
 
-                if (('jiraTicketId' in mergeRequestContainer.dataset) && ('jiraTicketUrl' in mergeRequestContainer.dataset)) {
+                if (this.preferences.enable_button_to_toggle_wip_status) {
+                    let toggleWipStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-wip-status" title="Toggle WIP status" style="padding-left: 0">' +
+                        '<i class="fa fa-wrench" aria-hidden="true"></i>' +
+                    '</button> ';
+
+                    this.parseHtmlAndPrepend(
+                        mergeRequestNode.querySelector('.merge-request-title'),
+                        toggleWipStatusButton
+                    );
+                }
+
+                // -----------------------------------------------
+                // Jira ticket link (data attributes are set in setDataAttributesToNode, above)
+
+                if (('jiraTicketId' in mergeRequestNode.dataset) && ('jiraTicketUrl' in mergeRequestNode.dataset)) {
+                    let jiraTicketLinkToolip = null;
                     let jiraTicketLinkLabel = null;
 
                     switch (this.preferences.jira_ticket_link_label_type) {
                         case 'ticket_id':
-                            jiraTicketLinkLabel = mergeRequestContainer.dataset.jiraTicketId;
+                            jiraTicketLinkLabel = mergeRequestNode.dataset.jiraTicketId;
 
                             break;
                         case 'icon':
-                            jiraTicketLinkLabel = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip" title="Jira ticket ' + mergeRequestContainer.dataset.jiraTicketId + '">' +
-                                '<i class="fa fa-ticket" aria-hidden="true"></i>' +
-                            '</button>';
+                            jiraTicketLinkLabel = '<i class="fa fa-ticket" aria-hidden="true"></i>';
+                            jiraTicketLinkToolip = 'Jira ticket ' + mergeRequestNode.dataset.jiraTicketId;
 
                             break;
                         default:
@@ -234,12 +308,14 @@
                     }
 
                     if (jiraTicketLinkLabel) {
-                        let jiraTicketLink = '<a href="' + mergeRequestContainer.dataset.jiraTicketUrl + '" class="issuable-milestone">' +
+                        let jiraTicketLink = '<a href="' + mergeRequestNode.dataset.jiraTicketUrl + '" ' +
+                            'class="issuable-milestone ' + (jiraTicketLinkToolip ? 'has-tooltip' : '') + '" ' +
+                            (jiraTicketLinkToolip ? 'title="' + jiraTicketLinkToolip + '"' : '') + '>' +
                             jiraTicketLinkLabel +
                         '</a> ';
 
-                        this.parseHtmlAndPrepend(
-                            mergeRequestContainer.querySelector('.merge-request-title'),
+                        this.parseHtmlAndInsertBefore(
+                            mergeRequestNode.querySelector('.merge-request-title-text'),
                             jiraTicketLink
                         );
                     }
@@ -249,12 +325,12 @@
                 // Copy MR info button
 
                 if (this.preferences.enable_button_to_copy_mr_info) {
-                    let copyMrInfoButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-mr-info" title="Copy Merge Request info">' +
+                    let copyMrInfoButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-mr-info" title="Copy Merge Request info" style="padding-left: 0">' +
                         '<i class="fa fa-share-square-o" aria-hidden="true"></i>' +
                     '</button> ';
 
                     this.parseHtmlAndPrepend(
-                        mergeRequestContainer.querySelector('.issuable-info'),
+                        mergeRequestNode.querySelector('.issuable-info'),
                         copyMrInfoButton
                     );
                 }
@@ -291,7 +367,7 @@
                 newInfoLineToInject += '</div>';
 
                 this.parseHtmlAndAppend(
-                    mergeRequestContainer.querySelector('.issuable-main-info'),
+                    mergeRequestNode.querySelector('.issuable-main-info'),
                     newInfoLineToInject
                 );
             }, this);
@@ -300,22 +376,23 @@
         /**
          * Sets several data-* attributes on a DOM node representing a Merge Request so these values may be used later.
          */
-        setDataAttributesToMergeRequestContainer(mergeRequestContainer, mergeRequest) {
-            mergeRequestContainer.dataset.title = mergeRequest.title;
-            mergeRequestContainer.dataset.iid = mergeRequest.iid;
-            mergeRequestContainer.dataset.url = mergeRequest.web_url;
-            mergeRequestContainer.dataset.diffsUrl = mergeRequest.web_url + '/diffs';
-            mergeRequestContainer.dataset.authorName = mergeRequest.author.name;
-            mergeRequestContainer.dataset.status = mergeRequest.state;
-            mergeRequestContainer.dataset.sourceBranchName = mergeRequest.source_branch;
-            mergeRequestContainer.dataset.targetBranchName = mergeRequest.target_branch;
+        setDataAttributesToMergeRequestNode(mergeRequestNode, mergeRequest) {
+            mergeRequestNode.dataset.title = mergeRequest.title;
+            mergeRequestNode.dataset.iid = mergeRequest.iid;
+            mergeRequestNode.dataset.url = mergeRequest.web_url;
+            mergeRequestNode.dataset.diffsUrl = mergeRequest.web_url + '/diffs';
+            mergeRequestNode.dataset.authorName = mergeRequest.author.name;
+            mergeRequestNode.dataset.status = mergeRequest.state;
+            mergeRequestNode.dataset.sourceBranchName = mergeRequest.source_branch;
+            mergeRequestNode.dataset.targetBranchName = mergeRequest.target_branch;
+            mergeRequestNode.dataset.isWip = mergeRequest.work_in_progress;
 
             if (this.preferences.enable_jira_ticket_link) {
                 let jiraTicketId = this.findFirstJiraTicketId(mergeRequest);
 
                 if (jiraTicketId) {
-                    mergeRequestContainer.dataset.jiraTicketId = jiraTicketId;
-                    mergeRequestContainer.dataset.jiraTicketUrl = this.createJiraTicketUrl(jiraTicketId);
+                    mergeRequestNode.dataset.jiraTicketId = jiraTicketId;
+                    mergeRequestNode.dataset.jiraTicketUrl = this.createJiraTicketUrl(jiraTicketId);
                 }
             }
         }
@@ -402,20 +479,77 @@
         }
 
         /**
+         * Attach a click event to all buttons inserted by the extension allowing to toggle Merge Request WIP status.
+         */
+        attachClickEventToToggleWipStatusButtons() {
+            let self = this;
+
+            document.querySelectorAll('button.gmrle-toggle-wip-status').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    self.toggleMergeRequestWipStatus(this.closest('.merge-request'), this);
+                });
+            });
+        }
+
+        /**
+         * Actually toggle a given Merge Request WIP status.
+         */
+        toggleMergeRequestWipStatus(mergeRequestNode, toggleButton) {
+            toggleButton.disabled = true;
+            toggleButton.firstChild.classList.remove('fa-wrench');
+            toggleButton.firstChild.classList.add('fa-spinner', 'fa-spin');
+
+            let isWip = mergeRequestNode.dataset.isWip == 'true';
+            let newTitle = '';
+
+            if (isWip) {
+                newTitle = mergeRequestNode.dataset.title.replace(new RegExp('^WIP:'), '').trim();
+            } else {
+                newTitle = 'WIP: ' + mergeRequestNode.dataset.title.trim();
+            }
+
+            this.apiClient.updateProjectMergeRequest(
+                function() {
+                    if (this.status == 200) {
+                        mergeRequestNode.dataset.isWip = this.response.work_in_progress;
+                        mergeRequestNode.dataset.title = this.response.title;
+
+                        mergeRequestNode.querySelector('.merge-request-title-text a').textContent = this.response.title;
+                    } else {
+                        console.error('Got error from GitLab:', this.status, this.response);
+
+                        alert('Got error from GitLab, check console for more information.');
+                    }
+
+                    toggleButton.disabled = false;
+                    toggleButton.firstChild.classList.add('fa-wrench');
+                    toggleButton.firstChild.classList.remove('fa-spinner', 'fa-spin');
+                },
+                this.currentProjectId,
+                mergeRequestNode.dataset.iid,
+                {
+                    title: newTitle
+                }
+            );
+        }
+
+        /**
          * Creates the Merge Request info text from a Merge Request container DOM node.
          */
-        buildMergeRequestInfoText(mergeRequestContainer) {
+        buildMergeRequestInfoText(mergeRequestNode) {
             let placeholders = {
-                MR_TITLE: mergeRequestContainer.dataset.title,
-                MR_ID: mergeRequestContainer.dataset.iid,
-                MR_URL: mergeRequestContainer.dataset.url,
-                MR_DIFFS_URL: mergeRequestContainer.dataset.diffsUrl,
-                MR_AUTHOR_NAME: mergeRequestContainer.dataset.authorName,
-                MR_STATUS: mergeRequestContainer.dataset.status,
-                MR_SOURCE_BRANCH_NAME: mergeRequestContainer.dataset.sourceBranchName,
-                MR_TARGET_BRANCH_NAME: mergeRequestContainer.dataset.targetBranchName,
-                MR_JIRA_TICKET_ID: ('jiraTicketId' in mergeRequestContainer.dataset) ? mergeRequestContainer.dataset.jiraTicketId : '',
-                MR_JIRA_TICKET_URL: ('jiraTicketUrl' in mergeRequestContainer.dataset) ? mergeRequestContainer.dataset.jiraTicketUrl : ''
+                MR_TITLE: mergeRequestNode.dataset.title,
+                MR_ID: mergeRequestNode.dataset.iid,
+                MR_URL: mergeRequestNode.dataset.url,
+                MR_DIFFS_URL: mergeRequestNode.dataset.diffsUrl,
+                MR_AUTHOR_NAME: mergeRequestNode.dataset.authorName,
+                MR_STATUS: mergeRequestNode.dataset.status,
+                MR_SOURCE_BRANCH_NAME: mergeRequestNode.dataset.sourceBranchName,
+                MR_TARGET_BRANCH_NAME: mergeRequestNode.dataset.targetBranchName,
+                MR_JIRA_TICKET_ID: ('jiraTicketId' in mergeRequestNode.dataset) ? mergeRequestNode.dataset.jiraTicketId : '',
+                MR_JIRA_TICKET_URL: ('jiraTicketUrl' in mergeRequestNode.dataset) ? mergeRequestNode.dataset.jiraTicketUrl : ''
             };
 
             let placeholdersReplaceRegex = new RegExp('{(' + Object.keys(placeholders).join('|') + ')}', 'g');
