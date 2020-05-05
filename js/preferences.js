@@ -6,6 +6,7 @@
     globals.Gmrle.PreferencesManager = class {
         get defaults() {
             return {
+                display_source_and_target_branches: true,
                 enable_buttons_to_copy_source_and_target_branches_name: true,
                 enable_button_to_copy_mr_info: true,
                 copy_mr_info_format: 'MR {MR_ID} (from {MR_AUTHOR_NAME}): {MR_TITLE}\n{MR_URL}',

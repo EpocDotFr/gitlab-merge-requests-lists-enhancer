@@ -24,6 +24,7 @@
             this.submitButtonInOptionsForm = this.optionsForm.querySelector('button[type="submit"]');
 
             this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox = document.querySelector('input#enable_buttons_to_copy_source_and_target_branches_name');
+            this.displaySourceTargetBranchesOptionsDiv = document.querySelector('div#display-source-target-branches-options');
 
             this.copyMrInfoOptionsDiv = document.querySelector('div#copy-mr-info-options');
             this.enableButtonToCopyMrInfoCheckbox = document.querySelector('input#enable_button_to_copy_mr_info');
