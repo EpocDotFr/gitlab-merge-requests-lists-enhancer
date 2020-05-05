@@ -10,16 +10,17 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 
   - No configuration needed: install and it just works
   - Display source and target branches
-    - Buttons allowing to easily copy these branches name (can be disabled in the extension preferences)
+    - Can be enabled/disabled in the extension preferences
+    - Buttons allowing to easily copy these branches name (can be enabled/disabled in the extension preferences)
   - Button allowing to copy Merge Request information (useful when sharing the Merge Request on e.g instant messaging softwares)
-    - Can be disabled in the extension preferences
+    - Can be enabled/disabled in the extension preferences
     - Text format is customizable (with support of placeholders)
   - Direct Jira ticket link
     - Can be enabled/disabled in the extension preferences
     - Ticket ID is automatically detected in source branch name or Merge Request title
     - Base Jira URL is configured in extension preferences
     - The ticket ID or an icon can be displayed as the link label (configured in extension preferences)
-  - WIP toggle button (can be disabled in the extension preferences)
+  - WIP toggle button (can be enabled/disabled in the extension preferences)
   - Compatible with all GitLab editions (GitLab CE, GitLab EE, GitLab.com) (look at the prerequisites, though)
 
 ## Prerequisites
@@ -47,11 +48,17 @@ You can also install this add-on manually by using one of the ZIP files on the [
   - **1.1** - Copy source and target branches name
   - **1.2** - Copy Merge Request information (intended for sharing on e.g instant messaging softwares)
   - **1.3** - Direct Jira ticket link (automatic detection of ticket ID in source branch name or Merge Request title)
-  - 👉 **1.4** - WIP toggle button
-  - **1.5**
+  - **1.4** - WIP toggle button
+  - 👉 **1.5**
     - New option: enable display Merge Request source and target branches
     - New options: enable copy source and target branches name button (one option for each branches)
   - **1.6** - Automatic update of pipeline status icon and conflict icon
+
+## FAQ
+
+  - Why is there still clickable links on deleted source/target branch names?
+
+Due to a technical GitLab limitation, the extension has no reliable way to determine if a branch has been deleted. Therefore, branch names are always links and are always clickable.
 
 ## License
 
