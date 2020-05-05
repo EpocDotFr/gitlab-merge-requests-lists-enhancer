@@ -51,6 +51,7 @@ You can also install this add-on manually by using one of the ZIP files on the [
   - **1.5**
     - New option: enable display Merge Request source and target branches
     - New options: enable copy source and target branches name button (one option for each branches)
+  - **1.6** - Automatic update of pipeline status icon and conflict icon
 
 ## License
 
