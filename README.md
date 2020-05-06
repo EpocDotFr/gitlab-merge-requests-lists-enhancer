@@ -49,14 +49,18 @@ You can also install this add-on manually by using one of the ZIP files on the [
   - **1.2** - Copy Merge Request information (intended for sharing on e.g instant messaging softwares)
   - **1.3** - Direct Jira ticket link (automatic detection of ticket ID in source branch name or Merge Request title)
   - **1.4** - WIP toggle button
-  - 👉 **1.5** - New option: enable display Merge Request source and target branches name
+  - 👉 **1.5** - New option: enable display Merge Request source and target branches
   - **1.6** - Automatic update of pipeline status and conflict icons
 
 ## FAQ
 
   - Why is there still clickable links on deleted source/target branches name?
 
-Due to a technical GitLab limitation, the extension has no reliable way to determine if a branch has been deleted. Therefore, branches name are always links and are always clickable.
+Due to a technical GitLab limitation, the extension has no reliable way to determine if a branch has been deleted. Therefore, branches name are always links and are always clickable even though it's leading to a 404 page.
+
+  - Can you display a link to the Merge Request linked to the target branch, if any?
+
+It would be great, however the extension has no reliable way to do that due to a technical GitLab limitation.
 
 ## License
 

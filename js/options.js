@@ -23,8 +23,9 @@
             this.optionsForm = document.querySelector('form');
             this.submitButtonInOptionsForm = this.optionsForm.querySelector('button[type="submit"]');
 
-            this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox = document.querySelector('input#enable_buttons_to_copy_source_and_target_branches_name');
             this.displaySourceTargetBranchesOptionsDiv = document.querySelector('div#display-source-target-branches-options');
+            this.displaySourceAndTargetBranchesCheckbox = document.querySelector('input#display_source_and_target_branches');
+            this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox = document.querySelector('input#enable_buttons_to_copy_source_and_target_branches_name');
 
             this.copyMrInfoOptionsDiv = document.querySelector('div#copy-mr-info-options');
             this.enableButtonToCopyMrInfoCheckbox = document.querySelector('input#enable_button_to_copy_mr_info');
@@ -45,6 +46,9 @@
             let self = this;
 
             this.preferencesManager.getAll(function(preferences) {
+                self.displaySourceAndTargetBranchesCheckbox.checked = preferences.display_source_and_target_branches;
+                self.displaySourceAndTargetBranchesCheckbox.dispatchEvent(new CustomEvent('change'));
+
                 self.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked = preferences.enable_buttons_to_copy_source_and_target_branches_name;
 
                 self.enableButtonToCopyMrInfoCheckbox.checked = preferences.enable_button_to_copy_mr_info;
@@ -81,6 +85,10 @@
                 self.saveOptionsToStorage();
             });
 
+            this.displaySourceAndTargetBranchesCheckbox.addEventListener('change', function() {
+                self.displaySourceTargetBranchesOptionsDiv.classList.toggle('is-hidden', !this.checked);
+            });
+
             this.enableButtonToCopyMrInfoCheckbox.addEventListener('change', function() {
                 self.copyMrInfoOptionsDiv.classList.toggle('is-hidden', !this.checked);
                 self.copyMrInfoFormatTextarea.toggleAttribute('required', this.checked);
@@ -108,6 +116,7 @@
 
             this.preferencesManager.setAll(
                 {
+                    display_source_and_target_branches: this.displaySourceAndTargetBranchesCheckbox.checked,
                     enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked,
                     enable_button_to_copy_mr_info: this.enableButtonToCopyMrInfoCheckbox.checked,
                     copy_mr_info_format: this.copyMrInfoFormatTextarea.value,
