@@ -78,6 +78,12 @@
             this.optionsForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
+                if (self.userDisabledAllFeatures()) {
+                    alert('That would make the extension useless! Please enable at least one feature.');
+
+                    return false;
+                }
+
                 if (!self.initializeVisualFeedbackOnSubmitButton()) {
                     return false;
                 }
@@ -132,6 +138,16 @@
                     self.revertVisualFeedbackOnSubmitButton();
                 }
             );
+        }
+
+        /**
+         * Check if the user disabled all the features of the extension (which is useless).
+         */
+        userDisabledAllFeatures() {
+            return !this.displaySourceAndTargetBranchesCheckbox.checked
+                && !this.enableButtonToCopyMrInfoCheckbox.checked
+                && !this.enableJiraTicketLinkCheckbox.checked
+                && !this.enableButtonToToggleWipStatusCheckbox.checked;
         }
 
         /**
