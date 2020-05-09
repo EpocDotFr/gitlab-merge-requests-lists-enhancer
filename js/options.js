@@ -78,12 +78,6 @@
             this.optionsForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                if (self.userDisabledAllFeatures()) {
-                    alert('That would make the extension useless! Please enable at least one feature.');
-
-                    return false;
-                }
-
                 if (!self.initializeVisualFeedbackOnSubmitButton()) {
                     return false;
                 }
@@ -93,11 +87,15 @@
 
             this.displaySourceAndTargetBranchesCheckbox.addEventListener('change', function() {
                 self.displaySourceTargetBranchesOptionsDiv.classList.toggle('is-hidden', !this.checked);
+
+                self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
 
             this.enableButtonToCopyMrInfoCheckbox.addEventListener('change', function() {
                 self.copyMrInfoOptionsDiv.classList.toggle('is-hidden', !this.checked);
                 self.copyMrInfoFormatTextarea.toggleAttribute('required', this.checked);
+
+                self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
 
             this.enableJiraTicketLinkCheckbox.addEventListener('change', function() {
@@ -107,6 +105,12 @@
                 self.jiraTicketLinkLabelTypeRadioButtons.forEach(function(el) {
                     el.toggleAttribute('required', this.checked);
                 }, this);
+
+                self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
+            });
+
+            this.enableButtonToToggleWipStatusCheckbox.addEventListener('change', function() {
+                self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
         }
 
@@ -141,13 +145,26 @@
         }
 
         /**
-         * Check if the user disabled all the features of the extension (which is useless).
+         * Force the user to enable at least one feature if he disabled all the features of
+         * the extension (which is useless).
          */
-        userDisabledAllFeatures() {
-            return !this.displaySourceAndTargetBranchesCheckbox.checked
+        forceUserToEnableAtLeastOneFeatureIfNecessarily() {
+            let hasUserDisabledAllFeatures = !this.displaySourceAndTargetBranchesCheckbox.checked
                 && !this.enableButtonToCopyMrInfoCheckbox.checked
                 && !this.enableJiraTicketLinkCheckbox.checked
                 && !this.enableButtonToToggleWipStatusCheckbox.checked;
+
+            if (hasUserDisabledAllFeatures) {
+                this.displaySourceAndTargetBranchesCheckbox.required = true;
+                this.enableButtonToCopyMrInfoCheckbox.required = true;
+                this.enableJiraTicketLinkCheckbox.required = true;
+                this.enableButtonToToggleWipStatusCheckbox.required = true;
+            } else {
+                this.displaySourceAndTargetBranchesCheckbox.required = false;
+                this.enableButtonToCopyMrInfoCheckbox.required = false;
+                this.enableJiraTicketLinkCheckbox.required = false;
+                this.enableButtonToToggleWipStatusCheckbox.required = false;
+            }
         }
 
         /**
