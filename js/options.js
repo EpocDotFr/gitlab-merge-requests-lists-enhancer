@@ -66,6 +66,7 @@
                 }).checked = true;
 
                 self.enableButtonToToggleWipStatusCheckbox.checked = preferences.enable_button_to_toggle_wip_status;
+                self.enableButtonToToggleWipStatusCheckbox.dispatchEvent(new CustomEvent('change'));
             });
         }
 
@@ -77,6 +78,10 @@
 
             this.optionsForm.addEventListener('submit', function(e) {
                 e.preventDefault();
+
+                if (self.hasUserDisabledAllFeatures()) {
+                    return false;
+                }
 
                 if (!self.initializeVisualFeedbackOnSubmitButton()) {
                     return false;
@@ -149,22 +154,26 @@
          * the extension (which is useless).
          */
         forceUserToEnableAtLeastOneFeatureIfNecessarily() {
-            let hasUserDisabledAllFeatures = !this.displaySourceAndTargetBranchesCheckbox.checked
+            if (this.hasUserDisabledAllFeatures() && !this.submitButtonInOptionsForm.disabled) {
+                this.submitButtonInOptionsForm.disabled = true;
+                this.submitButtonInOptionsForm.dataset.originalTextContent = this.submitButtonInOptionsForm.textContent;
+                this.submitButtonInOptionsForm.textContent = '⚠️ Please enable at least one feature';
+            } else if (this.submitButtonInOptionsForm.disabled) {
+                this.submitButtonInOptionsForm.disabled = false;
+                this.submitButtonInOptionsForm.textContent = this.submitButtonInOptionsForm.dataset.originalTextContent;
+
+                delete this.submitButtonInOptionsForm.dataset.originalTextContent;
+            }
+        }
+
+        /**
+         * Determine if the user has disabled all the features of the extension (which is useless).
+         */
+        hasUserDisabledAllFeatures() {
+            return !this.displaySourceAndTargetBranchesCheckbox.checked
                 && !this.enableButtonToCopyMrInfoCheckbox.checked
                 && !this.enableJiraTicketLinkCheckbox.checked
                 && !this.enableButtonToToggleWipStatusCheckbox.checked;
-
-            if (hasUserDisabledAllFeatures) {
-                this.displaySourceAndTargetBranchesCheckbox.required = true;
-                this.enableButtonToCopyMrInfoCheckbox.required = true;
-                this.enableJiraTicketLinkCheckbox.required = true;
-                this.enableButtonToToggleWipStatusCheckbox.required = true;
-            } else {
-                this.displaySourceAndTargetBranchesCheckbox.required = false;
-                this.enableButtonToCopyMrInfoCheckbox.required = false;
-                this.enableJiraTicketLinkCheckbox.required = false;
-                this.enableButtonToToggleWipStatusCheckbox.required = false;
-            }
         }
 
         /**
