@@ -23,6 +23,8 @@
             this.optionsForm = document.querySelector('form');
             this.submitButtonInOptionsForm = this.optionsForm.querySelector('button[type="submit"]');
 
+            this.displaySourceTargetBranchesOptionsDiv = document.querySelector('div#display-source-target-branches-options');
+            this.displaySourceAndTargetBranchesCheckbox = document.querySelector('input#display_source_and_target_branches');
             this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox = document.querySelector('input#enable_buttons_to_copy_source_and_target_branches_name');
 
             this.copyMrInfoOptionsDiv = document.querySelector('div#copy-mr-info-options');
@@ -44,6 +46,9 @@
             let self = this;
 
             this.preferencesManager.getAll(function(preferences) {
+                self.displaySourceAndTargetBranchesCheckbox.checked = preferences.display_source_and_target_branches;
+                self.displaySourceAndTargetBranchesCheckbox.dispatchEvent(new CustomEvent('change'));
+
                 self.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked = preferences.enable_buttons_to_copy_source_and_target_branches_name;
 
                 self.enableButtonToCopyMrInfoCheckbox.checked = preferences.enable_button_to_copy_mr_info;
@@ -61,6 +66,7 @@
                 }).checked = true;
 
                 self.enableButtonToToggleWipStatusCheckbox.checked = preferences.enable_button_to_toggle_wip_status;
+                self.enableButtonToToggleWipStatusCheckbox.dispatchEvent(new CustomEvent('change'));
             });
         }
 
@@ -73,6 +79,10 @@
             this.optionsForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
+                if (self.hasUserDisabledAllFeatures()) {
+                    return false;
+                }
+
                 if (!self.initializeVisualFeedbackOnSubmitButton()) {
                     return false;
                 }
@@ -80,9 +90,17 @@
                 self.saveOptionsToStorage();
             });
 
+            this.displaySourceAndTargetBranchesCheckbox.addEventListener('change', function() {
+                self.displaySourceTargetBranchesOptionsDiv.classList.toggle('is-hidden', !this.checked);
+
+                self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
+            });
+
             this.enableButtonToCopyMrInfoCheckbox.addEventListener('change', function() {
                 self.copyMrInfoOptionsDiv.classList.toggle('is-hidden', !this.checked);
                 self.copyMrInfoFormatTextarea.toggleAttribute('required', this.checked);
+
+                self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
 
             this.enableJiraTicketLinkCheckbox.addEventListener('change', function() {
@@ -92,6 +110,12 @@
                 self.jiraTicketLinkLabelTypeRadioButtons.forEach(function(el) {
                     el.toggleAttribute('required', this.checked);
                 }, this);
+
+                self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
+            });
+
+            this.enableButtonToToggleWipStatusCheckbox.addEventListener('change', function() {
+                self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
         }
 
@@ -107,6 +131,7 @@
 
             this.preferencesManager.setAll(
                 {
+                    display_source_and_target_branches: this.displaySourceAndTargetBranchesCheckbox.checked,
                     enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked,
                     enable_button_to_copy_mr_info: this.enableButtonToCopyMrInfoCheckbox.checked,
                     copy_mr_info_format: this.copyMrInfoFormatTextarea.value,
@@ -122,6 +147,33 @@
                     self.revertVisualFeedbackOnSubmitButton();
                 }
             );
+        }
+
+        /**
+         * Force the user to enable at least one feature if he disabled all the features of
+         * the extension (which is useless).
+         */
+        forceUserToEnableAtLeastOneFeatureIfNecessarily() {
+            if (this.hasUserDisabledAllFeatures() && !this.submitButtonInOptionsForm.disabled) {
+                this.submitButtonInOptionsForm.disabled = true;
+                this.submitButtonInOptionsForm.dataset.originalTextContent = this.submitButtonInOptionsForm.textContent;
+                this.submitButtonInOptionsForm.textContent = '⚠️ Please enable at least one feature';
+            } else if (this.submitButtonInOptionsForm.disabled) {
+                this.submitButtonInOptionsForm.disabled = false;
+                this.submitButtonInOptionsForm.textContent = this.submitButtonInOptionsForm.dataset.originalTextContent;
+
+                delete this.submitButtonInOptionsForm.dataset.originalTextContent;
+            }
+        }
+
+        /**
+         * Determine if the user has disabled all the features of the extension (which is useless).
+         */
+        hasUserDisabledAllFeatures() {
+            return !this.displaySourceAndTargetBranchesCheckbox.checked
+                && !this.enableButtonToCopyMrInfoCheckbox.checked
+                && !this.enableJiraTicketLinkCheckbox.checked
+                && !this.enableButtonToToggleWipStatusCheckbox.checked;
         }
 
         /**

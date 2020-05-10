@@ -196,7 +196,10 @@
             this.apiClient.getProjectMergeRequests(
                 function() {
                     if (this.status == 200) {
-                        self.removeExistingTargetBranchNodes();
+                        if (self.preferences.display_source_and_target_branches) {
+                            self.removeExistingTargetBranchNodes();
+                        }
+
                         self.updateMergeRequestsNodes(this.response);
 
                         if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
@@ -346,38 +349,41 @@
                 // -----------------------------------------------
                 // Source and target branches info
 
-                // Source branch name
-                let newInfoLineToInject = '<div class="issuable-info">' +
-                    '<span class="project-ref-path has-tooltip" title="Source branch">' +
-                        '<a class="ref-name" href="' + this.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
-                    '</span>';
+                if (this.preferences.display_source_and_target_branches) {
+                    let newInfoLineToInject = '<div class="issuable-info">';
 
-                // Copy source branch name button
-                if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
-                    newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="source">' +
-                        '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
-                    '</button>';
+                    // Source branch name
+                    newInfoLineToInject += '<span class="project-ref-path has-tooltip" title="Source branch">' +
+                            '<a class="ref-name" href="' + this.baseProjectUrl + '/-/commits/' + mergeRequest.source_branch + '">' + mergeRequest.source_branch + '</a>' +
+                        '</span>';
+
+                    // Copy source branch name button
+                    if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                        newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="source">' +
+                            '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                        '</button>';
+                    }
+
+                    // Target branch name
+                    newInfoLineToInject += ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
+                        '<span class="project-ref-path has-tooltip" title="Target branch">' +
+                            '<a class="ref-name" href="' + this.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
+                        '</span>';
+
+                    // Copy target branch name button
+                    if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                        newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="target">' +
+                            '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                        '</button>';
+                    }
+
+                    newInfoLineToInject += '</div>';
+
+                    this.parseHtmlAndAppend(
+                        mergeRequestNode.querySelector('.issuable-main-info'),
+                        newInfoLineToInject
+                    );
                 }
-
-                // Target branch name
-                newInfoLineToInject += ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
-                    '<span class="project-ref-path has-tooltip" title="Target branch">' +
-                        '<a class="ref-name" href="' + this.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
-                    '</span>';
-
-                // Copy target branch name button
-                if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
-                    newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="target">' +
-                        '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
-                    '</button>';
-                }
-
-                newInfoLineToInject += '</div>';
-
-                this.parseHtmlAndAppend(
-                    mergeRequestNode.querySelector('.issuable-main-info'),
-                    newInfoLineToInject
-                );
             }, this);
         }
 
