@@ -40,18 +40,6 @@ You can also install this add-on manually by using one of the ZIP files on the [
 
   - Logo: [GitLab](https://about.gitlab.com/press/press-kit/#logos) and [Octicons](https://primer.style/octicons/git-pull-request) (MIT License)
 
-## Roadmap
-
-👉 = current version
-
-  - **1.0** - Initial release (display Merge Request source and target branches name)
-  - **1.1** - Copy source and target branches name
-  - **1.2** - Copy Merge Request information (intended for sharing on e.g instant messaging softwares)
-  - **1.3** - Direct Jira ticket link (automatic detection of ticket ID in source branch name or Merge Request title)
-  - **1.4** - WIP toggle button
-  - 👉 **1.5** - New option: enable display Merge Request source and target branches
-  - **1.6** - Automatic update of pipeline status and conflict icons
-
 ## FAQ
 
   - Why is there still clickable links on deleted source/target branches name?
