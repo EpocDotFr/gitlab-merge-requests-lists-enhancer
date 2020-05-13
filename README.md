@@ -50,6 +50,10 @@ Due to a technical GitLab limitation, the extension has no reliable way to deter
 
 It would be great, however the extension has no reliable way to do that due to a technical GitLab limitation.
 
+## Changelog
+
+See [here](https://github.com/EpocDotFr/gitlab-merge-requests-lists-enhancer/releases).
+
 ## License
 
 [DBAD 1.1](LICENSE.md)
