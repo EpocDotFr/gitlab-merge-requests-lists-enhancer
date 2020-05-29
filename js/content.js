@@ -12,35 +12,26 @@
         }
 
         /**
-         * Creates an `URL` object representing the full URL to the given GitLab API endpoint.
+         * Returns the full URL to the given GitLab API endpoint.
          */
         createEndpointUrl(endpoint, queryStringParameters = null) {
-            let url = new URL(this.baseUrl + endpoint);
+            let endpointUrl = new URL(this.baseUrl + endpoint);
 
             if (queryStringParameters) {
                 queryStringParameters.forEach(function(queryStringParameter) {
-                    url.searchParams.append(queryStringParameter[0], queryStringParameter[1]);
+                    endpointUrl.searchParams.append(queryStringParameter[0], queryStringParameter[1]);
                 });
             }
 
-            return url;
+            return endpointUrl.toString();
         }
 
         /**
          * Sends an HTTP request to the GitLab API.
          */
-        sendRequest(callback, method, endpoint, queryStringParameters = null, data = null) {
-            let xhr = new XMLHttpRequest();
-
-            xhr.responseType = 'json';
-
-            xhr.onload = callback;
-
-            xhr.onerror = function() {
-                alert('Error while communicating with GitLab.');
-            };
-
-            xhr.open(method, this.createEndpointUrl(endpoint, queryStringParameters));
+        sendRequest(method, endpoint, queryStringParameters = null, data = null) {
+            let headers = {};
+            let body = null;
 
             if (['post', 'put', 'patch'].includes(method.toLowerCase())) {
                 if (!this.csrfToken) {
@@ -49,28 +40,46 @@
                     return;
                 }
 
-                xhr.setRequestHeader('X-CSRF-Token', this.csrfToken);
+                headers['X-CSRF-Token'] = this.csrfToken;
             }
 
             if (data) {
-                xhr.setRequestHeader('Content-Type', 'application/json');
+                headers['Content-Type'] = 'application/json';
 
-                data = JSON.stringify(data);
+                body = JSON.stringify(data);
             }
 
-            xhr.send(data);
+            let fetchPromise = fetch(this.createEndpointUrl(endpoint, queryStringParameters), {
+                method: method,
+                headers: headers,
+                body: body,
+                credentials: 'same-origin'
+            }).then(function(response) {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return Promise.reject(response);
+                }
+            });
+
+            fetchPromise.catch(function(err) {
+                console.error('Got error from GitLab:', err);
+
+                alert('Got error from GitLab, check console for more information.');
+            });
+
+            return fetchPromise;
         }
 
         /**
          * Fetch details about the given Merge Requests IDs in the given project ID.
          */
-        getProjectMergeRequests(callback, projectId, mergeRequestIds) {
+        getProjectMergeRequests(projectId, mergeRequestIds) {
             let queryStringParameters = mergeRequestIds.map(function(mergeRequestId) {
                 return ['iids[]', mergeRequestId];
             });
 
-            this.sendRequest(
-                callback,
+            return this.sendRequest(
                 'GET',
                 'projects/' + projectId + '/merge_requests',
                 queryStringParameters
@@ -80,7 +89,7 @@
         /**
          * Update the given Merge Request Id in the given project ID.
          */
-        updateProjectMergeRequest(callback, projectId, mergeRequestId, data) {
+        updateProjectMergeRequest(projectId, mergeRequestId, data) {
             let dataToSend = {
                 id: parseInt(projectId, 10),
                 merge_request_iid: parseInt(mergeRequestId, 10)
@@ -88,8 +97,7 @@
 
             Object.assign(dataToSend, data);
 
-            this.sendRequest(
-                callback,
+            return this.sendRequest(
                 'PUT',
                 'projects/' + projectId + '/merge_requests/' + mergeRequestId,
                 null,
@@ -194,34 +202,27 @@
             let self = this;
 
             this.apiClient.getProjectMergeRequests(
-                function() {
-                    if (this.status == 200) {
-                        if (self.preferences.display_source_and_target_branches) {
-                            self.removeExistingTargetBranchNodes();
-                        }
-
-                        self.updateMergeRequestsNodes(this.response);
-
-                        if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
-                            self.attachClickEventToCopyBranchNameButtons();
-                        }
-
-                        if (self.preferences.enable_button_to_copy_mr_info) {
-                            self.attachClickEventToCopyMergeRequestInfoButtons();
-                        }
-
-                        if (self.userAuthenticated && self.preferences.enable_button_to_toggle_wip_status) {
-                            self.attachClickEventToToggleWipStatusButtons();
-                        }
-                    } else {
-                        console.error('Got error from GitLab:', this.status, this.response);
-
-                        alert('Got error from GitLab, check console for more information.');
-                    }
-                },
                 this.currentProjectId,
                 mergeRequestIds
-            );
+            ).then(function(responseData) {
+                if (self.preferences.display_source_and_target_branches) {
+                    self.removeExistingTargetBranchNodes();
+                }
+
+                self.updateMergeRequestsNodes(responseData);
+
+                if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
+                    self.attachClickEventToCopyBranchNameButtons();
+                }
+
+                if (self.preferences.enable_button_to_copy_mr_info) {
+                    self.attachClickEventToCopyMergeRequestInfoButtons();
+                }
+
+                if (self.userAuthenticated && self.preferences.enable_button_to_toggle_wip_status) {
+                    self.attachClickEventToToggleWipStatusButtons();
+                }
+            });
         }
 
         /**
@@ -525,28 +526,21 @@
             }
 
             this.apiClient.updateProjectMergeRequest(
-                function() {
-                    if (this.status == 200) {
-                        mergeRequestNode.dataset.isWip = this.response.work_in_progress;
-                        mergeRequestNode.dataset.title = this.response.title;
-
-                        mergeRequestNode.querySelector('.merge-request-title-text a').textContent = this.response.title;
-                    } else {
-                        console.error('Got error from GitLab:', this.status, this.response);
-
-                        alert('Got error from GitLab, check console for more information.');
-                    }
-
-                    toggleButton.disabled = false;
-                    toggleButton.firstChild.classList.add('fa-wrench');
-                    toggleButton.firstChild.classList.remove('fa-spinner', 'fa-spin');
-                },
                 this.currentProjectId,
                 mergeRequestNode.dataset.iid,
                 {
                     title: newTitle
                 }
-            );
+            ).then(function(responseData) {
+                mergeRequestNode.dataset.isWip = responseData.work_in_progress;
+                mergeRequestNode.dataset.title = responseData.title;
+
+                mergeRequestNode.querySelector('.merge-request-title-text a').textContent = responseData.title;
+            }).finally(function() {
+                toggleButton.disabled = false;
+                toggleButton.firstChild.classList.add('fa-wrench');
+                toggleButton.firstChild.classList.remove('fa-spinner', 'fa-spin');
+            });
         }
 
         /**
