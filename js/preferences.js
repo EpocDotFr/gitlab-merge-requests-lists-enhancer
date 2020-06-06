@@ -13,7 +13,8 @@
                 enable_jira_ticket_link: false,
                 base_jira_url: '',
                 jira_ticket_link_label_type: 'ticket_id',
-                enable_button_to_toggle_wip_status: true
+                enable_button_to_toggle_wip_status: true,
+                automatically_update_pipeline_status_icons: false
             };
         }
 
