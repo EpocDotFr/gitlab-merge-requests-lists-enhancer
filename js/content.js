@@ -222,6 +222,12 @@
                 if (self.userAuthenticated && self.preferences.enable_button_to_toggle_wip_status) {
                     self.attachClickEventToToggleWipStatusButtons();
                 }
+
+                if (self.preferences.automatically_update_pipeline_status_icons) {
+                    setTimeout(function() {
+                        // TODO Set timeout to call Gitlab API again and update icons
+                    }, 10000);
+                }
             });
         }
 
