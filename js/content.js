@@ -201,10 +201,7 @@
         fetchMergeRequestsDetailsThenUpdateUI(mergeRequestIds) {
             let self = this;
 
-            this.apiClient.getProjectMergeRequests(
-                this.currentProjectId,
-                mergeRequestIds
-            ).then(function(responseData) {
+            this.fetchMergeRequestsDetails(mergeRequestIds).then(function(responseData) {
                 if (self.preferences.display_source_and_target_branches) {
                     self.removeExistingTargetBranchNodes();
                 }
@@ -224,11 +221,20 @@
                 }
 
                 if (self.preferences.automatically_update_pipeline_status_icons) {
-                    setTimeout(function() {
-                        // TODO Set timeout to call Gitlab API again and update icons
-                    }, 10000);
+                    self.schedulePipelineStatusIconsUpdate();
                 }
             });
+        }
+
+        /**
+         * Performs an HTTP GET request to the GitLab API to retrieve details about Merge Requests that are
+         * currently displayed.
+         */
+        fetchMergeRequestsDetails(mergeRequestIds) {
+            return this.apiClient.getProjectMergeRequests(
+                this.currentProjectId,
+                mergeRequestIds
+            );
         }
 
         /**
@@ -571,6 +577,30 @@
             return this.preferences.copy_mr_info_format.replace(placeholdersReplaceRegex, function(_, placeholder) {
               return placeholders[placeholder];
             }).trim();
+        }
+
+        /*
+         * Schedule a pipeline status icons update to be performed in 10 seconds.
+         */
+        schedulePipelineStatusIconsUpdate() {
+            let self = this;
+
+            setTimeout(function() {
+                self.updatePipelineStatusIcons();
+            }, 10000);
+        }
+
+        /**
+         * Actually update pipeline status icons by invoking the GitLab API.
+         */
+        updatePipelineStatusIcons() {
+            let self = this;
+
+            this.fetchMergeRequestsDetails(mergeRequestIds).then(function(responseData) {
+                // TODO actually update icons
+
+                self.schedulePipelineStatusIconsUpdate();
+            });
         }
     }
 
