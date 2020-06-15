@@ -16,8 +16,10 @@ def create_manifest_file(target):
             }
         }
     elif target == 'chrome':
-        data['minimum_chrome_version'] = '66'
         data['options_ui']['chrome_style'] = True
+        data['minimum_chrome_version'] = '66'
+
+    data['version'] = settings.VERSIONS[target]
 
     with open('manifest.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2)
@@ -53,7 +55,7 @@ def build(target):
 def run():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('action', choices=['build', 'switch'])
-    arg_parser.add_argument('target', choices=['firefox', 'chrome'])
+    arg_parser.add_argument('target', choices=['firefox', 'chrome', 'opera', 'edge'])
 
     args = arg_parser.parse_args()
 
