@@ -301,7 +301,7 @@
          */
         updateMergeRequestsNodes(mergeRequests) {
             mergeRequests.forEach(function(mergeRequest) {
-                let mergeRequestNode = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
+                let mergeRequestNode = this.getMergeRequestNode(mergeRequest.id);
 
                 this.setDataAttributesToMergeRequestNode(mergeRequestNode, mergeRequest);
 
@@ -407,6 +407,13 @@
                     );
                 }
             }, this);
+        }
+
+        /**
+         * Return the DOM node containing a Merge Request row.
+         */
+        getMergeRequestNode(mergeRequestId) {
+            return document.querySelector('.mr-list .merge-request[data-id="' + mergeRequestId + '"]');
         }
 
         /**
@@ -605,8 +612,12 @@
         updatePipelineStatusIcons() {
             let self = this;
 
-            this.fetchMergeRequestsDetails(this.currentMergeRequestIds).then(function(responseData) {
-                // TODO Actually update icons
+            this.fetchMergeRequestsDetails(this.currentMergeRequestIds).then(function(mergeRequests) {
+                mergeRequests.forEach(function(mergeRequest) {
+                    let mergeRequestNode = self.getMergeRequestNode(mergeRequest.id);
+
+                    // TODO
+                });
 
                 self.schedulePipelineStatusIconsUpdate();
             });
