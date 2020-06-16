@@ -132,16 +132,18 @@
             this.baseUrl = location.protocol + '//' + location.host;
             this.baseApiUrl = this.baseUrl + '/api/v4/';
             this.userAuthenticated = this.isUserAuthenticated();
+            this.pipelineFeatureEnabled = this.isPipelineFeatureEnabled();
             this.apiClient = new GitLabApiClient(this.baseApiUrl, this.getCsrfToken());
 
-            let currentMergeRequestIds = this.getCurrentMergeRequestIds();
+            this.currentMergeRequestIds = this.getCurrentMergeRequestIds();
+
             let preferencesManager = new globals.Gmrle.PreferencesManager();
 
             let self = this;
 
             preferencesManager.getAll(function(preferences) {
                 self.preferences = preferences;
-                self.fetchMergeRequestsDetailsThenUpdateUI(currentMergeRequestIds);
+                self.fetchMergeRequestsDetailsThenUpdateUI(self.currentMergeRequestIds);
             });
         }
 
@@ -184,6 +186,13 @@
         }
 
         /**
+         * Determines if the project do uses the Gitlab "pipeline" feature.
+         */
+        isPipelineFeatureEnabled() {
+            return document.querySelector('.issuable-pipeline-status') ? true : false;
+        }
+
+        /**
          * Gets all Merge Requests IDs that are currently displayed.
          */
         getCurrentMergeRequestIds() {
@@ -220,7 +229,7 @@
                     self.attachClickEventToToggleWipStatusButtons();
                 }
 
-                if (self.preferences.automatically_update_pipeline_status_icons) {
+                if (self.pipelineFeatureEnabled && self.preferences.automatically_update_pipeline_status_icons) {
                     self.schedulePipelineStatusIconsUpdate();
                 }
             });
@@ -596,8 +605,8 @@
         updatePipelineStatusIcons() {
             let self = this;
 
-            this.fetchMergeRequestsDetails(mergeRequestIds).then(function(responseData) {
-                // TODO actually update icons
+            this.fetchMergeRequestsDetails(this.currentMergeRequestIds).then(function(responseData) {
+                // TODO Actually update icons
 
                 self.schedulePipelineStatusIconsUpdate();
             });
