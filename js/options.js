@@ -37,8 +37,6 @@
             this.jiraTicketLinkLabelTypeRadioButtons = Array.from(document.querySelectorAll('input[name="jira_ticket_link_label_type"]'));
 
             this.enableButtonToToggleWipStatusCheckbox = document.querySelector('input#enable_button_to_toggle_wip_status');
-
-            this.automaticallyUpdatePipelineStatusIconsCheckbox = document.querySelector('input#automatically_update_pipeline_status_icons');
         }
 
         /**
@@ -69,9 +67,6 @@
 
                 self.enableButtonToToggleWipStatusCheckbox.checked = preferences.enable_button_to_toggle_wip_status;
                 self.enableButtonToToggleWipStatusCheckbox.dispatchEvent(new CustomEvent('change'));
-
-                self.automaticallyUpdatePipelineStatusIconsCheckbox.checked = preferences.automatically_update_pipeline_status_icons;
-                self.automaticallyUpdatePipelineStatusIconsCheckbox.dispatchEvent(new CustomEvent('change'));
             });
         }
 
@@ -122,10 +117,6 @@
             this.enableButtonToToggleWipStatusCheckbox.addEventListener('change', function() {
                 self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
-
-            this.automaticallyUpdatePipelineStatusIconsCheckbox.addEventListener('change', function() {
-                self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
-            });
         }
 
         /**
@@ -147,8 +138,7 @@
                     enable_jira_ticket_link: this.enableJiraTicketLinkCheckbox.checked,
                     base_jira_url: this.baseJiraUrlInput.value,
                     jira_ticket_link_label_type: jira_ticket_link_label_type,
-                    enable_button_to_toggle_wip_status: this.enableButtonToToggleWipStatusCheckbox.checked,
-                    automatically_update_pipeline_status_icons: this.automaticallyUpdatePipelineStatusIconsCheckbox.checked
+                    enable_button_to_toggle_wip_status: this.enableButtonToToggleWipStatusCheckbox.checked
                 },
                 function() {
                     self.setSuccessfulVisualFeedbackOnSubmitButton();
@@ -183,8 +173,7 @@
             return !this.displaySourceAndTargetBranchesCheckbox.checked
                 && !this.enableButtonToCopyMrInfoCheckbox.checked
                 && !this.enableJiraTicketLinkCheckbox.checked
-                && !this.enableButtonToToggleWipStatusCheckbox.checked
-                && !this.automaticallyUpdatePipelineStatusIconsCheckbox.checked;
+                && !this.enableButtonToToggleWipStatusCheckbox.checked;
         }
 
         /**

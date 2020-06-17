@@ -132,7 +132,6 @@
             this.baseUrl = location.protocol + '//' + location.host;
             this.baseApiUrl = this.baseUrl + '/api/v4/';
             this.userAuthenticated = this.isUserAuthenticated();
-            this.pipelineFeatureEnabled = this.isPipelineFeatureEnabled();
             this.apiClient = new GitLabApiClient(this.baseApiUrl, this.getCsrfToken());
 
             this.currentMergeRequestIds = this.getCurrentMergeRequestIds();
@@ -186,13 +185,6 @@
         }
 
         /**
-         * Determines if the project do uses the Gitlab "pipeline" feature.
-         */
-        isPipelineFeatureEnabled() {
-            return document.querySelector('.issuable-pipeline-status') ? true : false;
-        }
-
-        /**
          * Gets all Merge Requests IDs that are currently displayed.
          */
         getCurrentMergeRequestIds() {
@@ -210,7 +202,10 @@
         fetchMergeRequestsDetailsThenUpdateUI(mergeRequestIds) {
             let self = this;
 
-            this.fetchMergeRequestsDetails(mergeRequestIds).then(function(responseData) {
+            this.apiClient.getProjectMergeRequests(
+                this.currentProjectId,
+                mergeRequestIds
+            ).then(function(responseData) {
                 if (self.preferences.display_source_and_target_branches) {
                     self.removeExistingTargetBranchNodes();
                 }
@@ -228,22 +223,7 @@
                 if (self.userAuthenticated && self.preferences.enable_button_to_toggle_wip_status) {
                     self.attachClickEventToToggleWipStatusButtons();
                 }
-
-                if (self.pipelineFeatureEnabled && self.preferences.automatically_update_pipeline_status_icons) {
-                    self.schedulePipelineStatusIconsUpdate();
-                }
             });
-        }
-
-        /**
-         * Performs an HTTP GET request to the GitLab API to retrieve details about Merge Requests that are
-         * currently displayed.
-         */
-        fetchMergeRequestsDetails(mergeRequestIds) {
-            return this.apiClient.getProjectMergeRequests(
-                this.currentProjectId,
-                mergeRequestIds
-            );
         }
 
         /**
@@ -593,34 +573,6 @@
             return this.preferences.copy_mr_info_format.replace(placeholdersReplaceRegex, function(_, placeholder) {
               return placeholders[placeholder];
             }).trim();
-        }
-
-        /*
-         * Schedule a pipeline status icons update to be performed in 10 seconds.
-         */
-        schedulePipelineStatusIconsUpdate() {
-            let self = this;
-
-            setTimeout(function() {
-                self.updatePipelineStatusIcons();
-            }, 10000);
-        }
-
-        /**
-         * Actually update pipeline status icons by invoking the GitLab API.
-         */
-        updatePipelineStatusIcons() {
-            let self = this;
-
-            this.fetchMergeRequestsDetails(this.currentMergeRequestIds).then(function(mergeRequests) {
-                mergeRequests.forEach(function(mergeRequest) {
-                    let mergeRequestNode = self.getMergeRequestNode(mergeRequest.id);
-
-                    // TODO
-                });
-
-                self.schedulePipelineStatusIconsUpdate();
-            });
         }
     }
 
