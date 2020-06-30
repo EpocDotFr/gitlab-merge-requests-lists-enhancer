@@ -19,8 +19,6 @@ def create_manifest_file(target):
         data['options_ui']['chrome_style'] = True
         data['minimum_chrome_version'] = '66'
 
-    data['version'] = settings.VERSIONS[target]
-
     with open('manifest.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2)
 
