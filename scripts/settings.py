@@ -34,3 +34,5 @@ FILES_AND_DIRECTORIES_TO_IGNORE_WHEN_BUILDING = [
     'README.md',
     'screenshot.png',
 ]
+
+EXTENSION_NAME_SLUG = 'gitlab_merge_requests_lists_enhancer'

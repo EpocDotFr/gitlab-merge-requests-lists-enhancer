@@ -2,6 +2,7 @@ import subprocess
 import argparse
 import settings
 import json
+import os
 
 
 def create_manifest_file(target):
@@ -28,7 +29,7 @@ def switch(target):
 
     create_manifest_file(target)
 
-    print('Done')
+    print('  Done')
 
 
 def build(target):
@@ -45,9 +46,22 @@ def build(target):
 
     arguments.extend(settings.FILES_AND_DIRECTORIES_TO_IGNORE_WHEN_BUILDING)
 
-    subprocess.run(arguments, shell=True)
+    try:
+        subprocess.run(arguments, shell=True, check=True)
 
-    print('Done')
+        slug = settings.EXTENSION_NAME_SLUG
+        version = settings.MANIFEST_FILE['version']
+
+        os.replace(
+            'web-ext-artifacts/{slug}-{version}.zip'.format(slug=slug, version=version),
+            'web-ext-artifacts/{slug}-{version}_{target}.zip'.format(slug=slug, version=version, target=target)
+        )
+
+        print('  Done')
+    except subprocess.CalledProcessError as cpe:
+        print('Build failed for ' + target + ':')
+
+        raise cpe
 
 
 def run():
