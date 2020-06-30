@@ -182,10 +182,14 @@
         getCurrentBrowserName() {
             let ua = navigator.userAgent;
 
-            if (ua.includes('Firefox') && !ua.includes('Seamonkey')) {
+            if (ua.includes('Firefox/') && !ua.includes('Seamonkey/')) {
                 return 'firefox';
-            } else if (ua.includes('Chrome') && !ua.includes('Chromium')) {
+            } else if (ua.includes('Chrome/') && !ua.includes('Chromium/')) {
                 return 'chrome';
+            } else if (ua.includes('Edg/')) {
+                return 'edge';
+            } else if (ua.includes('OPR/')) {
+                return 'opera';
             }
 
             return null;

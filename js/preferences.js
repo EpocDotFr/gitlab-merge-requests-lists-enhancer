@@ -21,9 +21,9 @@
          * This class holds all the logic related to user preferences persistance.
          */
         constructor() {
-            if (globals.browser) { // Firefox uses `browser`, Chrome uses `chrome`
-                this.getAll = this.getAllFirefox;
-                this.setAll = this.setAllFirefox;
+            if (globals.browser) { // Firefox and Edge uses `browser`, Chrome and Opera uses `chrome`
+                this.getAll = this.getAllBrowser;
+                this.setAll = this.setAllBrowser;
             } else if (globals.chrome) {
                 this.getAll = this.getAllChrome;
                 this.setAll = this.setAllChrome;
@@ -35,9 +35,9 @@
         /**
          * Get all the user's preferences.
          *
-         * Used as `getAll` if the current browser is Firefox.
+         * Used as `getAll` if the current browser is Firefox or Edge.
          */
-        getAllFirefox(successCallback) {
+        getAllBrowser(successCallback) {
             browser.storage.local.get(this.defaults).then(successCallback, function() {
                 alert('Error retrieving extension preferences.');
             });
@@ -46,9 +46,9 @@
         /**
          * Save all the user's preferences.
          *
-         * Used as `setAll` if the current browser is Firefox.
+         * Used as `setAll` if the current browser is Firefox or Edge.
          */
-        setAllFirefox(preferences, successCallback, errorCallback) {
+        setAllBrowser(preferences, successCallback, errorCallback) {
             browser.storage.local.set(preferences).then(successCallback, function() {
                 errorCallback();
 
@@ -59,7 +59,7 @@
         /**
          * Get all the user's preferences.
          *
-         * Used as `getAll` if the current browser is Chrome.
+         * Used as `getAll` if the current browser is Chrome or Opera.
          */
         getAllChrome(successCallback) {
             chrome.storage.local.get(this.defaults, function(preferences) {
@@ -76,7 +76,7 @@
         /**
          * Save all the user's preferences.
          *
-         * Used as `setAll` if the current browser is Chrome.
+         * Used as `setAll` if the current browser is Chrome or Opera.
          */
         setAllChrome(preferences, successCallback, errorCallback) {
             chrome.storage.local.set(preferences, function() {

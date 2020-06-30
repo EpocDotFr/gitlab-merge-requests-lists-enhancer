@@ -50,6 +50,10 @@ Due to a technical GitLab limitation, the extension has no reliable way to deter
 
 It would be great, however the extension has no reliable way to do that due to a technical GitLab limitation.
 
+  - Pipeline status icons aren't being automatically updated on Merge Requests lists (it is on other pages), can you add this feature?
+
+That was the initial idea for the 1.6 release, however it's not possible due to a technical GitLab limitation.
+
 ## Changelog
 
 See [here](https://github.com/EpocDotFr/gitlab-merge-requests-lists-enhancer/releases).
