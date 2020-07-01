@@ -132,6 +132,7 @@
             this.baseUrl = location.protocol + '//' + location.host;
             this.baseApiUrl = this.baseUrl + '/api/v4/';
             this.userAuthenticated = this.isUserAuthenticated();
+            this.pipelineFeatureEnabled = this.isPipelineFeatureEnabled();
             this.apiClient = new GitLabApiClient(this.baseApiUrl, this.getCsrfToken());
 
             this.currentMergeRequestIds = this.getCurrentMergeRequestIds();
@@ -182,6 +183,13 @@
          */
         isUserAuthenticated() {
             return document.querySelector('.navbar-nav .header-user') ? true : false;
+        }
+
+        /**
+         * Determines if the project do uses the Gitlab "pipeline" feature.
+         */
+        isPipelineFeatureEnabled() {
+            return document.querySelector('.nav-sidebar .shortcuts-pipelines') ? true : false;
         }
 
         /**
