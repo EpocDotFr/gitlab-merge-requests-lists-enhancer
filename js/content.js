@@ -231,6 +231,10 @@
                 if (self.userAuthenticated && self.preferences.enable_button_to_toggle_wip_status) {
                     self.attachClickEventToToggleWipStatusButtons();
                 }
+
+                if (self.pipelineFeatureEnabled && self.preferences.enable_menu_to_hide_mrs_based_on_pipeline_status) {
+                    // TODO
+                }
             });
         }
 
