@@ -233,7 +233,7 @@
                 }
 
                 if (self.pipelineFeatureEnabled && self.preferences.enable_menu_to_hide_mrs_based_on_pipeline_status) {
-                    // TODO
+                    self.addHideMrsByPipelineStatusMenu();
                 }
             });
         }
@@ -578,6 +578,27 @@
             return this.preferences.copy_mr_info_format.replace(placeholdersReplaceRegex, function(_, placeholder) {
               return placeholders[placeholder];
             }).trim();
+        }
+
+        addHideMrsByPipelineStatusMenu() {
+            let menu = '<div class="filter-dropdown-container d-flex flex-column flex-md-row">' +
+               '<div class="dropdown inline prepend-left-10">' +
+                    '<button class="btn btn-default dropdown-menu-toggle" data-display="static" data-toggle="dropdown" type="button">' +
+                        'Pipeline status <i aria-hidden="true" class="fa fa-chevron-down"></i>' +
+                    '</button>' +
+                    '<ul class="dropdown-menu dropdown-menu-right dropdown-menu-selectable">' +
+                       '<li>' +
+                          '<a class="" href="#">Passed</a>' +
+                          '<a class="is-active" href="#">Failed</a>' +
+                       '</li>' +
+                    '</ul>' +
+               '</div>' +
+            '</div>';
+
+            this.parseHtmlAndAppend(
+                document.querySelector('.filtered-search-block'),
+                menu
+            );
         }
     }
 
