@@ -2,6 +2,8 @@
 
 A browser extension that enhance all Merge Requests lists on any instance of Gitlab and GitLab.com.
 
+![Mozilla Add-on](https://img.shields.io/amo/v/gitlab-mrs-lists-enhancer) ![Chrome Web Store](https://img.shields.io/chrome-web-store/v/emiefdjcbfjkaofipmdcflcddcchmdkf)
+
 <p align="center">
   <img src="screenshot.png">
 </p>
