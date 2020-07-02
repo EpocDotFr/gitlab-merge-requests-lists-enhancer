@@ -580,6 +580,9 @@
             }).trim();
         }
 
+        /**
+         * Add the menu allowing to hide Merge Requests by pipeline statuses.
+         */
         addHideMrsByPipelineStatusMenu() {
             let menu = '<div class="filter-dropdown-container d-flex flex-column flex-md-row">' +
                '<div class="dropdown inline prepend-left-10">' +
