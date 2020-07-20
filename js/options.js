@@ -38,7 +38,7 @@
 
             this.enableButtonToToggleWipStatusCheckbox = document.querySelector('input#enable_button_to_toggle_wip_status');
 
-            this.enableMenuToHideMrsBasedOnPipelineStatus = document.querySelector('input#enable_menu_to_hide_mrs_based_on_pipeline_status');
+            this.enableMenuToHideMrsBasedOnPipelineStatusCheckbox = document.querySelector('input#enable_menu_to_hide_mrs_based_on_pipeline_status');
         }
 
         /**
@@ -70,8 +70,8 @@
                 self.enableButtonToToggleWipStatusCheckbox.checked = preferences.enable_button_to_toggle_wip_status;
                 self.enableButtonToToggleWipStatusCheckbox.dispatchEvent(new CustomEvent('change'));
 
-                self.enableMenuToHideMrsBasedOnPipelineStatus.checked = preferences.enable_menu_to_hide_mrs_based_on_pipeline_status;
-                self.enableMenuToHideMrsBasedOnPipelineStatus.dispatchEvent(new CustomEvent('change'));
+                self.enableMenuToHideMrsBasedOnPipelineStatusCheckbox.checked = preferences.enable_menu_to_hide_mrs_based_on_pipeline_status;
+                self.enableMenuToHideMrsBasedOnPipelineStatusCheckbox.dispatchEvent(new CustomEvent('change'));
             });
         }
 
@@ -123,7 +123,7 @@
                 self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
 
-            this.enableMenuToHideMrsBasedOnPipelineStatus.addEventListener('change', function() {
+            this.enableMenuToHideMrsBasedOnPipelineStatusCheckbox.addEventListener('change', function() {
                 self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
         }
@@ -148,7 +148,7 @@
                     base_jira_url: this.baseJiraUrlInput.value,
                     jira_ticket_link_label_type: jira_ticket_link_label_type,
                     enable_button_to_toggle_wip_status: this.enableButtonToToggleWipStatusCheckbox.checked,
-                    enable_menu_to_hide_mrs_based_on_pipeline_status: this.enableMenuToHideMrsBasedOnPipelineStatus.checked
+                    enable_menu_to_hide_mrs_based_on_pipeline_status: this.enableMenuToHideMrsBasedOnPipelineStatusCheckbox.checked
                 },
                 function() {
                     self.setSuccessfulVisualFeedbackOnSubmitButton();
@@ -184,7 +184,7 @@
                 && !this.enableButtonToCopyMrInfoCheckbox.checked
                 && !this.enableJiraTicketLinkCheckbox.checked
                 && !this.enableButtonToToggleWipStatusCheckbox.checked
-                && !this.enableMenuToHideMrsBasedOnPipelineStatus.checked;
+                && !this.enableMenuToHideMrsBasedOnPipelineStatusCheckbox.checked;
         }
 
         /**
