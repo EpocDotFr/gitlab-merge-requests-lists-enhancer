@@ -580,6 +580,13 @@
             }).trim();
         }
 
+        /**
+         * Generate the HTML code corresponding to an SVG icon.
+         */
+        buildSpriteIcon(iconName) {
+            return '';
+        }
+
         addHideMrsByPipelineStatusMenu() {
             let menu = '<div class="filter-dropdown-container d-flex flex-column flex-md-row">' +
                '<div class="dropdown inline prepend-left-10">' +
