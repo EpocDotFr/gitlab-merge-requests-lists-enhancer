@@ -131,6 +131,7 @@
 
             this.baseUrl = location.protocol + '//' + location.host;
             this.baseApiUrl = this.baseUrl + '/api/v4/';
+            this.baseIconsUrl = this.getBaseIconsUrl();
             this.userAuthenticated = this.isUserAuthenticated();
             this.pipelineFeatureEnabled = this.isPipelineFeatureEnabled();
             this.apiClient = new GitLabApiClient(this.baseApiUrl, this.getCsrfToken());
@@ -183,6 +184,19 @@
          */
         isUserAuthenticated() {
             return document.querySelector('.navbar-nav .header-user') ? true : false;
+        }
+
+        /**
+         * Return the base URL to the SVG icons file.
+         */
+        getBaseIconsUrl() {
+            let svgUse = document.querySelector('svg.s16 > use');
+
+            if (!svgUse) {
+                return null;
+            }
+
+            // return new Url(svgUse.href);
         }
 
         /**
@@ -584,7 +598,9 @@
          * Generate the HTML code corresponding to an SVG icon.
          */
         buildSpriteIcon(iconName) {
-            return '';
+            return '<svg class="s16" data-testid="' + iconName + '-icon">' +
+                '<use xlink:href="' this.getBaseIconsUrl + '/assets/icons-795a2ef2fd636a0538bbef3b8d2787dd90927b42d7617fdda8620930016b333d.svg#' + iconName + '"></use>' +
+            '</svg>';
         }
 
         addHideMrsByPipelineStatusMenu() {

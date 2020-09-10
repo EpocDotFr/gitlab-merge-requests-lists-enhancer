@@ -28,7 +28,7 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
 
 ## Prerequisites
 
-  - **GitLab**: 9.0 or above or GitLab.com (this addon requires GitLab API v4)
+  - **GitLab**: the latest available version of GitLab or GitLab.com
   - **Firefox**: >= 63 (because this extension uses the `clipboard.writeText` API)
   - **Chrome**: >= 66 (because this extension uses the `clipboard.writeText` API)
 
@@ -56,6 +56,10 @@ It would be great, however the extension has no reliable way to do that due to a
   - Pipeline status icons aren't being automatically updated on Merge Requests lists (it is on other pages), can you add this feature?
 
 That was the initial idea for the 1.6 release, however it's not possible due to a technical GitLab limitation.
+
+  - Some feature looks broken on GitLab version [old version of GitLab]. Can you please fix that?
+
+Nope. I don't want to deal with old versions of GitLab. Too much work.
 
 ## Changelog
 
