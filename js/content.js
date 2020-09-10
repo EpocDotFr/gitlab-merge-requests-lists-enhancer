@@ -203,7 +203,7 @@
          * Determines if the project do uses the Gitlab "pipeline" feature.
          */
         isPipelineFeatureEnabled() {
-            return false;// document.querySelector('.nav-sidebar .shortcuts-pipelines') ? true : false;
+            return document.querySelector('.nav-sidebar .shortcuts-pipelines') ? true : false;
         }
 
         /**
@@ -244,10 +244,6 @@
 
                 if (self.userAuthenticated && self.preferences.enable_button_to_toggle_wip_status) {
                     self.attachClickEventToToggleWipStatusButtons();
-                }
-
-                if (self.pipelineFeatureEnabled && self.preferences.enable_menu_to_hide_mrs_based_on_pipeline_status) {
-                    self.addHideMrsByPipelineStatusMenu();
                 }
             });
         }
@@ -601,27 +597,6 @@
             return '<svg class="s16" data-testid="' + iconName + '-icon">' +
                 '<use xlink:href="' this.getBaseIconsUrl + '/assets/icons-795a2ef2fd636a0538bbef3b8d2787dd90927b42d7617fdda8620930016b333d.svg#' + iconName + '"></use>' +
             '</svg>';
-        }
-
-        addHideMrsByPipelineStatusMenu() {
-            let menu = '<div class="filter-dropdown-container d-flex flex-column flex-md-row">' +
-               '<div class="dropdown inline prepend-left-10">' +
-                    '<button class="btn btn-default dropdown-menu-toggle" data-display="static" data-toggle="dropdown" type="button">' +
-                        'Pipeline status <i aria-hidden="true" class="fa fa-chevron-down"></i>' +
-                    '</button>' +
-                    '<ul class="dropdown-menu dropdown-menu-right dropdown-menu-selectable">' +
-                       '<li>' +
-                          '<a class="" href="#">Passed</a>' +
-                          '<a class="is-active" href="#">Failed</a>' +
-                       '</li>' +
-                    '</ul>' +
-               '</div>' +
-            '</div>';
-
-            this.parseHtmlAndAppend(
-                document.querySelector('.filtered-search-block'),
-                menu
-            );
         }
     }
 
