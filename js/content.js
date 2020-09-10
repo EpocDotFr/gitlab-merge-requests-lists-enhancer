@@ -196,7 +196,9 @@
                 return null;
             }
 
-            // return new Url(svgUse.href);
+            let href = new URL(svgUse.href.baseVal);
+
+            return this.baseUrl + '/' + href.pathname;
         }
 
         /**
@@ -312,7 +314,7 @@
 
                 if (this.userAuthenticated && this.preferences.enable_button_to_toggle_wip_status) {
                     let toggleWipStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-wip-status" title="Toggle WIP status" style="padding-left: 0">' +
-                        '<i class="fa fa-wrench" aria-hidden="true"></i>' +
+                        this.buildSpriteIcon('lock') +
                     '</button> ';
 
                     this.parseHtmlAndPrepend(
@@ -536,8 +538,6 @@
          */
         toggleMergeRequestWipStatus(mergeRequestNode, toggleButton) {
             toggleButton.disabled = true;
-            toggleButton.firstChild.classList.remove('fa-wrench');
-            toggleButton.firstChild.classList.add('fa-spinner', 'fa-spin');
 
             let isWip = mergeRequestNode.dataset.isWip == 'true';
             let newTitle = '';
@@ -561,8 +561,6 @@
                 mergeRequestNode.querySelector('.merge-request-title-text a').textContent = responseData.title;
             }).finally(function() {
                 toggleButton.disabled = false;
-                toggleButton.firstChild.classList.add('fa-wrench');
-                toggleButton.firstChild.classList.remove('fa-spinner', 'fa-spin');
             });
         }
 
@@ -595,7 +593,7 @@
          */
         buildSpriteIcon(iconName) {
             return '<svg class="s16" data-testid="' + iconName + '-icon">' +
-                '<use xlink:href="' this.getBaseIconsUrl + '/assets/icons-795a2ef2fd636a0538bbef3b8d2787dd90927b42d7617fdda8620930016b333d.svg#' + iconName + '"></use>' +
+                '<use xlink:href="' + this.baseIconsUrl + '#' + iconName + '"></use>' +
             '</svg>';
         }
     }
