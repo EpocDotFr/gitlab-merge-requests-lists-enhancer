@@ -336,7 +336,7 @@
 
                             break;
                         case 'icon':
-                            jiraTicketLinkLabel = '<i class="fa fa-ticket" aria-hidden="true"></i>';
+                            jiraTicketLinkLabel = this.buildSpriteIcon('issues');
                             jiraTicketLinkToolip = 'Jira ticket ' + mergeRequestNode.dataset.jiraTicketId;
 
                             break;
@@ -363,7 +363,7 @@
 
                 if (this.preferences.enable_button_to_copy_mr_info) {
                     let copyMrInfoButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-mr-info" title="Copy Merge Request info" style="padding-left: 0">' +
-                        '<i class="fa fa-share-square-o" aria-hidden="true"></i>' +
+                        this.buildSpriteIcon('share') +
                     '</button> ';
 
                     this.parseHtmlAndPrepend(
@@ -386,12 +386,12 @@
                     // Copy source branch name button
                     if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
                         newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="source">' +
-                            '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                            this.buildSpriteIcon('copy-to-clipboard') +
                         '</button>';
                     }
 
                     // Target branch name
-                    newInfoLineToInject += ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
+                    newInfoLineToInject += ' ' + this.buildSpriteIcon('long-arrow') + ' ' +
                         '<span class="project-ref-path has-tooltip" title="Target branch">' +
                             '<a class="ref-name" href="' + this.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
                         '</span>';
@@ -399,7 +399,7 @@
                     // Copy target branch name button
                     if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
                         newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="target">' +
-                            '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                            this.buildSpriteIcon('copy-to-clipboard') +
                         '</button>';
                     }
 
