@@ -189,7 +189,7 @@
          * Determines if the project do uses the Gitlab "pipeline" feature.
          */
         isPipelineFeatureEnabled() {
-            return false;// document.querySelector('.nav-sidebar .shortcuts-pipelines') ? true : false;
+            return document.querySelector('.nav-sidebar .shortcuts-pipelines') ? true : false;
         }
 
         /**
