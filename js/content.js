@@ -192,13 +192,19 @@
         getBaseIconsUrl() {
             let svgUse = document.querySelector('svg.s16 > use');
 
-            if (!svgUse) {
+            if (!svgUse || !svgUse.href.baseVal) {
                 return null;
             }
 
-            let href = new URL(svgUse.href.baseVal);
+            let url = svgUse.href.baseVal;
 
-            return this.baseUrl + '/' + href.pathname;
+            if (url.startsWith('/')) {
+                url = this.baseUrl + url;
+            }
+
+            let parsedUrl = new URL(url);
+
+            return parsedUrl.protocol + '//' + parsedUrl.host + '/' + parsedUrl.pathname;
         }
 
         /**
