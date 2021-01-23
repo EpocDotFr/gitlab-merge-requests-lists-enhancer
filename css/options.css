@@ -85,12 +85,12 @@ body.is-chrome {
  * Layout styles */
 
 .row {
-    display: table;
-    width: 100%;
+    display: flex;
+    flex-direction: row;
 }
 
-.row > * {
-    display: table-cell;
+.row > .fluid {
+    flex-grow: 1;
 }
 
 /************************************************************************
