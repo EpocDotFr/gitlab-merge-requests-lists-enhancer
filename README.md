@@ -23,7 +23,9 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
     - Base Jira URL is configured in extension preferences
     - The ticket ID or an icon can be displayed as the link label (configured in extension preferences)
   - WIP toggle button (can be enabled/disabled in the extension preferences)
-  - Show an indicator when there's unresolved discussions left on Merge Requests (can be enabled/disabled in the extension preferences)
+  - Show an indicator when there's unresolved discussions left on Merge Requests
+    - Can be enabled/disabled in the extension preferences
+    - Note the **All discussions must be resolved** option must be enabled for this feature to be working as expected. This option must be enabled per project and is located in **Settings > General > Merge Requests > Merge checks**
   - Compatible with all GitLab editions (GitLab CE, GitLab EE, GitLab.com) (look at the prerequisites, though)
 
 ## Prerequisites
