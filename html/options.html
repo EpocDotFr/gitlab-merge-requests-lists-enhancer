@@ -10,7 +10,7 @@
             <div class="w40p txt-center browser-style">
                 <input type="checkbox" id="display_source_and_target_branches">
             </div>
-            <div>
+            <div class="fluid">
                 <label for="display_source_and_target_branches">Display source and target branches</label>
             </div>
         </div>
@@ -21,7 +21,7 @@
             <div class="w40p txt-center browser-style">
                 <input type="checkbox" id="enable_button_to_copy_mr_info">
             </div>
-            <div>
+            <div class="fluid">
                 <label for="enable_button_to_copy_mr_info">Enable button allowing to copy Merge Request information</label>
             </div>
         </div>
@@ -37,7 +37,7 @@
             <div class="w40p txt-center browser-style">
                 <input type="checkbox" id="enable_jira_ticket_link">
             </div>
-            <div>
+            <div class="fluid">
                 <label for="enable_jira_ticket_link">Enable Jira ticket link</label>
             </div>
         </div>
@@ -55,12 +55,23 @@
             <div class="w40p txt-center browser-style">
                 <input type="checkbox" id="enable_button_to_toggle_wip_status">
             </div>
-            <div>
+            <div class="fluid">
                 <label for="enable_button_to_toggle_wip_status">Enable button allowing to toggle WIP status</label>
             </div>
         </div>
         <div class="pbs pll">
             <small class="txt-muted">This feature is automatically disabled if logged-out</small>
+        </div>
+        <div class="pts row">
+            <div class="w40p txt-center browser-style">
+                <input type="checkbox" id="enable_unresolved_discussions_indicator">
+            </div>
+            <div class="fluid">
+                <label for="enable_unresolved_discussions_indicator">Show an indicator when there's unresolved discussion(s) left</label>
+            </div>
+        </div>
+        <div class="pbs pll">
+            <small class="txt-muted">Note the <strong>All discussions must be resolved</strong> option must be enabled for this feature to be working as expected. This option is enabled per project and is located in <strong>Settings > General > Merge Requests > Merge checks</strong>.</small>
         </div>
         <div class="txt-center pts pbs"><button type="submit" class="browser-style">Save preferences</button></div>
     </form>

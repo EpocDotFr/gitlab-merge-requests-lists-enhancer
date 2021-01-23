@@ -416,6 +416,18 @@
                         newInfoLineToInject
                     );
                 }
+
+                // -----------------------------------------------
+                // Unresolved discussions indicator
+
+                if (this.preferences.enable_unresolved_discussions_indicator && !mergeRequest.blocking_discussions_resolved) {
+                    let unresolvedDiscussionsIndicatorToInject = '<li><span class="has-tooltip" title="Unresolved discussion(s) left">' + this.buildSpriteIcon('comment-dots', 'danger-title') + '</span></li>';
+
+                    this.parseHtmlAndPrepend(
+                        mergeRequestNode.querySelector('.issuable-meta .controls'),
+                        unresolvedDiscussionsIndicatorToInject
+                    );
+                }
             }, this);
         }
 
@@ -597,8 +609,8 @@
         /**
          * Generate the HTML code corresponding to an SVG icon.
          */
-        buildSpriteIcon(iconName) {
-            return '<svg class="s16" data-testid="' + iconName + '-icon">' +
+        buildSpriteIcon(iconName, classes = '') {
+            return '<svg class="s16 ' + classes + '" data-testid="' + iconName + '-icon">' +
                 '<use xlink:href="' + this.baseIconsUrl + '#' + iconName + '"></use>' +
             '</svg>';
         }
