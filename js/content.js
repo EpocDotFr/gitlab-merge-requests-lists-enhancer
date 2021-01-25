@@ -131,6 +131,7 @@
 
             this.baseUrl = location.protocol + '//' + location.host;
             this.baseApiUrl = this.baseUrl + '/api/v4/';
+            this.baseIconsUrl = this.getBaseIconsUrl();
             this.userAuthenticated = this.isUserAuthenticated();
             this.pipelineFeatureEnabled = this.isPipelineFeatureEnabled();
             this.apiClient = new GitLabApiClient(this.baseApiUrl, this.getCsrfToken());
@@ -183,6 +184,27 @@
          */
         isUserAuthenticated() {
             return document.querySelector('.navbar-nav .header-user') ? true : false;
+        }
+
+        /**
+         * Return the base URL to the SVG icons file.
+         */
+        getBaseIconsUrl() {
+            let svgUse = document.querySelector('svg.s16 > use');
+
+            if (!svgUse || !svgUse.href.baseVal) {
+                return null;
+            }
+
+            let url = svgUse.href.baseVal;
+
+            if (url.startsWith('/')) {
+                url = this.baseUrl + url;
+            }
+
+            let parsedUrl = new URL(url);
+
+            return parsedUrl.protocol + '//' + parsedUrl.host + '/' + parsedUrl.pathname;
         }
 
         /**
@@ -298,7 +320,7 @@
 
                 if (this.userAuthenticated && this.preferences.enable_button_to_toggle_wip_status) {
                     let toggleWipStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-wip-status" title="Toggle WIP status" style="padding-left: 0">' +
-                        '<i class="fa fa-wrench" aria-hidden="true"></i>' +
+                        this.buildSpriteIcon('lock') +
                     '</button> ';
 
                     this.parseHtmlAndPrepend(
@@ -320,7 +342,7 @@
 
                             break;
                         case 'icon':
-                            jiraTicketLinkLabel = '<i class="fa fa-ticket" aria-hidden="true"></i>';
+                            jiraTicketLinkLabel = this.buildSpriteIcon('issues');
                             jiraTicketLinkToolip = 'Jira ticket ' + mergeRequestNode.dataset.jiraTicketId;
 
                             break;
@@ -347,7 +369,7 @@
 
                 if (this.preferences.enable_button_to_copy_mr_info) {
                     let copyMrInfoButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-mr-info" title="Copy Merge Request info" style="padding-left: 0">' +
-                        '<i class="fa fa-share-square-o" aria-hidden="true"></i>' +
+                        this.buildSpriteIcon('share') +
                     '</button> ';
 
                     this.parseHtmlAndPrepend(
@@ -370,12 +392,12 @@
                     // Copy source branch name button
                     if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
                         newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="source">' +
-                            '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                            this.buildSpriteIcon('copy-to-clipboard') +
                         '</button>';
                     }
 
                     // Target branch name
-                    newInfoLineToInject += ' <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' +
+                    newInfoLineToInject += ' ' + this.buildSpriteIcon('long-arrow') + ' ' +
                         '<span class="project-ref-path has-tooltip" title="Target branch">' +
                             '<a class="ref-name" href="' + this.baseProjectUrl + '/-/commits/' + mergeRequest.target_branch + '">' + mergeRequest.target_branch + '</a>' +
                         '</span>';
@@ -383,7 +405,7 @@
                     // Copy target branch name button
                     if (this.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
                         newInfoLineToInject += ' <button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-copy-branch-name" title="Copy branch name" data-branch-name-to-copy="target">' +
-                            '<i class="fa fa-clipboard" aria-hidden="true"></i>' +
+                            this.buildSpriteIcon('copy-to-clipboard') +
                         '</button>';
                     }
 
@@ -392,6 +414,18 @@
                     this.parseHtmlAndAppend(
                         mergeRequestNode.querySelector('.issuable-main-info'),
                         newInfoLineToInject
+                    );
+                }
+
+                // -----------------------------------------------
+                // Unresolved discussions indicator
+
+                if (this.preferences.enable_unresolved_discussions_indicator && !mergeRequest.blocking_discussions_resolved) {
+                    let unresolvedDiscussionsIndicatorToInject = '<li><span class="has-tooltip" title="Unresolved discussion(s) left">' + this.buildSpriteIcon('comment-dots', 'danger-title') + '</span></li>';
+
+                    this.parseHtmlAndPrepend(
+                        mergeRequestNode.querySelector('.issuable-meta .controls'),
+                        unresolvedDiscussionsIndicatorToInject
                     );
                 }
             }, this);
@@ -522,8 +556,6 @@
          */
         toggleMergeRequestWipStatus(mergeRequestNode, toggleButton) {
             toggleButton.disabled = true;
-            toggleButton.firstChild.classList.remove('fa-wrench');
-            toggleButton.firstChild.classList.add('fa-spinner', 'fa-spin');
 
             let isWip = mergeRequestNode.dataset.isWip == 'true';
             let newTitle = '';
@@ -547,8 +579,6 @@
                 mergeRequestNode.querySelector('.merge-request-title-text a').textContent = responseData.title;
             }).finally(function() {
                 toggleButton.disabled = false;
-                toggleButton.firstChild.classList.add('fa-wrench');
-                toggleButton.firstChild.classList.remove('fa-spinner', 'fa-spin');
             });
         }
 
@@ -574,6 +604,15 @@
             return this.preferences.copy_mr_info_format.replace(placeholdersReplaceRegex, function(_, placeholder) {
               return placeholders[placeholder];
             }).trim();
+        }
+
+        /**
+         * Generate the HTML code corresponding to an SVG icon.
+         */
+        buildSpriteIcon(iconName, classes = '') {
+            return '<svg class="s16 ' + classes + '" data-testid="' + iconName + '-icon">' +
+                '<use xlink:href="' + this.baseIconsUrl + '#' + iconName + '"></use>' +
+            '</svg>';
         }
     }
 
