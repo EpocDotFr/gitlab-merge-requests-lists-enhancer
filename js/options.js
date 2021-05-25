@@ -46,7 +46,7 @@
             this.baseJiraUrlInput = document.querySelector('input#base_jira_url');
             this.jiraTicketLinkLabelTypeRadioButtons = Array.from(document.querySelectorAll('input[name="jira_ticket_link_label_type"]'));
 
-            this.enableButtonToToggleWipStatusCheckbox = document.querySelector('input#enable_button_to_toggle_wip_status');
+            this.enableButtonToToggleDraftStatusCheckbox = document.querySelector('input#enable_button_to_toggle_draft_status');
 
             this.enableUnresolvedDiscussionsIndicatorCheckbox = document.querySelector('input#enable_unresolved_discussions_indicator');
         }
@@ -77,8 +77,8 @@
                     return el.value == preferences.jira_ticket_link_label_type;
                 }).checked = true;
 
-                self.enableButtonToToggleWipStatusCheckbox.checked = preferences.enable_button_to_toggle_wip_status;
-                self.enableButtonToToggleWipStatusCheckbox.dispatchEvent(new CustomEvent('change'));
+                self.enableButtonToToggleDraftStatusCheckbox.checked = preferences.enable_button_to_toggle_draft_status;
+                self.enableButtonToToggleDraftStatusCheckbox.dispatchEvent(new CustomEvent('change'));
 
                 self.enableUnresolvedDiscussionsIndicatorCheckbox.checked = preferences.enable_unresolved_discussions_indicator;
                 self.enableUnresolvedDiscussionsIndicatorCheckbox.dispatchEvent(new CustomEvent('change'));
@@ -129,7 +129,7 @@
                 self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
 
-            this.enableButtonToToggleWipStatusCheckbox.addEventListener('change', function() {
+            this.enableButtonToToggleDraftStatusCheckbox.addEventListener('change', function() {
                 self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
 
@@ -157,7 +157,7 @@
                     enable_jira_ticket_link: this.enableJiraTicketLinkCheckbox.checked,
                     base_jira_url: this.baseJiraUrlInput.value,
                     jira_ticket_link_label_type: jira_ticket_link_label_type,
-                    enable_button_to_toggle_wip_status: this.enableButtonToToggleWipStatusCheckbox.checked,
+                    enable_button_to_toggle_draft_status: this.enableButtonToToggleDraftStatusCheckbox.checked,
                     enable_unresolved_discussions_indicator: this.enableUnresolvedDiscussionsIndicatorCheckbox.checked
                 },
                 function() {
@@ -193,7 +193,7 @@
             return !this.displaySourceAndTargetBranchesCheckbox.checked
                 && !this.enableButtonToCopyMrInfoCheckbox.checked
                 && !this.enableJiraTicketLinkCheckbox.checked
-                && !this.enableButtonToToggleWipStatusCheckbox.checked
+                && !this.enableButtonToToggleDraftStatusCheckbox.checked
                 && !this.enableUnresolvedDiscussionsIndicatorCheckbox.checked;
         }
 
