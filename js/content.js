@@ -561,7 +561,7 @@
             let newTitle = '';
 
             if (isDraft) {
-                newTitle = mergeRequestNode.dataset.title.replace(new RegExp('^(Draft|WIP):'), '').trim();
+                newTitle = mergeRequestNode.dataset.title.replace(new RegExp('^(Draft|WIP):', 'i'), '').trim();
             } else {
                 newTitle = 'Draft: ' + mergeRequestNode.dataset.title.trim();
             }
