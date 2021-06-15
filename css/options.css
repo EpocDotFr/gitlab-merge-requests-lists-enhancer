@@ -10,6 +10,11 @@
         color: rgb(249, 249, 250);
     }
 
+    body.is-firefox.gte-89 {
+        background-color: rgb(35, 34, 43);
+        color: rgb(251,251,254);
+    }
+
     .is-firefox input[type="url"],
     .is-firefox textarea {
         background-color: #2a2a2e;
