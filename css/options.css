@@ -43,6 +43,10 @@ body.is-chrome {
 /************************************************************************
  * Global styles */
 
+html, body, button {
+    font-size: 15px;
+}
+
 .is-hidden {
     display: none;
 }
