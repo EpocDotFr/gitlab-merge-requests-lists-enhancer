@@ -22,7 +22,7 @@ MANIFEST_FILE = {
         'open_in_tab': False
     },
     'permissions': [
-        '*://*/*/*/-/merge_requests', '*://*/*/*/-/merge_requests?*',
+        '*://*/*/-/merge_requests', '*://*/*/-/merge_requests?*',
         'storage'
     ]
 }
