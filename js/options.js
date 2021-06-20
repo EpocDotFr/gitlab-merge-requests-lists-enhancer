@@ -249,6 +249,9 @@
             this.addBrowserVersionsComparisonsClasses(currentBrowserName, currentBrowserVersion, body);
         }
 
+        /**
+         * Adds CSS classes related to the current browser's version to the `el` tag.
+         */
         addBrowserVersionsComparisonsClasses(currentBrowserName, currentBrowserVersion, el) {
             if (!currentBrowserName || !currentBrowserVersion || !(currentBrowserName in this.browser_versions_to_compare)) {
                 return;

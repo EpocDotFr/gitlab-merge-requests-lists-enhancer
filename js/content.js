@@ -443,7 +443,7 @@
             mergeRequestNode.dataset.status = mergeRequest.state;
             mergeRequestNode.dataset.sourceBranchName = mergeRequest.source_branch;
             mergeRequestNode.dataset.targetBranchName = mergeRequest.target_branch;
-            mergeRequestNode.dataset.isDraft = mergeRequest.work_in_progress;
+            mergeRequestNode.dataset.isDraft = ('draft' in mergeRequest) ? mergeRequest.draft : mergeRequest.work_in_progress;
 
             if (this.preferences.enable_jira_ticket_link) {
                 let jiraTicketId = this.findFirstJiraTicketId(mergeRequest);
@@ -573,7 +573,7 @@
                     title: newTitle
                 }
             ).then(function(responseData) {
-                mergeRequestNode.dataset.isDraft = responseData.work_in_progress;
+                mergeRequestNode.dataset.isDraft = ('draft' in responseData) ? responseData.draft : responseData.work_in_progress;
                 mergeRequestNode.dataset.title = responseData.title;
 
                 mergeRequestNode.querySelector('.merge-request-title-text a').textContent = responseData.title;
