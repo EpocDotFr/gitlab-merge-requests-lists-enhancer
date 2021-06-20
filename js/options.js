@@ -257,7 +257,7 @@
             this.browser_versions_to_compare[currentBrowserName].forEach(function(targetBrowserVersion) {
                 ['gt', 'ge', 'lt', 'le', 'eq', 'ne'].forEach(function(operator) {
                     if (this.versionCompare(currentBrowserVersion, targetBrowserVersion, operator)) {
-                        el.classList.add(operator + '-' + targetBrowserVersion.replace(new RegExp('\.'), '-'));
+                        el.classList.add(operator + '-' + targetBrowserVersion.replace(new RegExp('\\.'), '-'));
                     }
                 }, this);
             }, this);
