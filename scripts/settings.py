@@ -17,6 +17,9 @@ MANIFEST_FILE = {
             'js': ['js/preferences.js', 'js/content.js']
         }
     ],
+    'background': {
+        'scripts': ['js/common.js', 'js/preferences.js', 'js/background.js']
+    },
     'options_ui': {
         'page': 'html/options.html',
         'open_in_tab': False
