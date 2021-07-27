@@ -6,6 +6,14 @@
          * The background script of the extension.
          */
         constructor() {
+            if ('chrome' in globals && globals.chrome) { // Firefox and Edge uses `browser`, Chrome and Opera uses `chrome`
+                globals.browser = globals.chrome;
+            }
+
+            if (!('browser' in globals) || !globals.browser) {
+                console.error('Unsupported browser');
+            }
+
             this.listenToExtensionUpdates();
         }
 
@@ -15,7 +23,7 @@
         listenToExtensionUpdates() {
             let self = this;
 
-            browser.runtime.onInstalled.addListener(function(details) {
+            globals.browser.runtime.onInstalled.addListener(function(details) {
                 if (!('reason' in details) || details.reason != 'update' || !('previousVersion' in details) || !details.previousVersion) {
                     return;
                 }

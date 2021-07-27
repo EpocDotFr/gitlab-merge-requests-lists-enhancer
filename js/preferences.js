@@ -25,7 +25,7 @@
             if ('browser' in globals && globals.browser) { // Firefox and Edge uses `browser`, Chrome and Opera uses `chrome`
                 this.getAll = this.getAllBrowser;
                 this.setAll = this.setAllBrowser;
-            } else if (globals.chrome) {
+            } else if ('chrome' in globals && globals.chrome) {
                 this.getAll = this.getAllChrome;
                 this.setAll = this.setAllChrome;
             } else {
@@ -39,7 +39,7 @@
          * Used as `getAll` if the current browser is Firefox or Edge.
          */
         getAllBrowser(successCallback) {
-            browser.storage.local.get(this.defaults).then(successCallback, function() {
+            globals.browser.storage.local.get(this.defaults).then(successCallback, function() {
                 alert('Error retrieving extension preferences.');
             });
         }
@@ -50,7 +50,7 @@
          * Used as `setAll` if the current browser is Firefox or Edge.
          */
         setAllBrowser(preferences, successCallback, errorCallback) {
-            browser.storage.local.set(preferences).then(successCallback, function() {
+            globals.browser.storage.local.set(preferences).then(successCallback, function() {
                 errorCallback();
 
                 alert('Error saving extension preferences.');
@@ -63,7 +63,7 @@
          * Used as `getAll` if the current browser is Chrome or Opera.
          */
         getAllChrome(successCallback) {
-            chrome.storage.local.get(this.defaults, function(preferences) {
+            globals.chrome.storage.local.get(this.defaults, function(preferences) {
                 if (chrome.runtime.lastError) {
                     alert('Error retrieving extension preferences, check console for more information.');
 
@@ -80,7 +80,7 @@
          * Used as `setAll` if the current browser is Chrome or Opera.
          */
         setAllChrome(preferences, successCallback, errorCallback) {
-            chrome.storage.local.set(preferences, function() {
+            globals.chrome.storage.local.set(preferences, function() {
                 if (chrome.runtime.lastError) {
                     errorCallback();
 
