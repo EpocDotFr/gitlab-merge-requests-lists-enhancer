@@ -246,13 +246,6 @@
 
             body.classList.add('is-' + currentBrowserName);
 
-            this.addBrowserVersionsComparisonsClasses(currentBrowserName, currentBrowserVersion, body);
-        }
-
-        /**
-         * Adds CSS classes related to the current browser's version to the `el` tag.
-         */
-        addBrowserVersionsComparisonsClasses(currentBrowserName, currentBrowserVersion, el) {
             if (!currentBrowserName || !currentBrowserVersion || !(currentBrowserName in this.browser_versions_to_compare)) {
                 return;
             }
@@ -260,7 +253,7 @@
             this.browser_versions_to_compare[currentBrowserName].forEach(function(targetBrowserVersion) {
                 ['gt', 'ge', 'lt', 'le', 'eq', 'ne'].forEach(function(operator) {
                     if (globals.Gmrle.versionCompare(currentBrowserVersion, targetBrowserVersion, operator)) {
-                        el.classList.add(operator + '-' + targetBrowserVersion.replace(new RegExp('\\.'), '-'));
+                        body.classList.add(operator + '-' + targetBrowserVersion.replace(new RegExp('\\.'), '-'));
                     }
                 });
             });

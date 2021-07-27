@@ -22,7 +22,7 @@
          * This class holds all the logic related to user preferences persistance.
          */
         constructor() {
-            if (globals.browser) { // Firefox and Edge uses `browser`, Chrome and Opera uses `chrome`
+            if ('browser' in globals && globals.browser) { // Firefox and Edge uses `browser`, Chrome and Opera uses `chrome`
                 this.getAll = this.getAllBrowser;
                 this.setAll = this.setAllBrowser;
             } else if (globals.chrome) {
