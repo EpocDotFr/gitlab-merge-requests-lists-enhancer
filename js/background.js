@@ -24,11 +24,11 @@
             let self = this;
 
             globals.browser.runtime.onInstalled.addListener(function(details) {
-                if (!('reason' in details) || details.reason != 'update' || !('previousVersion' in details) || !details.previousVersion) {
+                if (!('reason' in details) || details.reason != 'update') {
                     return;
                 }
 
-                // TODO
+                // TODO enable_button_to_toggle_wip_status => enable_button_to_toggle_draft_status
             });
         }
     }
