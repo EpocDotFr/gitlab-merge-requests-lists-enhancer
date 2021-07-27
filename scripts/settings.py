@@ -1,7 +1,7 @@
 MANIFEST_FILE = {
     'manifest_version': 2,
     'name': 'GitLab Merge Requests lists enhancer',
-    'version': '1.6.0',
+    'version': '1.7.0',
     'description': 'An extension that enhance all Merge Requests lists on any instance of Gitlab and GitLab.com.',
     'homepage_url': 'https://github.com/EpocDotFr/gitlab-merge-requests-lists-enhancer',
     'author': 'Maxime \'Epoc\' G.',
@@ -17,6 +17,9 @@ MANIFEST_FILE = {
             'js': ['js/preferences.js', 'js/content.js']
         }
     ],
+    'background': {
+        'scripts': ['js/common.js', 'js/preferences.js', 'js/background.js']
+    },
     'options_ui': {
         'page': 'html/options.html',
         'open_in_tab': False

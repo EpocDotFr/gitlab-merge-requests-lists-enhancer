@@ -13,7 +13,7 @@
                 enable_jira_ticket_link: false,
                 base_jira_url: '',
                 jira_ticket_link_label_type: 'ticket_id',
-                enable_button_to_toggle_wip_status: true,
+                enable_button_to_toggle_draft_status: true,
                 enable_unresolved_discussions_indicator: true
             };
         }
@@ -22,11 +22,13 @@
          * This class holds all the logic related to user preferences persistance.
          */
         constructor() {
-            if (globals.browser) { // Firefox and Edge uses `browser`, Chrome and Opera uses `chrome`
+            if ('browser' in globals && globals.browser) { // Firefox and Edge uses `browser`, Chrome and Opera uses `chrome`
                 this.getAll = this.getAllBrowser;
+                this.get = this.getBrowser;
                 this.setAll = this.setAllBrowser;
-            } else if (globals.chrome) {
+            } else if ('chrome' in globals && globals.chrome) {
                 this.getAll = this.getAllChrome;
+                this.get = this.getChrome;
                 this.setAll = this.setAllChrome;
             } else {
                 console.error('Unsupported browser');
@@ -39,7 +41,16 @@
          * Used as `getAll` if the current browser is Firefox or Edge.
          */
         getAllBrowser(successCallback) {
-            browser.storage.local.get(this.defaults).then(successCallback, function() {
+            this.getBrowser(this.defaults, successCallback);
+        }
+
+        /**
+         * Get one or several user's preferences.
+         *
+         * Used as `get` if the current browser is Firefox or Edge.
+         */
+        getBrowser(prefs, successCallback) {
+            globals.browser.storage.local.get(prefs).then(successCallback, function() {
                 alert('Error retrieving extension preferences.');
             });
         }
@@ -50,7 +61,7 @@
          * Used as `setAll` if the current browser is Firefox or Edge.
          */
         setAllBrowser(preferences, successCallback, errorCallback) {
-            browser.storage.local.set(preferences).then(successCallback, function() {
+            globals.browser.storage.local.set(preferences).then(successCallback, function() {
                 errorCallback();
 
                 alert('Error saving extension preferences.');
@@ -63,7 +74,16 @@
          * Used as `getAll` if the current browser is Chrome or Opera.
          */
         getAllChrome(successCallback) {
-            chrome.storage.local.get(this.defaults, function(preferences) {
+            this.getChrome(this.defaults, successCallback);
+        }
+
+        /**
+         * Get one or several user's preferences.
+         *
+         * Used as `get` if the current browser is Chrome or Opera.
+         */
+        getChrome(prefs, successCallback) {
+            globals.chrome.storage.local.get(prefs, function(preferences) {
                 if (chrome.runtime.lastError) {
                     alert('Error retrieving extension preferences, check console for more information.');
 
@@ -80,7 +100,7 @@
          * Used as `setAll` if the current browser is Chrome or Opera.
          */
         setAllChrome(preferences, successCallback, errorCallback) {
-            chrome.storage.local.set(preferences, function() {
+            globals.chrome.storage.local.set(preferences, function() {
                 if (chrome.runtime.lastError) {
                     errorCallback();
 

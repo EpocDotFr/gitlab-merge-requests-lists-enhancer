@@ -250,8 +250,8 @@
                     self.attachClickEventToCopyMergeRequestInfoButtons();
                 }
 
-                if (self.userAuthenticated && self.preferences.enable_button_to_toggle_wip_status) {
-                    self.attachClickEventToToggleWipStatusButtons();
+                if (self.userAuthenticated && self.preferences.enable_button_to_toggle_draft_status) {
+                    self.attachClickEventToToggleDraftStatusButtons();
                 }
             });
         }
@@ -316,16 +316,16 @@
                 this.setDataAttributesToMergeRequestNode(mergeRequestNode, mergeRequest);
 
                 // -----------------------------------------------
-                // Toggle WIP status button
+                // Toggle Draft status button
 
-                if (this.userAuthenticated && this.preferences.enable_button_to_toggle_wip_status) {
-                    let toggleWipStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-wip-status" title="Toggle WIP status" style="padding-left: 0">' +
+                if (this.userAuthenticated && this.preferences.enable_button_to_toggle_draft_status) {
+                    let toggleDraftStatusButton = '<button class="btn btn-secondary btn-md btn-default btn-transparent btn-clipboard has-tooltip gmrle-toggle-draft-status" title="Toggle Draft status" style="padding-left: 0">' +
                         this.buildSpriteIcon('lock') +
                     '</button> ';
 
                     this.parseHtmlAndPrepend(
                         mergeRequestNode.querySelector('.merge-request-title'),
-                        toggleWipStatusButton
+                        toggleDraftStatusButton
                     );
                 }
 
@@ -443,7 +443,7 @@
             mergeRequestNode.dataset.status = mergeRequest.state;
             mergeRequestNode.dataset.sourceBranchName = mergeRequest.source_branch;
             mergeRequestNode.dataset.targetBranchName = mergeRequest.target_branch;
-            mergeRequestNode.dataset.isWip = mergeRequest.work_in_progress;
+            mergeRequestNode.dataset.isDraft = ('draft' in mergeRequest) ? mergeRequest.draft : mergeRequest.work_in_progress;
 
             if (this.preferences.enable_jira_ticket_link) {
                 let jiraTicketId = this.findFirstJiraTicketId(mergeRequest);
@@ -537,33 +537,33 @@
         }
 
         /**
-         * Attach a click event to all buttons inserted by the extension allowing to toggle Merge Request WIP status.
+         * Attach a click event to all buttons inserted by the extension allowing to toggle Merge Request Draft status.
          */
-        attachClickEventToToggleWipStatusButtons() {
+        attachClickEventToToggleDraftStatusButtons() {
             let self = this;
 
-            document.querySelectorAll('button.gmrle-toggle-wip-status').forEach(function(el) {
+            document.querySelectorAll('button.gmrle-toggle-draft-status').forEach(function(el) {
                 el.addEventListener('click', function(e) {
                     e.preventDefault();
 
-                    self.toggleMergeRequestWipStatus(this.closest('.merge-request'), this);
+                    self.toggleMergeRequestDraftStatus(this.closest('.merge-request'), this);
                 });
             });
         }
 
         /**
-         * Actually toggle a given Merge Request WIP status.
+         * Actually toggle a given Merge Request Draft status.
          */
-        toggleMergeRequestWipStatus(mergeRequestNode, toggleButton) {
+        toggleMergeRequestDraftStatus(mergeRequestNode, toggleButton) {
             toggleButton.disabled = true;
 
-            let isWip = mergeRequestNode.dataset.isWip == 'true';
+            let isDraft = mergeRequestNode.dataset.isDraft == 'true';
             let newTitle = '';
 
-            if (isWip) {
-                newTitle = mergeRequestNode.dataset.title.replace(new RegExp('^WIP:'), '').trim();
+            if (isDraft) {
+                newTitle = mergeRequestNode.dataset.title.replace(new RegExp('^(Draft|WIP):', 'i'), '').trim();
             } else {
-                newTitle = 'WIP: ' + mergeRequestNode.dataset.title.trim();
+                newTitle = 'Draft: ' + mergeRequestNode.dataset.title.trim();
             }
 
             this.apiClient.updateProjectMergeRequest(
@@ -573,7 +573,7 @@
                     title: newTitle
                 }
             ).then(function(responseData) {
-                mergeRequestNode.dataset.isWip = responseData.work_in_progress;
+                mergeRequestNode.dataset.isDraft = ('draft' in responseData) ? responseData.draft : responseData.work_in_progress;
                 mergeRequestNode.dataset.title = responseData.title;
 
                 mergeRequestNode.querySelector('.merge-request-title-text a').textContent = responseData.title;
