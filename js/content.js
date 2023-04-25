@@ -87,6 +87,18 @@
         }
 
         /**
+         * Fetch details about the given Merge Requests IDs in the given project ID.
+         */
+        getProjectMergeRequestAward(projectId, mergeRequestId) {
+            return this.sendRequest(
+                'GET',
+                'projects/' + projectId + '/merge_requests',
+                mergeRequestId + '/award_emoji'
+            );
+            
+        }
+
+        /**
          * Update the given Merge Request Id in the given project ID.
          */
         updateProjectMergeRequest(projectId, mergeRequestId, data) {
@@ -240,7 +252,7 @@
                     self.removeExistingTargetBranchNodes();
                 }
 
-                self.updateMergeRequestsNodes(responseData);
+                self.updateMergeRequestsNodes(responseData, self.currentProjectId);
 
                 if (self.preferences.enable_buttons_to_copy_source_and_target_branches_name) {
                     self.attachClickEventToCopyBranchNameButtons();
@@ -309,7 +321,7 @@
         /**
          * Actually updates the UI by altering the DOM by adding our stuff.
          */
-        updateMergeRequestsNodes(mergeRequests) {
+        updateMergeRequestsNodes(mergeRequests, projectId) {
             mergeRequests.forEach(function(mergeRequest) {
                 let mergeRequestNode = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
 
@@ -428,7 +440,30 @@
                         unresolvedDiscussionsIndicatorToInject
                     );
                 }
+                
+                // -----------------------------------------------
+                // Approval icons indicator
+                
+                let awardsIcons = this.getProjectMergeRequestAward(projectId, mergeRequest.id);
+
+                // https://netuno.arcasolutions.com/api/v4/projects/8/merge_requests/761/award_emoji
+                awardsIcons.then(data => {
+                    const filtredIcons = data.filter(icon => icon.name !== "thumbsup" && icon.name !== "thumbsdown" )
+                    let iconsIndicatorToInject = '';
+                    filtredIcons.map(filtredIcon => {
+                        iconsIndicatorToInject += '<li><span class="has-tooltip" title="'+filtredIcon.name+'">' + this.buildApprovalsIcons(filtredIcon) + '</span></li>'
+                    })
+                    
+                    this.parseHtmlAndPrepend(
+                        mergeRequestNode.querySelector('.issuable-meta .controls'),
+                        iconsIndicatorToInject
+                    )
+                })
             }, this);
+        }
+
+        buildApprovalsIcons(filtredIcon){
+            return this.buildSpriteIcon(filtredIcon.name, ' gl-mr-3 gl-my-2 ')
         }
 
         /**
