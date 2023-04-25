@@ -17,10 +17,10 @@ A browser extension that enhance all Merge Requests lists on any instance of Git
   - Button allowing to copy Merge Request information (useful when sharing the Merge Request on e.g instant messaging softwares)
     - Can be enabled/disabled in the extension preferences
     - Text format is customizable (with support of placeholders)
-  - Direct Jira ticket link
+  - Direct Taiga ticket link
     - Can be enabled/disabled in the extension preferences
     - Ticket ID is automatically detected in source branch name or Merge Request title
-    - Base Jira URL is configured in extension preferences
+    - Base Taiga URL is configured in extension preferences
     - The ticket ID or an icon can be displayed as the link label (configured in extension preferences)
   - WIP toggle button (can be enabled/disabled in the extension preferences)
   - Show an indicator when there's unresolved discussions left on Merge Requests
@@ -76,3 +76,8 @@ See [here](https://github.com/EpocDotFr/gitlab-merge-requests-lists-enhancer/rel
 If you have questions or problems, you can [submit an issue](https://github.com/EpocDotFr/gitlab-merge-requests-lists-enhancer/issues).
 
 You can also submit pull requests. It's open-source dude!
+
+
+BUILD
+
+web-ext build --overwrite-dest --ignore-files scripts web-ext-artifacts LICENSE.md README.md screenshot.png

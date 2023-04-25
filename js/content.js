@@ -92,10 +92,8 @@
         getProjectMergeRequestAward(projectId, mergeRequestId) {
             return this.sendRequest(
                 'GET',
-                'projects/' + projectId + '/merge_requests',
-                mergeRequestId + '/award_emoji'
+                'projects/' + projectId + '/merge_requests/' + mergeRequestId + '/award_emoji',[]
             );
-            
         }
 
         /**
@@ -322,6 +320,7 @@
          * Actually updates the UI by altering the DOM by adding our stuff.
          */
         updateMergeRequestsNodes(mergeRequests, projectId) {
+            var self = this;
             mergeRequests.forEach(function(mergeRequest) {
                 let mergeRequestNode = document.querySelector('.mr-list .merge-request[data-id="' + mergeRequest.id + '"]');
 
@@ -342,36 +341,36 @@
                 }
 
                 // -----------------------------------------------
-                // Jira ticket link (data attributes are set in setDataAttributesToNode, above)
+                // Taiga ticket link (data attributes are set in setDataAttributesToNode, above)
 
-                if (('jiraTicketId' in mergeRequestNode.dataset) && ('jiraTicketUrl' in mergeRequestNode.dataset)) {
-                    let jiraTicketLinkToolip = null;
-                    let jiraTicketLinkLabel = null;
+                if (('TaigaTicketId' in mergeRequestNode.dataset) && ('TaigaTicketUrl' in mergeRequestNode.dataset)) {
+                    let TaigaTicketLinkToolip = null;
+                    let TaigaTicketLinkLabel = null;
 
-                    switch (this.preferences.jira_ticket_link_label_type) {
+                    switch (this.preferences.Taiga_ticket_link_label_type) {
                         case 'ticket_id':
-                            jiraTicketLinkLabel = mergeRequestNode.dataset.jiraTicketId;
+                            TaigaTicketLinkLabel = mergeRequestNode.dataset.TaigaTicketId;
 
                             break;
                         case 'icon':
-                            jiraTicketLinkLabel = this.buildSpriteIcon('issues');
-                            jiraTicketLinkToolip = 'Jira ticket ' + mergeRequestNode.dataset.jiraTicketId;
+                            TaigaTicketLinkLabel = this.buildSpriteIcon('issues');
+                            TaigaTicketLinkToolip = 'Taiga ticket ' + mergeRequestNode.dataset.TaigaTicketId;
 
                             break;
                         default:
-                            console.error('Invalid link label type ' + this.preferences.jira_ticket_link_label_type);
+                            console.error('Invalid link label type ' + this.preferences.Taiga_ticket_link_label_type);
                     }
 
-                    if (jiraTicketLinkLabel) {
-                        let jiraTicketLink = '<a href="' + mergeRequestNode.dataset.jiraTicketUrl + '" ' +
-                            'class="issuable-milestone ' + (jiraTicketLinkToolip ? 'has-tooltip' : '') + '" ' +
-                            (jiraTicketLinkToolip ? 'title="' + jiraTicketLinkToolip + '"' : '') + '>' +
-                            jiraTicketLinkLabel +
+                    if (TaigaTicketLinkLabel) {
+                        let TaigaTicketLink = '<a href="' + mergeRequestNode.dataset.TaigaTicketUrl + '" ' +
+                            'class="issuable-milestone ' + (TaigaTicketLinkToolip ? 'has-tooltip' : '') + '" ' +
+                            (TaigaTicketLinkToolip ? 'title="' + TaigaTicketLinkToolip + '"' : '') + '>' +
+                            TaigaTicketLinkLabel +
                         '</a> ';
 
                         this.parseHtmlAndInsertBefore(
                             mergeRequestNode.querySelector('.merge-request-title-text'),
-                            jiraTicketLink
+                            TaigaTicketLink
                         );
                     }
                 }
@@ -444,14 +443,15 @@
                 // -----------------------------------------------
                 // Approval icons indicator
                 
-                let awardsIcons = this.getProjectMergeRequestAward(projectId, mergeRequest.id);
+                console.log(projectId, mergeRequest)
+                let awardsIcons = self.apiClient.getProjectMergeRequestAward(projectId, mergeRequest.iid);
 
                 // https://netuno.arcasolutions.com/api/v4/projects/8/merge_requests/761/award_emoji
                 awardsIcons.then(data => {
                     const filtredIcons = data.filter(icon => icon.name !== "thumbsup" && icon.name !== "thumbsdown" )
                     let iconsIndicatorToInject = '';
                     filtredIcons.map(filtredIcon => {
-                        iconsIndicatorToInject += '<li><span class="has-tooltip" title="'+filtredIcon.name+'">' + this.buildApprovalsIcons(filtredIcon) + '</span></li>'
+                        iconsIndicatorToInject += '<li><span class="has-tooltip" title="'+filtredIcon.user?.name+" - "+filtredIcon.created_at+'">' + this.buildGlIcon(filtredIcon) + '</span></li>'
                     })
                     
                     this.parseHtmlAndPrepend(
@@ -462,8 +462,15 @@
             }, this);
         }
 
-        buildApprovalsIcons(filtredIcon){
-            return this.buildSpriteIcon(filtredIcon.name, ' gl-mr-3 gl-my-2 ')
+        buildGlIcon(filtredIcon){
+            let icons = JSON.parse(localStorage.getItem('gl-emoji-map'))
+            if(icons){
+                console.log(icons)
+                let iconData = icons[filtredIcon.name]
+                console.log(iconData)
+                return `<span data-testid="award-html" class="award-emoji-block"><gl-emoji data-name="${filtredIcon.name}" data-unicode-version="6.0" title="${filtredIcon.name}">${iconData['e']}</gl-emoji></span>` 
+            }
+            return;
         }
 
         /**
@@ -480,32 +487,32 @@
             mergeRequestNode.dataset.targetBranchName = mergeRequest.target_branch;
             mergeRequestNode.dataset.isWip = mergeRequest.work_in_progress;
 
-            if (this.preferences.enable_jira_ticket_link) {
-                let jiraTicketId = this.findFirstJiraTicketId(mergeRequest);
+            if (this.preferences.enable_Taiga_ticket_link) {
+                let TaigaTicketId = this.findFirstTaigaTicketId(mergeRequest);
 
-                if (jiraTicketId) {
-                    mergeRequestNode.dataset.jiraTicketId = jiraTicketId;
-                    mergeRequestNode.dataset.jiraTicketUrl = this.createJiraTicketUrl(jiraTicketId);
+                if (TaigaTicketId) {
+                    mergeRequestNode.dataset.TaigaTicketId = TaigaTicketId;
+                    mergeRequestNode.dataset.TaigaTicketUrl = this.createTaigaTicketUrl(TaigaTicketId);
                 }
             }
         }
 
         /**
-         * Finds a Jira ticket ID in the given Merge Request object. It first tris in the source branch name, then
+         * Finds a Taiga ticket ID in the given Merge Request object. It first tris in the source branch name, then
          * fallbacks to the Merge Request title.
          */
-        findFirstJiraTicketId(mergeRequest) {
-            let jiraTicketIdRegex = new RegExp('[A-Z]{1,10}-\\d+');
+        findFirstTaigaTicketId(mergeRequest) {
+            let TaigaTicketIdRegex = new RegExp('[A-Z]{1,10}-\\d+');
 
             // First try in the source branch name
-            let results = jiraTicketIdRegex.exec(mergeRequest.source_branch);
+            let results = TaigaTicketIdRegex.exec(mergeRequest.source_branch);
 
             if (results) {
                 return results[0];
             }
 
             // Fallback to the Merge Request title if none found in the source branch name
-            results = jiraTicketIdRegex.exec(mergeRequest.title);
+            results = TaigaTicketIdRegex.exec(mergeRequest.title);
 
             if (results) {
                 return results[0];
@@ -515,19 +522,19 @@
         }
 
         /**
-         * Creates an URL to a given Jira ticket ID, pointing to the Jira base URL the user has defined in its
+         * Creates an URL to a given Taiga ticket ID, pointing to the Taiga base URL the user has defined in its
          * preferences.
          */
-        createJiraTicketUrl(jiraTicketId) {
-            let baseJiraUrl = new URL(this.preferences.base_jira_url);
+        createTaigaTicketUrl(TaigaTicketId) {
+            let baseTaigaUrl = new URL(this.preferences.base_Taiga_url);
 
-            if (!baseJiraUrl.pathname.endsWith('/')) {
-                baseJiraUrl.pathname += '/';
+            if (!baseTaigaUrl.pathname.endsWith('/')) {
+                baseTaigaUrl.pathname += '/';
             }
 
-            baseJiraUrl.pathname += 'browse/' + jiraTicketId;
+            baseTaigaUrl.pathname += 'browse/' + TaigaTicketId;
 
-            return baseJiraUrl.toString();
+            return baseTaigaUrl.toString();
         }
 
         /**
@@ -630,8 +637,8 @@
                 MR_STATUS: mergeRequestNode.dataset.status,
                 MR_SOURCE_BRANCH_NAME: mergeRequestNode.dataset.sourceBranchName,
                 MR_TARGET_BRANCH_NAME: mergeRequestNode.dataset.targetBranchName,
-                MR_JIRA_TICKET_ID: ('jiraTicketId' in mergeRequestNode.dataset) ? mergeRequestNode.dataset.jiraTicketId : '',
-                MR_JIRA_TICKET_URL: ('jiraTicketUrl' in mergeRequestNode.dataset) ? mergeRequestNode.dataset.jiraTicketUrl : ''
+                MR_Taiga_TICKET_ID: ('TaigaTicketId' in mergeRequestNode.dataset) ? mergeRequestNode.dataset.TaigaTicketId : '',
+                MR_Taiga_TICKET_URL: ('TaigaTicketUrl' in mergeRequestNode.dataset) ? mergeRequestNode.dataset.TaigaTicketUrl : ''
             };
 
             let placeholdersReplaceRegex = new RegExp('{(' + Object.keys(placeholders).join('|') + ')}', 'g');

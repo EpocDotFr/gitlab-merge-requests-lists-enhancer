@@ -31,24 +31,24 @@
         <div class="pll pts pbs" id="copy-mr-info-options">
             <div class="pbs"><label for="copy_mr_info_format">Text format:</label></div>
             <div><textarea class="browser-style w100 monospaced man pas" id="copy_mr_info_format" rows="6" required></textarea></div>
-            <div class="pts"><small class="txt-muted">Available placeholders: <code>{MR_TITLE}</code>, <code>{MR_ID}</code>, <code>{MR_URL}</code>, <code>{MR_DIFFS_URL}</code>, <code>{MR_AUTHOR_NAME}</code>, <code>{MR_STATUS}</code>, <code>{MR_SOURCE_BRANCH_NAME}</code>, <code>{MR_TARGET_BRANCH_NAME}</code>, <code>{MR_JIRA_TICKET_ID}</code>, <code>{MR_JIRA_TICKET_URL}</code></small></div>
+            <div class="pts"><small class="txt-muted">Available placeholders: <code>{MR_TITLE}</code>, <code>{MR_ID}</code>, <code>{MR_URL}</code>, <code>{MR_DIFFS_URL}</code>, <code>{MR_AUTHOR_NAME}</code>, <code>{MR_STATUS}</code>, <code>{MR_SOURCE_BRANCH_NAME}</code>, <code>{MR_TARGET_BRANCH_NAME}</code>, <code>{MR_Taiga_TICKET_ID}</code>, <code>{MR_Taiga_TICKET_URL}</code></small></div>
         </div>
         <div class="pts row">
             <div class="w40p txt-center browser-style">
-                <input type="checkbox" id="enable_jira_ticket_link">
+                <input type="checkbox" id="enable_Taiga_ticket_link">
             </div>
             <div class="fluid">
-                <label for="enable_jira_ticket_link">Enable Jira ticket link</label>
+                <label for="enable_Taiga_ticket_link">Enable Taiga ticket link</label>
             </div>
         </div>
-        <div class="pll pbs" id="jira-ticket-link-options">
+        <div class="pll pbs" id="Taiga-ticket-link-options">
             <div class="pbs"><small class="txt-muted">The ticket ID is automatically searched for in the source branch name and in the Merge Request title. The position of the ticket ID in these locations doesn't matter. Only the first uppercase ticket ID occurence will be matched.</small></div>
-            <div class="browser-style pbs man"><label for="base_jira_url">Base Jira URL:</label></div>
-            <div class="browser-style man pbm"><input type="url" id="base_jira_url" class="w100 man pas" required></div>
-            <div class="pbs">What should be displayed as the label of the Jira ticket link?</div>
+            <div class="browser-style pbs man"><label for="base_Taiga_url">Base Taiga URL:</label></div>
+            <div class="browser-style man pbm"><input type="url" id="base_Taiga_url" class="w100 man pas" required></div>
+            <div class="pbs">What should be displayed as the label of the Taiga ticket link?</div>
             <div class="pll">
-                <div class="browser-style man pbs"><input type="radio" required name="jira_ticket_link_label_type" value="ticket_id" id="jira_ticket_link_label_type_ticket_id" class="man"> <label for="jira_ticket_link_label_type_ticket_id">The ticket ID</label></div>
-                <div class="browser-style man"><input type="radio" required name="jira_ticket_link_label_type" value="icon" id="jira_ticket_link_label_type_icon" class="man"> <label for="jira_ticket_link_label_type_icon">An icon</label></div>
+                <div class="browser-style man pbs"><input type="radio" required name="Taiga_ticket_link_label_type" value="ticket_id" id="Taiga_ticket_link_label_type_ticket_id" class="man"> <label for="Taiga_ticket_link_label_type_ticket_id">The ticket ID</label></div>
+                <div class="browser-style man"><input type="radio" required name="Taiga_ticket_link_label_type" value="icon" id="Taiga_ticket_link_label_type_icon" class="man"> <label for="Taiga_ticket_link_label_type_icon">An icon</label></div>
             </div>
         </div>
         <div class="pts row">

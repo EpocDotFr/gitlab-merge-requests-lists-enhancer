@@ -1,10 +1,10 @@
 MANIFEST_FILE = {
-    'manifest_version': 2,
+    'manifest_version': 1,
     'name': 'GitLab Merge Requests lists enhancer',
-    'version': '1.6.0',
+    'version': '1.0.0',
     'description': 'An extension that enhance all Merge Requests lists on any instance of Gitlab and GitLab.com.',
-    'homepage_url': 'https://github.com/EpocDotFr/gitlab-merge-requests-lists-enhancer',
-    'author': 'Maxime \'Epoc\' G.',
+    'homepage_url': 'https://github.com/zwillianmattos/gitlab-merge-requests-lists-enhancer',
+    'author': 'Willian Mattos',
     'icons': {
         '16': 'images/logo_16.png',
         '48': 'images/logo_48.png',
@@ -35,4 +35,4 @@ FILES_AND_DIRECTORIES_TO_IGNORE_WHEN_BUILDING = [
     'screenshot.png',
 ]
 
-EXTENSION_NAME_SLUG = 'gitlab_merge_requests_lists_enhancer'
+EXTENSION_NAME_SLUG = 'gitlab_merge_requests_lists_enhancer_netuno'

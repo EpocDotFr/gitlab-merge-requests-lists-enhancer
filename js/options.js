@@ -41,10 +41,10 @@
             this.enableButtonToCopyMrInfoCheckbox = document.querySelector('input#enable_button_to_copy_mr_info');
             this.copyMrInfoFormatTextarea = document.querySelector('textarea#copy_mr_info_format');
 
-            this.jiraTicketLinkOptionsDiv = document.querySelector('div#jira-ticket-link-options');
-            this.enableJiraTicketLinkCheckbox = document.querySelector('input#enable_jira_ticket_link');
-            this.baseJiraUrlInput = document.querySelector('input#base_jira_url');
-            this.jiraTicketLinkLabelTypeRadioButtons = Array.from(document.querySelectorAll('input[name="jira_ticket_link_label_type"]'));
+            this.TaigaTicketLinkOptionsDiv = document.querySelector('div#Taiga-ticket-link-options');
+            this.enableTaigaTicketLinkCheckbox = document.querySelector('input#enable_Taiga_ticket_link');
+            this.baseTaigaUrlInput = document.querySelector('input#base_Taiga_url');
+            this.TaigaTicketLinkLabelTypeRadioButtons = Array.from(document.querySelectorAll('input[name="Taiga_ticket_link_label_type"]'));
 
             this.enableButtonToToggleWipStatusCheckbox = document.querySelector('input#enable_button_to_toggle_wip_status');
 
@@ -68,13 +68,13 @@
 
                 self.copyMrInfoFormatTextarea.value = preferences.copy_mr_info_format;
 
-                self.enableJiraTicketLinkCheckbox.checked = preferences.enable_jira_ticket_link;
-                self.enableJiraTicketLinkCheckbox.dispatchEvent(new CustomEvent('change'));
+                self.enableTaigaTicketLinkCheckbox.checked = preferences.enable_Taiga_ticket_link;
+                self.enableTaigaTicketLinkCheckbox.dispatchEvent(new CustomEvent('change'));
 
-                self.baseJiraUrlInput.value = preferences.base_jira_url;
+                self.baseTaigaUrlInput.value = preferences.base_Taiga_url;
 
-                self.jiraTicketLinkLabelTypeRadioButtons.find(function(el) {
-                    return el.value == preferences.jira_ticket_link_label_type;
+                self.TaigaTicketLinkLabelTypeRadioButtons.find(function(el) {
+                    return el.value == preferences.Taiga_ticket_link_label_type;
                 }).checked = true;
 
                 self.enableButtonToToggleWipStatusCheckbox.checked = preferences.enable_button_to_toggle_wip_status;
@@ -118,11 +118,11 @@
                 self.forceUserToEnableAtLeastOneFeatureIfNecessarily();
             });
 
-            this.enableJiraTicketLinkCheckbox.addEventListener('change', function() {
-                self.jiraTicketLinkOptionsDiv.classList.toggle('is-hidden', !this.checked);
-                self.baseJiraUrlInput.toggleAttribute('required', this.checked);
+            this.enableTaigaTicketLinkCheckbox.addEventListener('change', function() {
+                self.TaigaTicketLinkOptionsDiv.classList.toggle('is-hidden', !this.checked);
+                self.baseTaigaUrlInput.toggleAttribute('required', this.checked);
 
-                self.jiraTicketLinkLabelTypeRadioButtons.forEach(function(el) {
+                self.TaigaTicketLinkLabelTypeRadioButtons.forEach(function(el) {
                     el.toggleAttribute('required', this.checked);
                 }, this);
 
@@ -144,7 +144,7 @@
         saveOptionsToStorage() {
             let self = this;
 
-            let jira_ticket_link_label_type = this.jiraTicketLinkLabelTypeRadioButtons.find(function(el) {
+            let Taiga_ticket_link_label_type = this.TaigaTicketLinkLabelTypeRadioButtons.find(function(el) {
                 return el.checked;
             }).value;
 
@@ -154,9 +154,9 @@
                     enable_buttons_to_copy_source_and_target_branches_name: this.enableButtonsToCopySourceAndTargetBranchesNameCheckbox.checked,
                     enable_button_to_copy_mr_info: this.enableButtonToCopyMrInfoCheckbox.checked,
                     copy_mr_info_format: this.copyMrInfoFormatTextarea.value,
-                    enable_jira_ticket_link: this.enableJiraTicketLinkCheckbox.checked,
-                    base_jira_url: this.baseJiraUrlInput.value,
-                    jira_ticket_link_label_type: jira_ticket_link_label_type,
+                    enable_Taiga_ticket_link: this.enableTaigaTicketLinkCheckbox.checked,
+                    base_Taiga_url: this.baseTaigaUrlInput.value,
+                    Taiga_ticket_link_label_type: Taiga_ticket_link_label_type,
                     enable_button_to_toggle_wip_status: this.enableButtonToToggleWipStatusCheckbox.checked,
                     enable_unresolved_discussions_indicator: this.enableUnresolvedDiscussionsIndicatorCheckbox.checked
                 },
@@ -192,7 +192,7 @@
         hasUserDisabledAllFeatures() {
             return !this.displaySourceAndTargetBranchesCheckbox.checked
                 && !this.enableButtonToCopyMrInfoCheckbox.checked
-                && !this.enableJiraTicketLinkCheckbox.checked
+                && !this.enableTaigaTicketLinkCheckbox.checked
                 && !this.enableButtonToToggleWipStatusCheckbox.checked
                 && !this.enableUnresolvedDiscussionsIndicatorCheckbox.checked;
         }
